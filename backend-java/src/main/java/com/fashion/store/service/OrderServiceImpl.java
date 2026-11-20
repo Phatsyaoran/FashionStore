@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -42,6 +43,8 @@ public class OrderServiceImpl implements OrderService {
 
     private static final BigDecimal FREESHIP_THRESHOLD = BigDecimal.valueOf(500000);
     private static final BigDecimal DEFAULT_SHIPPING_FEE = BigDecimal.valueOf(30000);
+    private static final String ORDER_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     @Override
     @Transactional
@@ -58,9 +61,9 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal subTotal = BigDecimal.ZERO;
         List<OrderItem> orderItemsToSave = new ArrayList<>();
 
-        // 1. Kiểm tra tồn kho và trừ tồn kho an toàn
+        // 1. Kiểm tra tồn kho và trừ tồn kho an toàn (Khóa PESSIMISTIC_WRITE chống bán âm kho)
         for (OrderItemRequest itemReq : request.getItems()) {
-            ProductVariant variant = productVariantRepository.findById(itemReq.getProductVariantId())
+            ProductVariant variant = productVariantRepository.findByIdForUpdate(itemReq.getProductVariantId())
                     .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy biến thể sản phẩm ID: " + itemReq.getProductVariantId()));
 
             int requestedQty = itemReq.getQuantity();
@@ -124,10 +127,8 @@ public class OrderServiceImpl implements OrderService {
             totalAmount = BigDecimal.ZERO;
         }
 
-        // 5. Sinh mã đơn hàng duy nhất: DH + yyyyMMdd + 4 số ngẫu nhiên / sequence
-        String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long countToday = orderRepository.count() + 1;
-        String orderCode = "DH" + datePart + String.format("%04d", (countToday % 10000));
+        // 5. Sinh mã đơn hàng duy nhất: DH + yyyyMMdd + 5 ký tự ngẫu nhiên (kiểm tra không trùng DB)
+        String orderCode = generateUniqueOrderCode();
 
         // 6. Lưu đơn hàng
         Order order = Order.builder()
@@ -165,14 +166,16 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDTO getOrderByCode(String orderCode) {
         Order order = orderRepository.findByOrderCode(orderCode.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng với mã: " + orderCode));
-        return mapToOrderResponseDTO(order);
+        return maskPublicPii(mapToOrderResponseDTO(order));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponseDTO> getOrdersByPhone(String phone) {
         List<Order> orders = orderRepository.findByCustomerPhoneOrderByCreatedAtDesc(phone.trim());
-        return orders.stream().map(this::mapToOrderResponseDTO).collect(Collectors.toList());
+        return mapOrdersBatch(orders).stream()
+                .map(this::maskPublicPii)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -392,5 +395,46 @@ public class OrderServiceImpl implements OrderService {
         String encodedAccountName = URLEncoder.encode(accountName, StandardCharsets.UTF_8);
         return String.format("https://img.vietqr.io/image/%s-%s-compact2.png?amount=%d&addInfo=%s&accountName=%s",
                 bankId, accountNo, amount, orderCode, encodedAccountName);
+    }
+
+    private String generateUniqueOrderCode() {
+        String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        for (int attempt = 0; attempt < 20; attempt++) {
+            StringBuilder suffix = new StringBuilder(5);
+            for (int i = 0; i < 5; i++) {
+                suffix.append(ORDER_CODE_CHARS.charAt(SECURE_RANDOM.nextInt(ORDER_CODE_CHARS.length())));
+            }
+            String candidate = "DH" + datePart + suffix;
+            if (!orderRepository.existsByOrderCode(candidate)) {
+                return candidate;
+            }
+        }
+        return "DH" + datePart + UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
+    }
+
+    private OrderResponseDTO maskPublicPii(OrderResponseDTO dto) {
+        if (dto == null) return null;
+        dto.setCustomerPhone(maskPhone(dto.getCustomerPhone()));
+        dto.setShippingAddress(maskAddress(dto.getShippingAddress()));
+        return dto;
+    }
+
+    private String maskPhone(String phone) {
+        if (phone == null) return null;
+        String clean = phone.trim();
+        if (clean.length() < 7) return "****";
+        return clean.substring(0, 3) + "****" + clean.substring(clean.length() - 3);
+    }
+
+    private String maskAddress(String address) {
+        if (address == null || address.isBlank()) return address;
+        String[] parts = address.split(",");
+        if (parts.length >= 2) {
+            String tail = parts[parts.length - 2].trim() + ", " + parts[parts.length - 1].trim();
+            return "*** " + tail;
+        }
+        String trimmed = address.trim();
+        if (trimmed.length() <= 12) return "***";
+        return "*** " + trimmed.substring(trimmed.length() - 12);
     }
 }

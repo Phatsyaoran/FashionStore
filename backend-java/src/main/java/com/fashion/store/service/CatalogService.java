@@ -41,4 +41,6 @@ public interface CatalogService {
     ProductReviewsResponse getProductReviewsResponse(Long productId);
 
     ReviewDTO addReview(Long productId, ReviewCreateRequest request);
+
+    ReviewDTO addReview(Long productId, ReviewCreateRequest request, String userEmail);
 }

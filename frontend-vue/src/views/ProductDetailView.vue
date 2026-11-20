@@ -569,7 +569,10 @@
                 <div>
                   <div class="flex items-center gap-2">
                     <h4 class="font-bold text-xs text-gray-900">{{ rev.customerName }}</h4>
-                    <span class="text-[10px] text-emerald-600 font-medium bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-100">
+                    <span
+                      v-if="rev.verifiedPurchase"
+                      class="text-[10px] text-emerald-600 font-medium bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-100"
+                    >
                       ✓ Đã mua hàng
                     </span>
                   </div>
@@ -860,6 +863,9 @@ async function loadProductDetail() {
     const res = await api.get(`/products/${slug}`);
     if (res.success && res.data) {
       product.value = res.data;
+      if (product.value.name) {
+        document.title = `${product.value.name} | FashionStore`;
+      }
       
       if (product.value.variants && product.value.variants.length > 0) {
         selectedSize.value = product.value.variants[0].size;

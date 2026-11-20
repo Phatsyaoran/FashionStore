@@ -20,78 +20,86 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta: { title: 'Trang chủ' }
   },
   {
     path: '/catalog',
     name: 'catalog',
-    component: CatalogView
+    component: CatalogView,
+    meta: { title: 'Cửa hàng' }
   },
   {
     path: '/product/:slug',
     name: 'product-detail',
-    component: ProductDetailView
+    component: ProductDetailView,
+    meta: { title: 'Chi tiết sản phẩm' }
   },
   {
     path: '/cart',
     name: 'cart',
-    component: CartView
+    component: CartView,
+    meta: { title: 'Giỏ hàng' }
   },
   {
     path: '/checkout',
     name: 'checkout',
-    component: CheckoutView
+    component: CheckoutView,
+    meta: { title: 'Thanh toán' }
   },
   {
     path: '/order-tracking',
     name: 'order-tracking',
-    component: OrderTrackingView
+    component: OrderTrackingView,
+    meta: { title: 'Tra cứu đơn hàng' }
   },
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta: { title: 'Đăng nhập' }
   },
   {
     path: '/register',
     name: 'register',
-    component: RegisterView
+    component: RegisterView,
+    meta: { title: 'Đăng ký' }
   },
   {
     path: '/profile',
     name: 'profile',
     component: ProfileView,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: 'Tài khoản của tôi' }
   },
   {
     path: '/admin',
     name: 'admin-dashboard',
     component: AdminDashboardView,
-    meta: { requiresAdmin: true }
+    meta: { requiresAdmin: true, title: 'Quản trị' }
   },
   {
     path: '/admin/products',
     name: 'admin-products',
     component: AdminProductsView,
-    meta: { requiresAdmin: true }
+    meta: { requiresAdmin: true, title: 'Quản lý sản phẩm' }
   },
   {
     path: '/admin/orders',
     name: 'admin-orders',
     component: AdminOrdersView,
-    meta: { requiresAdmin: true }
+    meta: { requiresAdmin: true, title: 'Quản lý đơn hàng' }
   },
   {
     path: '/admin/coupons',
     name: 'admin-coupons',
     component: AdminCouponsView,
-    meta: { requiresAdmin: true }
+    meta: { requiresAdmin: true, title: 'Quản lý mã giảm giá' }
   },
   {
     path: '/admin/categories',
     name: 'admin-categories',
     component: AdminCategoriesView,
-    meta: { requiresAdmin: true }
+    meta: { requiresAdmin: true, title: 'Quản lý danh mục' }
   },
   {
     path: '/:pathMatch(.*)*',
@@ -128,6 +136,11 @@ router.beforeEach((to, from, next) => {
     }
   }
   next();
+});
+
+router.afterEach((to) => {
+  const pageTitle = to.meta?.title;
+  document.title = pageTitle ? `${pageTitle} | FashionStore` : 'FashionStore';
 });
 
 export default router;

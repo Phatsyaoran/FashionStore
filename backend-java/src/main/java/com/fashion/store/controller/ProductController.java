@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -131,9 +132,11 @@ public class ProductController {
     @Operation(summary = "Gửi đánh giá và phản hồi số đo cho sản phẩm")
     public ResponseEntity<ApiResponse<ReviewDTO>> addReview(
             @PathVariable Long productId,
-            @Valid @RequestBody ReviewCreateRequest request
+            @Valid @RequestBody ReviewCreateRequest request,
+            Authentication authentication
     ) {
-        ReviewDTO created = catalogService.addReview(productId, request);
+        String userEmail = (authentication != null) ? authentication.getName() : null;
+        ReviewDTO created = catalogService.addReview(productId, request, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok("Đánh giá sản phẩm đã được ghi nhận", created));
     }

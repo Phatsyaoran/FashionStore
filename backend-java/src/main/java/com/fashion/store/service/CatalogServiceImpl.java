@@ -5,6 +5,7 @@ import com.fashion.store.entity.Category;
 import com.fashion.store.entity.Product;
 import com.fashion.store.entity.ProductVariant;
 import com.fashion.store.entity.Review;
+import com.fashion.store.entity.User;
 import com.fashion.store.exception.ResourceNotFoundException;
 import com.fashion.store.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class CatalogServiceImpl implements CatalogService {
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
     private final ReviewRepository reviewRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -235,16 +238,28 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     @Transactional
     public ReviewDTO addReview(Long productId, ReviewCreateRequest request) {
+        return addReview(productId, request, null);
+    }
+
+    @Override
+    @Transactional
+    public ReviewDTO addReview(Long productId, ReviewCreateRequest request, String userEmail) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
 
+        User user = null;
+        if (userEmail != null && !userEmail.isBlank()) {
+            user = userRepository.findByEmail(userEmail.trim().toLowerCase()).orElse(null);
+        }
+
         String customerName = request.getCustomerName();
         if (customerName == null || customerName.trim().isEmpty()) {
-            customerName = "Khách hàng ẩn danh";
+            customerName = (user != null && user.getFullName() != null) ? user.getFullName() : "Khách hàng ẩn danh";
         }
 
         Review review = Review.builder()
                 .product(product)
+                .user(user)
                 .customerName(customerName.trim())
                 .rating(request.getRating())
                 .comment(request.getComment().trim())
@@ -370,6 +385,10 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private ReviewDTO mapToReviewDTO(Review review) {
+        boolean verified = review.getUser() != null
+                && review.getProduct() != null
+                && orderItemRepository.hasCompletedPurchase(review.getUser().getId(), review.getProduct().getId());
+
         return ReviewDTO.builder()
                 .id(review.getId())
                 .productId(review.getProduct() != null ? review.getProduct().getId() : null)
@@ -382,6 +401,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .purchasedSize(review.getPurchasedSize())
                 .purchasedColor(review.getPurchasedColor())
                 .fitFeedback(review.getFitFeedback())
+                .verifiedPurchase(verified)
                 .createdAt(review.getCreatedAt())
                 .build();
     }

@@ -24,5 +24,6 @@ public class ReviewDTO {
     private String purchasedSize;
     private String purchasedColor;
     private String fitFeedback; // CHAT, VUA_VAN, RONG
+    private Boolean verifiedPurchase;
     private LocalDateTime createdAt;
 }

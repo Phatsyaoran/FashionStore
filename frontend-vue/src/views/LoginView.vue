@@ -19,7 +19,7 @@
           type="email"
           v-model="email"
           required
-          placeholder="admin@fashion.vn hoặc khachhang@fashion.vn"
+          placeholder="Nhập email của bạn..."
           class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
         />
       </div>
@@ -30,7 +30,7 @@
           type="password"
           v-model="password"
           required
-          placeholder="Mật khẩu mẫu: 123456"
+          placeholder="Nhập mật khẩu..."
           class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
         />
       </div>
@@ -51,21 +51,14 @@
         </router-link>
       </div>
 
-      <!-- Quick Fill Sample Accounts -->
+      <!-- Quick Fill Demo Customer Account -->
       <div class="pt-2 flex justify-center gap-2 text-[11px]">
         <button
           type="button"
-          @click="fillAdmin"
-          class="text-gray-500 hover:text-rose-600 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200"
-        >
-          🔑 Tài khoản Admin
-        </button>
-        <button
-          type="button"
           @click="fillCustomer"
-          class="text-gray-500 hover:text-rose-600 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200"
+          class="text-gray-500 hover:text-rose-600 bg-gray-50 px-3 py-1 rounded-lg border border-gray-200"
         >
-          👤 Tài khoản Khách
+          👤 Dùng thử tài khoản Khách hàng
         </button>
       </div>
     </form>
@@ -84,11 +77,6 @@ const email = ref('');
 const password = ref('');
 const loading = ref(false);
 const errorMsg = ref('');
-
-function fillAdmin() {
-  email.value = 'admin@fashion.vn';
-  password.value = '123456';
-}
 
 function fillCustomer() {
   email.value = 'khachhang@fashion.vn';

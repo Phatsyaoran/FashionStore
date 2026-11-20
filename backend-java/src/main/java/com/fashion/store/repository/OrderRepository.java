@@ -18,6 +18,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByOrderCode(String orderCode);
 
+    boolean existsByOrderCode(String orderCode);
+
     List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     List<Order> findByCustomerPhoneOrderByCreatedAtDesc(String customerPhone);
