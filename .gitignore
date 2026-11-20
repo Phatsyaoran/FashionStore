@@ -9,7 +9,10 @@ target/
 *.war
 *.class
 
-# IDE & OS
+# IDE, Secrets & OS
+.env
+!.env.example
+!frontend-vue/.env
 .idea/
 .vscode/
 *.iml
