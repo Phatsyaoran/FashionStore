@@ -1,0 +1,28 @@
+package com.fashion.store.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ReviewDTO {
+
+    private Long id;
+    private Long productId;
+    private Long userId;
+    private String customerName;
+    private Integer rating;
+    private String comment;
+    private Integer customerHeightCm;
+    private Integer customerWeightKg;
+    private String purchasedSize;
+    private String purchasedColor;
+    private String fitFeedback; // CHAT, VUA_VAN, RONG
+    private LocalDateTime createdAt;
+}

@@ -1,0 +1,105 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '@/views/HomeView.vue';
+import CatalogView from '@/views/CatalogView.vue';
+import ProductDetailView from '@/views/ProductDetailView.vue';
+import CartView from '@/views/CartView.vue';
+import CheckoutView from '@/views/CheckoutView.vue';
+import OrderTrackingView from '@/views/OrderTrackingView.vue';
+import LoginView from '@/views/LoginView.vue';
+import RegisterView from '@/views/RegisterView.vue';
+import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
+import AdminProductsView from '@/views/admin/AdminProductsView.vue';
+import AdminOrdersView from '@/views/admin/AdminOrdersView.vue';
+import { useAuthStore } from '@/stores/authStore';
+
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: HomeView
+  },
+  {
+    path: '/catalog',
+    name: 'catalog',
+    component: CatalogView
+  },
+  {
+    path: '/product/:slug',
+    name: 'product-detail',
+    component: ProductDetailView
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartView
+  },
+  {
+    path: '/checkout',
+    name: 'checkout',
+    component: CheckoutView
+  },
+  {
+    path: '/order-tracking',
+    name: 'order-tracking',
+    component: OrderTrackingView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: RegisterView
+  },
+  {
+    path: '/admin',
+    name: 'admin-dashboard',
+    component: AdminDashboardView,
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/admin/products',
+    name: 'admin-products',
+    component: AdminProductsView,
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/admin/orders',
+    name: 'admin-orders',
+    component: AdminOrdersView,
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
+  }
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0, behavior: 'smooth' };
+    }
+  }
+});
+
+// Admin Route Guard
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  if (to.meta.requiresAdmin) {
+    if (!authStore.isAuthenticated || !authStore.isAdmin) {
+      alert('Vui lòng đăng nhập bằng tài khoản Quản Trị Viên (Admin) để truy cập khu vực này.');
+      next({ name: 'login' });
+      return;
+    }
+  }
+  next();
+});
+
+export default router;

@@ -1,0 +1,18 @@
+# Frontend (Node / Vite)
+node_modules/
+dist/
+*.local
+
+# Backend (Maven / Java)
+target/
+*.jar
+*.war
+*.class
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
