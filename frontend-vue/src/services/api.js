@@ -37,6 +37,22 @@ api.interceptors.response.use(
         errorMsg = 'Dữ liệu gửi lên không hợp lệ. Vui lòng kiểm tra lại thông tin.';
       } else if (error.response.status === 401) {
         errorMsg = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+        const requestUrl = error.config?.url || '';
+        if (!requestUrl.includes('/auth/login') && !requestUrl.includes('/auth/register')) {
+          import('@/stores/authStore').then(({ useAuthStore }) => {
+            try {
+              useAuthStore().logout();
+            } catch {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+            }
+          });
+          import('@/router').then(({ default: router }) => {
+            if (router.currentRoute.value.path !== '/login') {
+              router.push('/login');
+            }
+          });
+        }
       } else if (error.response.status === 403) {
         errorMsg = 'Bạn không có quyền thực hiện thao tác này.';
       } else if (error.response.status === 404) {

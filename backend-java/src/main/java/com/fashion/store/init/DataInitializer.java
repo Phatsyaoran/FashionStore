@@ -20,60 +20,36 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info(">>> Khởi chạy DataInitializer: Đồng bộ và kiểm tra mã hóa mật khẩu BCrypt...");
+        log.info(">>> Khởi chạy DataInitializer: Kiểm tra tài khoản mẫu...");
 
-        // 1. Kiểm tra tài khoản Admin
-        userRepository.findByEmail("admin@fashion.vn").ifPresentOrElse(
-                admin -> {
-                    if (!passwordEncoder.matches("123456", admin.getPasswordHash())) {
-                        admin.setPasswordHash(passwordEncoder.encode("123456"));
-                        admin.setRole("ADMIN");
-                        userRepository.save(admin);
-                        log.info(">>> Đã cập nhật lại mật khẩu BCrypt chuẩn cho admin@fashion.vn");
-                    } else {
-                        log.info(">>> Mật khẩu admin@fashion.vn đã được mã hóa BCrypt chính xác.");
-                    }
-                },
-                () -> {
-                    User newAdmin = User.builder()
-                            .fullName("Quản Trị Viên")
-                            .email("admin@fashion.vn")
-                            .passwordHash(passwordEncoder.encode("123456"))
-                            .phone("0901234567")
-                            .address("Số 88 Phố Huế, Quận Hai Bà Trưng, Hà Nội")
-                            .role("ADMIN")
-                            .createdAt(LocalDateTime.now())
-                            .build();
-                    userRepository.save(newAdmin);
-                    log.info(">>> Đã tạo mới tài khoản admin@fashion.vn");
-                }
-        );
+        // 1. Chỉ tạo mới tài khoản Admin nếu chưa tồn tại (KHÔNG ghi đè mật khẩu cũ)
+        if (userRepository.findByEmail("admin@fashion.vn").isEmpty()) {
+            User newAdmin = User.builder()
+                    .fullName("Quản Trị Viên")
+                    .email("admin@fashion.vn")
+                    .passwordHash(passwordEncoder.encode("123456"))
+                    .phone("0901234567")
+                    .address("Số 88 Phố Huế, Quận Hai Bà Trưng, Hà Nội")
+                    .role("ADMIN")
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            userRepository.save(newAdmin);
+            log.info(">>> Đã tạo mới tài khoản admin@fashion.vn");
+        }
 
-        // 2. Kiểm tra tài khoản Customer
-        userRepository.findByEmail("khachhang@fashion.vn").ifPresentOrElse(
-                customer -> {
-                    if (!passwordEncoder.matches("123456", customer.getPasswordHash())) {
-                        customer.setPasswordHash(passwordEncoder.encode("123456"));
-                        customer.setRole("CUSTOMER");
-                        userRepository.save(customer);
-                        log.info(">>> Đã cập nhật lại mật khẩu BCrypt chuẩn cho khachhang@fashion.vn");
-                    } else {
-                        log.info(">>> Mật khẩu khachhang@fashion.vn đã được mã hóa BCrypt chính xác.");
-                    }
-                },
-                () -> {
-                    User newCustomer = User.builder()
-                            .fullName("Nguyễn Văn Khách")
-                            .email("khachhang@fashion.vn")
-                            .passwordHash(passwordEncoder.encode("123456"))
-                            .phone("0912345678")
-                            .address("Số 123 Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh")
-                            .role("CUSTOMER")
-                            .createdAt(LocalDateTime.now())
-                            .build();
-                    userRepository.save(newCustomer);
-                    log.info(">>> Đã tạo mới tài khoản khachhang@fashion.vn");
-                }
-        );
+        // 2. Chỉ tạo mới tài khoản Customer nếu chưa tồn tại (KHÔNG ghi đè mật khẩu cũ)
+        if (userRepository.findByEmail("khachhang@fashion.vn").isEmpty()) {
+            User newCustomer = User.builder()
+                    .fullName("Nguyễn Văn Khách")
+                    .email("khachhang@fashion.vn")
+                    .passwordHash(passwordEncoder.encode("123456"))
+                    .phone("0912345678")
+                    .address("Số 123 Lê Lợi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh")
+                    .role("CUSTOMER")
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            userRepository.save(newCustomer);
+            log.info(">>> Đã tạo mới tài khoản khachhang@fashion.vn");
+        }
     }
 }

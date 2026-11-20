@@ -238,6 +238,10 @@
           Đang nạp danh sách cảnh báo tồn kho...
         </div>
 
+        <div v-else-if="lowStockError" class="p-8 text-center text-xs text-rose-600 font-semibold bg-rose-50/40">
+          ⚠️ {{ lowStockError }}
+        </div>
+
         <div v-else-if="lowStockList.length === 0" class="p-12 text-center text-xs text-emerald-700 font-semibold bg-emerald-50/40">
           🎉 Hiện tại tất cả các biến thể đều có tồn kho dồi dào trên 5 chiếc!
         </div>
@@ -332,22 +336,23 @@ import api from '@/services/api';
 import { formatVND, onImageError } from '@/services/formatters';
 
 const stats = reactive({
-  revenue: 1666000,
-  totalOrders: 3,
-  pendingOrders: 1,
-  totalProducts: 26
+  revenue: 0,
+  totalOrders: 0,
+  pendingOrders: 0,
+  totalProducts: 0
 });
 
 const orderStatusCounts = reactive({
-  PENDING: 1,
-  CONFIRMED: 1,
+  PENDING: 0,
+  CONFIRMED: 0,
   PACKING: 0,
-  SHIPPING: 1,
-  COMPLETED: 1
+  SHIPPING: 0,
+  COMPLETED: 0
 });
 
 const lowStockList = ref([]);
 const loadingLowStock = ref(false);
+const lowStockError = ref('');
 const savingVariantId = ref(null);
 const editStockInputs = reactive({});
 
@@ -375,6 +380,7 @@ async function loadStats() {
 
 async function loadLowStock() {
   loadingLowStock.value = true;
+  lowStockError.value = '';
   try {
     const res = await api.get('/admin/dashboard/low-stock?threshold=5');
     if (res.success && res.data) {
@@ -385,36 +391,9 @@ async function loadLowStock() {
       });
     }
   } catch (err) {
-    // Dữ liệu mẫu dự phòng nếu chưa kết nối live backend
-    lowStockList.value = [
-      {
-        variantId: 10,
-        productId: 4,
-        productName: 'Áo Thun Cổ Tim Nữ Modal Mềm Mát Tôn Dáng',
-        sku: 'AT-04-M-TRANG',
-        size: 'M',
-        colorName: 'Trắng Ngà',
-        colorHex: '#FFFDD0',
-        price: 139000,
-        stockQuantity: 4,
-        thumbnailUrl: 'https://picsum.photos/seed/fs-sp-04/600/800'
-      },
-      {
-        variantId: 21,
-        productId: 8,
-        productName: 'Áo Sơ Mi Lụa Tay Phồng Nữ Công Sở Thanh Lịch',
-        sku: 'SM-08-M-DEN',
-        size: 'M',
-        colorName: 'Đen Quyến Rũ',
-        colorHex: '#0A0A0A',
-        price: 259000,
-        stockQuantity: 2,
-        thumbnailUrl: 'https://picsum.photos/seed/fs-sp-08/600/800'
-      }
-    ];
-    lowStockList.value.forEach(item => {
-      editStockInputs[item.variantId] = item.stockQuantity;
-    });
+    console.error('Lỗi nạp danh sách sắp hết hàng:', err);
+    lowStockList.value = [];
+    lowStockError.value = err.response?.data?.message || err.friendlyMessage || 'Không thể tải danh sách cảnh báo tồn kho từ máy chủ.';
   } finally {
     loadingLowStock.value = false;
   }
@@ -433,15 +412,18 @@ async function saveStock(variantId) {
     const res = await api.patch(`/admin/variants/${variantId}/stock`, {
       stockQuantity: Number(newQty)
     });
-    alert('Cập nhật số lượng tồn kho thành công!');
-    await loadLowStock();
+    if (res.success) {
+      alert(res.message || 'Cập nhật số lượng tồn kho thành công!');
+      await loadLowStock();
+    } else {
+      throw new Error(res.message || 'Cập nhật tồn kho thất bại');
+    }
   } catch (err) {
-    // Cập nhật giao diện trực tiếp
     const found = lowStockList.value.find(i => i.variantId === variantId);
     if (found) {
-      found.stockQuantity = Number(newQty);
-      alert('Đã cập nhật số lượng tồn kho mới!');
+      editStockInputs[variantId] = found.stockQuantity;
     }
+    alert(err.response?.data?.message || err.friendlyMessage || err.message || 'Không thể cập nhật tồn kho. Vui lòng thử lại!');
   } finally {
     savingVariantId.value = null;
   }

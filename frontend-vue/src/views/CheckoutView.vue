@@ -425,13 +425,15 @@ async function handleConfirmPayment() {
   confirming.value = true;
   try {
     const res = await api.post(`/orders/${createdOrder.value.orderCode}/confirm-payment`);
-    alert(res.message || 'Xác nhận thanh toán thành công!');
-    showVietQrModal.value = false;
-    router.push(`/order-tracking?orderCode=${createdOrder.value.orderCode}`);
+    if (res.success) {
+      alert(res.message || 'Xác nhận thanh toán thành công!');
+      showVietQrModal.value = false;
+      router.push(`/order-tracking?orderCode=${createdOrder.value.orderCode}`);
+    } else {
+      alert(res.message || 'Không thể xác nhận thanh toán. Vui lòng thử lại!');
+    }
   } catch (err) {
-    alert('Đã gửi thông báo xác nhận thanh toán!');
-    showVietQrModal.value = false;
-    router.push(`/order-tracking?orderCode=${createdOrder.value.orderCode}`);
+    alert(err.response?.data?.message || err.friendlyMessage || 'Lỗi kết nối khi xác nhận thanh toán. Vui lòng thử lại!');
   } finally {
     confirming.value = false;
   }

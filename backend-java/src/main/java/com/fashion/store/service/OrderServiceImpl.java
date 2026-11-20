@@ -187,15 +187,74 @@ public class OrderServiceImpl implements OrderService {
         return mapToOrderResponseDTO(updated);
     }
 
+    private static final Map<String, Integer> ORDER_STATUS_RANK = Map.of(
+            "PENDING", 0,
+            "CONFIRMED", 1,
+            "PACKING", 2,
+            "SHIPPING", 3,
+            "COMPLETED", 4
+    );
+
     @Override
     @Transactional
     public OrderResponseDTO updateOrderStatus(String orderCode, OrderStatusUpdateRequest request) {
         Order order = orderRepository.findByOrderCode(orderCode.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng: " + orderCode));
 
-        String status = request.getStatus().trim().toUpperCase();
-        order.setOrderStatus(status);
-        if ("COMPLETED".equals(status)) {
+        String newStatus = request.getStatus().trim().toUpperCase();
+        if (!ORDER_STATUS_RANK.containsKey(newStatus) && !"CANCELLED".equals(newStatus)) {
+            throw new BadRequestException("Trạng thái đơn hàng không hợp lệ: " + newStatus);
+        }
+
+        String currentStatus = order.getOrderStatus() != null
+                ? order.getOrderStatus().trim().toUpperCase()
+                : "PENDING";
+
+        if (currentStatus.equals(newStatus)) {
+            return mapToOrderResponseDTO(order);
+        }
+
+        if ("CANCELLED".equals(currentStatus)) {
+            throw new BadRequestException("Đơn hàng đã bị hủy, không thể chuyển sang trạng thái " + newStatus);
+        }
+
+        if ("COMPLETED".equals(currentStatus)) {
+            throw new BadRequestException("Đơn hàng đã hoàn thành, không thể chuyển sang trạng thái " + newStatus);
+        }
+
+        if (!"CANCELLED".equals(newStatus)) {
+            int currentRank = ORDER_STATUS_RANK.getOrDefault(currentStatus, 0);
+            int targetRank = ORDER_STATUS_RANK.get(newStatus);
+            if (targetRank < currentRank) {
+                throw new BadRequestException("Không thể chuyển ngược trạng thái đơn hàng từ " + currentStatus + " về " + newStatus);
+            }
+        } else {
+            // Hoàn trả tồn kho từng biến thể khi hủy đơn hàng
+            List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
+            for (OrderItem item : items) {
+                if (item.getProductVariant() != null) {
+                    ProductVariant variant = item.getProductVariant();
+                    int currentStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
+                    variant.setStockQuantity(currentStock + item.getQuantity());
+                    productVariantRepository.save(variant);
+                }
+            }
+
+            // Hoàn lại lượt sử dụng mã giảm giá nếu đơn hàng có áp dụng coupon
+            if (order.getCouponCode() != null && !order.getCouponCode().trim().isEmpty()) {
+                couponRepository.findByCode(order.getCouponCode().trim().toUpperCase())
+                        .ifPresent(coupon -> {
+                            int used = coupon.getUsedCount() != null ? coupon.getUsedCount() : 0;
+                            if (used > 0) {
+                                coupon.setUsedCount(used - 1);
+                                couponRepository.save(coupon);
+                            }
+                        });
+            }
+        }
+
+        order.setOrderStatus(newStatus);
+        if ("COMPLETED".equals(newStatus)) {
             order.setPaymentStatus("PAID");
         }
 

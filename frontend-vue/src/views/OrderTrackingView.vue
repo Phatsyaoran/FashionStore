@@ -36,6 +36,42 @@
       {{ errorMessage }}
     </div>
 
+    <!-- Multiple Orders Selector (when searching by Phone) -->
+    <div v-if="ordersList.length > 1" class="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 sm:p-6 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500">
+          Tìm thấy {{ ordersList.length }} đơn hàng — Chọn đơn để xem chi tiết
+        </h3>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button
+          v-for="item in ordersList"
+          :key="item.id || item.orderCode"
+          type="button"
+          @click="order = item"
+          class="text-left p-4 rounded-2xl border transition-all flex items-center justify-between gap-3"
+          :class="order?.orderCode === item.orderCode
+            ? 'border-rose-500 bg-rose-50/50 ring-2 ring-rose-500/20'
+            : 'border-gray-200 hover:border-rose-300 bg-white'"
+        >
+          <div class="min-w-0">
+            <div class="font-mono font-extrabold text-xs text-gray-900">#{{ item.orderCode }}</div>
+            <div class="text-[11px] text-gray-500 mt-0.5">{{ formatDateTime(item.createdAt) }}</div>
+            <span
+              class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
+              :class="item.orderStatus === 'CANCELLED' ? 'bg-rose-100 text-rose-700' : item.orderStatus === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'"
+            >
+              {{ item.orderStatus }}
+            </span>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="font-black text-xs text-rose-600">{{ formatVND(item.totalAmount) }}</div>
+            <div class="text-[10px] text-gray-400 mt-0.5">{{ (item.orderItems || []).length }} sản phẩm</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
     <!-- Order Result Box -->
     <div v-if="order" class="bg-white rounded-3xl border border-gray-100 shadow-lg p-6 sm:p-8 space-y-8">
       
@@ -196,6 +232,7 @@ const route = useRoute();
 const searchQuery = ref(route.query.orderCode || '');
 const loading = ref(false);
 const order = ref(null);
+const ordersList = ref([]);
 const errorMessage = ref('');
 
 const stepMap = {
@@ -220,6 +257,7 @@ async function handleSearch() {
   loading.value = true;
   errorMessage.value = '';
   order.value = null;
+  ordersList.value = [];
 
   try {
     const q = searchQuery.value.trim();
@@ -227,18 +265,20 @@ async function handleSearch() {
     if (res.success && res.data) {
       if (Array.isArray(res.data)) {
         if (res.data.length > 0) {
+          ordersList.value = res.data;
           order.value = res.data[0];
         } else {
           errorMessage.value = `Không tìm thấy đơn hàng nào liên kết với số điện thoại "${q}".`;
         }
       } else {
+        ordersList.value = [res.data];
         order.value = res.data;
       }
     } else {
       errorMessage.value = 'Không tìm thấy thông tin đơn hàng khớp với yêu cầu của bạn.';
     }
   } catch (err) {
-    errorMessage.value = err.response?.data?.message || 'Không tìm thấy đơn hàng hoặc có lỗi máy chủ.';
+    errorMessage.value = err.response?.data?.message || err.friendlyMessage || 'Không tìm thấy đơn hàng hoặc có lỗi máy chủ.';
   } finally {
     loading.value = false;
   }

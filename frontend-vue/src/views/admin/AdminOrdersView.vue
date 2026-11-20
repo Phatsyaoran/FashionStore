@@ -258,7 +258,8 @@ async function loadOrders() {
   try {
     const res = await api.get('/admin/orders');
     if (res.success && res.data) {
-      orders.value = res.data.content || res.data || [];
+      const list = res.data.content || res.data || [];
+      orders.value = list.map(o => ({ ...o, _prevStatus: o.orderStatus }));
     }
   } catch (err) {
     console.error('Lỗi nạp đơn hàng admin:', err);
@@ -266,11 +267,22 @@ async function loadOrders() {
 }
 
 async function updateStatus(order) {
+  const previousStatus = order._prevStatus;
   try {
-    await api.patch(`/admin/orders/${order.orderCode}/status`, { status: order.orderStatus });
-    alert(`Đã cập nhật đơn #${order.orderCode} sang trạng thái: ${order.orderStatus}`);
+    const res = await api.patch(`/admin/orders/${order.orderCode}/status`, { status: order.orderStatus });
+    if (res.success) {
+      order._prevStatus = order.orderStatus;
+      if (res.data?.paymentStatus) {
+        order.paymentStatus = res.data.paymentStatus;
+      }
+      alert(`Đã cập nhật đơn #${order.orderCode} sang trạng thái: ${order.orderStatus}`);
+    } else {
+      order.orderStatus = previousStatus;
+      alert(res.message || 'Không thể cập nhật trạng thái đơn hàng.');
+    }
   } catch (err) {
-    alert(`Đã lưu trạng thái: ${order.orderStatus}`);
+    order.orderStatus = previousStatus;
+    alert(err.response?.data?.message || err.friendlyMessage || 'Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại!');
   }
 }
 
