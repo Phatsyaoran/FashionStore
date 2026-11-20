@@ -1,21 +1,34 @@
+# Environment & Secrets
+.env
+backend-java/.env
+*.local
+!.env.example
+!backend-java/.env.example
+!frontend-vue/.env
+
 # Frontend (Node / Vite)
 node_modules/
+frontend-vue/node_modules/
 dist/
-*.local
+frontend-vue/dist/
 
 # Backend (Maven / Java)
 target/
+backend-java/target/
 *.jar
 *.war
 *.class
 
-# IDE, Secrets & OS
-.env
-!.env.example
-!frontend-vue/.env
+# Uploaded Media (giữ lại .gitkeep)
+uploads/*
+!uploads/.gitkeep
+backend-java/uploads/*
+!backend-java/uploads/.gitkeep
+
+# IDE, Logs & OS
 .idea/
 .vscode/
 *.iml
+*.log
 .DS_Store
 Thumbs.db
-*.log
