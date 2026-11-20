@@ -2,12 +2,14 @@ package com.fashion.store.service;
 
 import com.fashion.store.dto.*;
 import com.fashion.store.entity.Category;
+import com.fashion.store.entity.Coupon;
 import com.fashion.store.entity.Order;
 import com.fashion.store.entity.Product;
 import com.fashion.store.entity.ProductVariant;
 import com.fashion.store.exception.BadRequestException;
 import com.fashion.store.exception.ResourceNotFoundException;
 import com.fashion.store.repository.CategoryRepository;
+import com.fashion.store.repository.CouponRepository;
 import com.fashion.store.repository.OrderItemRepository;
 import com.fashion.store.repository.OrderRepository;
 import com.fashion.store.repository.ProductRepository;
@@ -47,6 +49,7 @@ public class AdminServiceImpl implements AdminService {
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
     private final CategoryRepository categoryRepository;
+    private final CouponRepository couponRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final ReviewRepository reviewRepository;
@@ -604,6 +607,209 @@ public class AdminServiceImpl implements AdminService {
                 return candidate;
             }
             candidate = baseSku + "-" + suffix++;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<OrderResponseDTO> getAdminOrders(String keyword, String status, int page, int size) {
+        return orderService.searchOrders(keyword, status, page, size);
+    }
+
+    // ==========================================
+    // ADMIN COUPON CRUD
+    // ==========================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AdminCouponDTO> getAllCoupons() {
+        return couponRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream()
+                .map(this::mapToAdminCouponDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public AdminCouponDTO createCoupon(AdminCouponRequest request) {
+        String code = request.getCode().trim().toUpperCase(Locale.ROOT);
+        if (couponRepository.existsByCode(code)) {
+            throw new BadRequestException("Mã giảm giá '" + code + "' đã tồn tại trong hệ thống.");
+        }
+        if (request.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Ngày hết hạn mã giảm giá phải ở tương lai.");
+        }
+
+        Coupon coupon = Coupon.builder()
+                .code(code)
+                .discountPercent(request.getDiscountPercent())
+                .maxDiscountAmount(request.getMaxDiscountAmount())
+                .minOrderValue(request.getMinOrderValue())
+                .expiryDate(request.getExpiryDate())
+                .usageLimit(request.getUsageLimit())
+                .usedCount(0)
+                .isActive(request.getIsActive() != null ? request.getIsActive() : true)
+                .build();
+
+        return mapToAdminCouponDTO(couponRepository.save(coupon));
+    }
+
+    @Override
+    @Transactional
+    public AdminCouponDTO updateCoupon(Long id, AdminCouponRequest request) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy mã giảm giá ID: " + id));
+
+        String code = request.getCode().trim().toUpperCase(Locale.ROOT);
+        couponRepository.findByCode(code).ifPresent(existing -> {
+            if (!existing.getId().equals(id)) {
+                throw new BadRequestException("Mã giảm giá '" + code + "' đã được sử dụng bởi bản ghi khác.");
+            }
+        });
+
+        coupon.setCode(code);
+        coupon.setDiscountPercent(request.getDiscountPercent());
+        coupon.setMaxDiscountAmount(request.getMaxDiscountAmount());
+        coupon.setMinOrderValue(request.getMinOrderValue());
+        coupon.setExpiryDate(request.getExpiryDate());
+        coupon.setUsageLimit(request.getUsageLimit());
+        if (request.getIsActive() != null) {
+            coupon.setIsActive(request.getIsActive());
+        }
+
+        return mapToAdminCouponDTO(couponRepository.save(coupon));
+    }
+
+    @Override
+    @Transactional
+    public AdminCouponDTO toggleCoupon(Long id) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy mã giảm giá ID: " + id));
+        coupon.setIsActive(!Boolean.TRUE.equals(coupon.getIsActive()));
+        return mapToAdminCouponDTO(couponRepository.save(coupon));
+    }
+
+    private AdminCouponDTO mapToAdminCouponDTO(Coupon c) {
+        return AdminCouponDTO.builder()
+                .id(c.getId())
+                .code(c.getCode())
+                .discountPercent(c.getDiscountPercent())
+                .maxDiscountAmount(c.getMaxDiscountAmount())
+                .minOrderValue(c.getMinOrderValue())
+                .expiryDate(c.getExpiryDate())
+                .usageLimit(c.getUsageLimit())
+                .usedCount(c.getUsedCount())
+                .isActive(c.getIsActive())
+                .build();
+    }
+
+    // ==========================================
+    // ADMIN CATEGORY CRUD
+    // ==========================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryDTO> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        Map<Long, Long> countsMap = new HashMap<>();
+        for (Object[] row : categoryRepository.countProductsByCategory()) {
+            countsMap.put((Long) row[0], (Long) row[1]);
+        }
+        return categories.stream()
+                .map(c -> CategoryDTO.builder()
+                        .id(c.getId())
+                        .name(c.getName())
+                        .slug(c.getSlug())
+                        .description(c.getDescription())
+                        .productCount(countsMap.getOrDefault(c.getId(), 0L))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public CategoryDTO createCategory(AdminCategoryRequest request) {
+        String rawSlug = (request.getSlug() != null && !request.getSlug().trim().isEmpty())
+                ? request.getSlug().trim()
+                : request.getName().trim();
+        String slug = generateUniqueCategorySlug(rawSlug, null);
+
+        Category category = Category.builder()
+                .name(request.getName().trim())
+                .slug(slug)
+                .description(request.getDescription() != null ? request.getDescription().trim() : "")
+                .build();
+
+        Category saved = categoryRepository.save(category);
+        return CategoryDTO.builder()
+                .id(saved.getId())
+                .name(saved.getName())
+                .slug(saved.getSlug())
+                .description(saved.getDescription())
+                .productCount(0L)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public CategoryDTO updateCategory(Long id, AdminCategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục ID: " + id));
+
+        String rawSlug = (request.getSlug() != null && !request.getSlug().trim().isEmpty())
+                ? request.getSlug().trim()
+                : request.getName().trim();
+        String slug = generateUniqueCategorySlug(rawSlug, id);
+
+        category.setName(request.getName().trim());
+        category.setSlug(slug);
+        category.setDescription(request.getDescription() != null ? request.getDescription().trim() : "");
+
+        Category saved = categoryRepository.save(category);
+        long productCount = productRepository.count((root, query, cb) -> cb.equal(root.get("category").get("id"), saved.getId()));
+        return CategoryDTO.builder()
+                .id(saved.getId())
+                .name(saved.getName())
+                .slug(saved.getSlug())
+                .description(saved.getDescription())
+                .productCount(productCount)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategory(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục ID: " + id));
+
+        if (productRepository.existsByCategoryId(id)) {
+            throw new BadRequestException("Không thể xóa danh mục \"" + category.getName()
+                    + "\" vì đang chứa sản phẩm. Hãy chuyển sản phẩm sang danh mục khác trước.");
+        }
+
+        categoryRepository.delete(category);
+    }
+
+    private String generateUniqueCategorySlug(String input, Long currentCategoryId) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replace('đ', 'd')
+                .replace('Đ', 'D')
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-+|-+$", "");
+
+        if (normalized.isEmpty()) {
+            normalized = "danh-muc";
+        }
+
+        String candidate = normalized;
+        int suffix = 1;
+        while (true) {
+            Optional<Category> existing = categoryRepository.findBySlug(candidate);
+            if (existing.isEmpty() || (currentCategoryId != null && existing.get().getId().equals(currentCategoryId))) {
+                return candidate;
+            }
+            candidate = normalized + "-" + suffix++;
         }
     }
 }

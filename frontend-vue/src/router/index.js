@@ -11,6 +11,8 @@ import ProfileView from '@/views/ProfileView.vue';
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminProductsView from '@/views/admin/AdminProductsView.vue';
 import AdminOrdersView from '@/views/admin/AdminOrdersView.vue';
+import AdminCouponsView from '@/views/admin/AdminCouponsView.vue';
+import AdminCategoriesView from '@/views/admin/AdminCategoriesView.vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useToastStore } from '@/stores/toastStore';
 
@@ -77,6 +79,18 @@ const routes = [
     path: '/admin/orders',
     name: 'admin-orders',
     component: AdminOrdersView,
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/admin/coupons',
+    name: 'admin-coupons',
+    component: AdminCouponsView,
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/admin/categories',
+    name: 'admin-categories',
+    component: AdminCategoriesView,
     meta: { requiresAdmin: true }
   },
   {

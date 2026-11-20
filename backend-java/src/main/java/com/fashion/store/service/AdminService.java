@@ -17,6 +17,8 @@ public interface AdminService {
 
     List<OrderResponseDTO> getAllOrders();
 
+    PageResponse<OrderResponseDTO> getAdminOrders(String keyword, String status, int page, int size);
+
     OrderResponseDTO updateOrderStatus(String orderCode, OrderStatusUpdateRequest request);
 
     ProductDTO toggleProductFlashSale(Long productId);
@@ -28,6 +30,22 @@ public interface AdminService {
     String uploadImage(MultipartFile file);
 
     void deleteProduct(Long productId);
+
+    List<AdminCouponDTO> getAllCoupons();
+
+    AdminCouponDTO createCoupon(AdminCouponRequest request);
+
+    AdminCouponDTO updateCoupon(Long id, AdminCouponRequest request);
+
+    AdminCouponDTO toggleCoupon(Long id);
+
+    List<CategoryDTO> getAllCategories();
+
+    CategoryDTO createCategory(AdminCategoryRequest request);
+
+    CategoryDTO updateCategory(Long id, AdminCategoryRequest request);
+
+    void deleteCategory(Long id);
 
     byte[] exportOrdersToCsv();
 

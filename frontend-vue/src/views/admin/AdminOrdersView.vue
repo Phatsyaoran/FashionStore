@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-200 no-print">
       <div>
         <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
           Quản Lý Đơn Hàng & Vận Đơn
@@ -29,8 +29,59 @@
       </div>
     </div>
 
+    <!-- Search & Status Filter Toolbar -->
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-4 space-y-3 no-print">
+      <div class="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+        <form @submit.prevent="handleSearch" class="relative flex-1 max-w-md flex gap-2">
+          <div class="relative flex-1">
+            <input
+              v-model="searchKeyword"
+              type="text"
+              placeholder="Tìm mã đơn (DH...), tên khách hoặc SĐT..."
+              class="w-full pl-9 pr-8 py-2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white text-xs focus:outline-none focus:ring-2 focus:ring-rose-500"
+            />
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+            <button
+              v-if="searchKeyword"
+              type="button"
+              @click="clearSearch"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
+            >
+              ✕
+            </button>
+          </div>
+          <button
+            type="submit"
+            class="px-4 py-2 rounded-xl bg-gray-900 hover:bg-rose-600 text-white text-xs font-bold transition-colors shrink-0"
+          >
+            Tìm
+          </button>
+        </form>
+
+        <div class="text-xs text-gray-500 font-semibold">
+          Tổng: <span class="font-black text-gray-900">{{ totalElements }}</span> đơn hàng
+        </div>
+      </div>
+
+      <!-- Status Filter Tabs -->
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          v-for="tab in statusTabs"
+          :key="tab.value"
+          type="button"
+          @click="selectStatus(tab.value)"
+          class="px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all"
+          :class="selectedStatus === tab.value
+            ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+    </div>
+
     <!-- Orders Table -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden no-print">
       <div class="overflow-x-auto">
         <table class="w-full min-w-[750px] text-left text-xs">
           <thead class="bg-gray-50 border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
@@ -45,7 +96,13 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            <tr v-for="order in orders" :key="order.id" class="hover:bg-gray-50 transition-colors">
+            <tr v-if="loadingOrders">
+              <td colspan="7" class="p-8 text-center text-gray-400">Đang tải danh sách đơn hàng...</td>
+            </tr>
+            <tr v-else-if="orders.length === 0">
+              <td colspan="7" class="p-8 text-center text-gray-400">Không có đơn hàng nào khớp với bộ lọc hiện tại.</td>
+            </tr>
+            <tr v-else v-for="order in orders" :key="order.id" class="hover:bg-gray-50 transition-colors">
               <td class="p-4 font-mono font-bold text-rose-600">
                 #{{ order.orderCode }}
               </td>
@@ -94,11 +151,39 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination Bar -->
+      <div
+        v-if="totalPages > 1"
+        class="p-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between text-xs"
+      >
+        <span class="text-gray-500 font-medium">
+          Trang <strong>{{ currentPage + 1 }}</strong> / {{ totalPages }}
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage <= 0"
+            class="px-3.5 py-1.5 rounded-xl border border-gray-200 bg-white font-bold text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            ← Trước
+          </button>
+          <button
+            type="button"
+            @click="goToPage(currentPage + 1)"
+            :disabled="currentPage >= totalPages - 1"
+            class="px-3.5 py-1.5 rounded-xl border border-gray-200 bg-white font-bold text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Sau →
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- IN PHIẾU GIAO HÀNG CHUẨN KHỔ A6 (Yêu cầu Phase 7) -->
-    <div v-if="selectedPrintOrder" class="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-4 shadow-2xl">
+    <!-- IN PHIẾU GIAO HÀNG CHUẨN KHỔ A6 (Yêu cầu Phase 7 + JsBarcode Code128) -->
+    <div v-if="selectedPrintOrder" class="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-white print:p-0">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-4 shadow-2xl print:max-h-none print:shadow-none print:p-0 print:rounded-none">
         <div class="flex justify-between items-center no-print pb-2 border-b border-gray-100">
           <div>
             <h3 class="font-bold text-base text-gray-900">Xem trước nhãn giao vận A6</h3>
@@ -120,10 +205,10 @@
               <p class="text-[10px] text-gray-600 mt-0.5">88 Phố Huế, Hai Bà Trưng, Hà Nội | CSKH: 1900 8899</p>
             </div>
 
-            <!-- Simulated Barcode -->
-            <div class="text-right">
-              <div class="font-mono text-base font-black tracking-widest leading-none">||||| | ||| |||| | ||</div>
-              <div class="font-mono text-xs font-bold mt-1">#{{ selectedPrintOrder.orderCode }}</div>
+            <!-- Real Code128 Barcode (JsBarcode) -->
+            <div class="text-right flex flex-col items-end">
+              <svg ref="barcodeSvg" class="max-w-[170px] h-11"></svg>
+              <div class="font-mono text-xs font-bold mt-0.5">#{{ selectedPrintOrder.orderCode }}</div>
             </div>
           </div>
 
@@ -220,7 +305,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, nextTick, onMounted } from 'vue';
+import JsBarcode from 'jsbarcode';
 import api from '@/services/api';
 import { useToastStore } from '@/stores/toastStore';
 import { formatVND } from '@/services/formatters';
@@ -228,7 +314,26 @@ import { formatVND } from '@/services/formatters';
 const toastStore = useToastStore();
 const orders = ref([]);
 const selectedPrintOrder = ref(null);
+const barcodeSvg = ref(null);
 const isExporting = ref(false);
+const loadingOrders = ref(false);
+
+const searchKeyword = ref('');
+const selectedStatus = ref('ALL');
+const currentPage = ref(0);
+const pageSize = 10;
+const totalPages = ref(1);
+const totalElements = ref(0);
+
+const statusTabs = [
+  { value: 'ALL', label: 'Tất cả' },
+  { value: 'PENDING', label: '⏳ Chờ xác nhận' },
+  { value: 'CONFIRMED', label: '✅ Đã xác nhận' },
+  { value: 'PACKING', label: '📦 Đang đóng gói' },
+  { value: 'SHIPPING', label: '🚚 Đang giao' },
+  { value: 'COMPLETED', label: '🎉 Hoàn thành' },
+  { value: 'CANCELLED', label: '❌ Đã hủy' }
+];
 
 async function exportOrdersCsv() {
   try {
@@ -256,16 +361,46 @@ async function exportOrdersCsv() {
   }
 }
 
-async function loadOrders() {
+async function loadOrders(page = currentPage.value) {
+  loadingOrders.value = true;
+  currentPage.value = page;
   try {
-    const res = await api.get('/admin/orders');
+    const params = { page, size: pageSize };
+    if (searchKeyword.value.trim()) params.keyword = searchKeyword.value.trim();
+    if (selectedStatus.value && selectedStatus.value !== 'ALL') params.status = selectedStatus.value;
+
+    const res = await api.get('/admin/orders', { params });
     if (res.success && res.data) {
-      const list = res.data.content || res.data || [];
+      const list = res.data.content || (Array.isArray(res.data) ? res.data : []);
       orders.value = list.map(o => ({ ...o, _prevStatus: o.orderStatus }));
+      totalPages.value = res.data.totalPages || 1;
+      totalElements.value = res.data.totalElements ?? list.length;
     }
   } catch (err) {
     console.error('Lỗi nạp đơn hàng admin:', err);
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Không thể tải danh sách đơn hàng.');
+  } finally {
+    loadingOrders.value = false;
   }
+}
+
+function handleSearch() {
+  loadOrders(0);
+}
+
+function clearSearch() {
+  searchKeyword.value = '';
+  loadOrders(0);
+}
+
+function selectStatus(status) {
+  selectedStatus.value = status;
+  loadOrders(0);
+}
+
+function goToPage(page) {
+  if (page < 0 || page >= totalPages.value) return;
+  loadOrders(page);
 }
 
 async function updateStatus(order) {
@@ -288,8 +423,22 @@ async function updateStatus(order) {
   }
 }
 
-function printLabel(order) {
+async function printLabel(order) {
   selectedPrintOrder.value = order;
+  await nextTick();
+  if (barcodeSvg.value && order?.orderCode) {
+    try {
+      JsBarcode(barcodeSvg.value, order.orderCode, {
+        format: 'CODE128',
+        width: 1.5,
+        height: 38,
+        displayValue: false,
+        margin: 0
+      });
+    } catch (err) {
+      console.error('Lỗi tạo mã vạch Code128:', err);
+    }
+  }
 }
 
 function triggerPrint() {

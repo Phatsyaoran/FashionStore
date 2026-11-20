@@ -108,20 +108,36 @@
           </div>
         </div>
 
-        <!-- Filter 3: Sizes -->
+        <!-- Filter 3: Sizes (Áo + Quần) -->
         <div class="space-y-3 pt-4 border-t border-gray-100">
           <h4 class="text-xs font-bold uppercase tracking-wider text-gray-900">Kích Cỡ (Size)</h4>
-          <div class="grid grid-cols-4 gap-2">
-            <button
-              v-for="s in ['S', 'M', 'L', 'XL']"
-              :key="s"
-              type="button"
-              @click="toggleSize(s)"
-              class="py-2 rounded-xl text-xs font-bold border transition-all text-center"
-              :class="filters.size === s ? 'border-rose-600 bg-rose-600 text-white shadow-sm' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
-            >
-              {{ s }}
-            </button>
+          <div class="space-y-2">
+            <p class="text-[10px] font-bold text-gray-400 uppercase">Size Áo / Váy</p>
+            <div class="grid grid-cols-5 gap-1.5">
+              <button
+                v-for="s in ['S', 'M', 'L', 'XL', 'XXL']"
+                :key="s"
+                type="button"
+                @click="toggleSize(s)"
+                class="py-1.5 rounded-xl text-xs font-bold border transition-all text-center"
+                :class="filters.size === s ? 'border-rose-600 bg-rose-600 text-white shadow-sm' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
+              >
+                {{ s }}
+              </button>
+            </div>
+            <p class="text-[10px] font-bold text-gray-400 uppercase pt-1">Size Quần</p>
+            <div class="grid grid-cols-5 gap-1.5">
+              <button
+                v-for="s in ['28', '29', '30', '31', '32']"
+                :key="s"
+                type="button"
+                @click="toggleSize(s)"
+                class="py-1.5 rounded-xl text-xs font-bold border transition-all text-center"
+                :class="filters.size === s ? 'border-rose-600 bg-rose-600 text-white shadow-sm' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
+              >
+                {{ s }}
+              </button>
+            </div>
           </div>
         </div>
 

@@ -7,6 +7,8 @@ import com.fashion.store.exception.ResourceNotFoundException;
 import com.fashion.store.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -265,9 +267,44 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponseDTO> getAllOrders() {
-        return orderRepository.findAll().stream()
+        List<Order> all = orderRepository.findAll().stream()
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .map(this::mapToOrderResponseDTO)
+                .collect(Collectors.toList());
+        return mapOrdersBatch(all);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<OrderResponseDTO> searchOrders(String keyword, String status, int page, int size) {
+        int safePage = Math.max(0, page);
+        int safeSize = Math.min(Math.max(1, size), 100);
+        String cleanKeyword = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
+        String cleanStatus = (status != null && !status.trim().isEmpty() && !"ALL".equalsIgnoreCase(status.trim()))
+                ? status.trim().toUpperCase()
+                : null;
+
+        Page<Order> orderPage = orderRepository.searchAdminOrders(cleanKeyword, cleanStatus, PageRequest.of(safePage, safeSize));
+        List<OrderResponseDTO> dtos = mapOrdersBatch(orderPage.getContent());
+
+        return PageResponse.<OrderResponseDTO>builder()
+                .content(dtos)
+                .pageNo(orderPage.getNumber())
+                .pageSize(orderPage.getSize())
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .isLast(orderPage.isLast())
+                .build();
+    }
+
+    private List<OrderResponseDTO> mapOrdersBatch(List<Order> orders) {
+        if (orders == null || orders.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Long> ids = orders.stream().map(Order::getId).collect(Collectors.toList());
+        Map<Long, List<OrderItem>> itemsByOrderId = orderItemRepository.findByOrderIdIn(ids).stream()
+                .collect(Collectors.groupingBy(it -> it.getOrder().getId()));
+        return orders.stream()
+                .map(o -> mapToOrderResponseDTO(o, itemsByOrderId.getOrDefault(o.getId(), Collections.emptyList())))
                 .collect(Collectors.toList());
     }
 
@@ -306,6 +343,10 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderResponseDTO mapToOrderResponseDTO(Order order) {
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
+        return mapToOrderResponseDTO(order, items);
+    }
+
+    private OrderResponseDTO mapToOrderResponseDTO(Order order, List<OrderItem> items) {
 
         List<OrderItemDTO> itemDTOs = items.stream().map(it -> OrderItemDTO.builder()
                 .id(it.getId())

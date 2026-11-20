@@ -3,6 +3,7 @@ package com.fashion.store.service;
 import com.fashion.store.dto.OrderCreateRequest;
 import com.fashion.store.dto.OrderResponseDTO;
 import com.fashion.store.dto.OrderStatusUpdateRequest;
+import com.fashion.store.dto.PageResponse;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface OrderService {
     OrderResponseDTO updateOrderStatus(String orderCode, OrderStatusUpdateRequest request);
 
     List<OrderResponseDTO> getAllOrders();
+
+    PageResponse<OrderResponseDTO> searchOrders(String keyword, String status, int page, int size);
 
     List<OrderResponseDTO> getMyOrders(String userEmail);
 

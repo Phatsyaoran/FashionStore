@@ -42,12 +42,23 @@
   animation: scanline 2.5s ease-in-out infinite alternate;
 }
 
-/* Print styles for thermal label */
+/* Print styles for A6 thermal shipping label */
 @media print {
+  @page {
+    size: A6 portrait;
+    margin: 6mm;
+  }
   body {
     background: white !important;
   }
   .no-print {
     display: none !important;
+  }
+  #thermal-label-a6 {
+    border: 2px solid #000 !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    page-break-inside: avoid;
   }
 }

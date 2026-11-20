@@ -9,7 +9,7 @@
   >
     <div
       v-if="visible && currentNotification"
-      class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40 max-w-[calc(100vw-2rem)] sm:max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-float border border-gray-100/80 flex items-center gap-3 pointer-events-auto"
+      class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40 max-w-[calc(100vw-2rem)] sm:max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-float border border-gray-100/80 flex items-center gap-3 pointer-events-auto no-print"
     >
       <!-- Product thumbnail -->
       <div class="relative w-12 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200/50">

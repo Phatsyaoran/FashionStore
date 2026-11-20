@@ -87,10 +87,80 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    @Operation(summary = "Lấy danh sách toàn bộ đơn hàng trong hệ thống")
-    public ResponseEntity<ApiResponse<List<OrderResponseDTO>>> getAllOrders() {
-        List<OrderResponseDTO> orders = adminService.getAllOrders();
+    @Operation(summary = "Tìm kiếm, lọc trạng thái và phân trang đơn hàng Admin (tránh N+1 query)")
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponseDTO>>> getAllOrders(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageResponse<OrderResponseDTO> orders = adminService.getAdminOrders(keyword, status, page, size);
         return ResponseEntity.ok(ApiResponse.ok("Lấy danh sách đơn hàng thành công", orders));
+    }
+
+    // ==========================================
+    // ADMIN COUPON CRUD
+    // ==========================================
+
+    @GetMapping("/coupons")
+    @Operation(summary = "Lấy danh sách toàn bộ mã giảm giá")
+    public ResponseEntity<ApiResponse<List<AdminCouponDTO>>> getAllCoupons() {
+        return ResponseEntity.ok(ApiResponse.ok("Lấy danh sách mã giảm giá thành công", adminService.getAllCoupons()));
+    }
+
+    @PostMapping("/coupons")
+    @Operation(summary = "Tạo mã giảm giá mới")
+    public ResponseEntity<ApiResponse<AdminCouponDTO>> createCoupon(@Valid @RequestBody AdminCouponRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Tạo mã giảm giá thành công", adminService.createCoupon(request)));
+    }
+
+    @PutMapping("/coupons/{id}")
+    @Operation(summary = "Cập nhật thông tin mã giảm giá")
+    public ResponseEntity<ApiResponse<AdminCouponDTO>> updateCoupon(
+            @PathVariable Long id,
+            @Valid @RequestBody AdminCouponRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok("Cập nhật mã giảm giá thành công", adminService.updateCoupon(id, request)));
+    }
+
+    @PatchMapping("/coupons/{id}/toggle")
+    @Operation(summary = "Bật/tắt kích hoạt mã giảm giá")
+    public ResponseEntity<ApiResponse<AdminCouponDTO>> toggleCoupon(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("Cập nhật trạng thái mã giảm giá thành công", adminService.toggleCoupon(id)));
+    }
+
+    // ==========================================
+    // ADMIN CATEGORY CRUD
+    // ==========================================
+
+    @GetMapping("/categories")
+    @Operation(summary = "Lấy danh sách toàn bộ danh mục kèm số lượng sản phẩm")
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAllCategories() {
+        return ResponseEntity.ok(ApiResponse.ok("Lấy danh sách danh mục thành công", adminService.getAllCategories()));
+    }
+
+    @PostMapping("/categories")
+    @Operation(summary = "Tạo danh mục sản phẩm mới")
+    public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@Valid @RequestBody AdminCategoryRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Tạo danh mục thành công", adminService.createCategory(request)));
+    }
+
+    @PutMapping("/categories/{id}")
+    @Operation(summary = "Cập nhật thông tin danh mục sản phẩm")
+    public ResponseEntity<ApiResponse<CategoryDTO>> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody AdminCategoryRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok("Cập nhật danh mục thành công", adminService.updateCategory(id, request)));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    @Operation(summary = "Xóa danh mục sản phẩm (Chặn xóa nếu đang có sản phẩm)")
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
+        adminService.deleteCategory(id);
+        return ResponseEntity.ok(ApiResponse.ok("Đã xóa danh mục thành công", null));
     }
 
     @PatchMapping("/orders/{orderCode}/status")

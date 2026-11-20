@@ -32,4 +32,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.createdAt >= :startDate AND o.orderStatus <> 'CANCELLED' ORDER BY o.createdAt ASC")
     List<Order> findActiveOrdersSince(@Param("startDate") LocalDateTime startDate);
+
+    @Query("SELECT o FROM Order o WHERE " +
+           "(:status IS NULL OR :status = '' OR UPPER(o.orderStatus) = UPPER(:status)) AND " +
+           "(:keyword IS NULL OR :keyword = '' OR " +
+           "LOWER(o.orderCode) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(o.customerName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(o.customerPhone) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "ORDER BY o.createdAt DESC")
+    Page<Order> searchAdminOrders(
+            @Param("keyword") String keyword,
+            @Param("status") String status,
+            Pageable pageable
+    );
 }

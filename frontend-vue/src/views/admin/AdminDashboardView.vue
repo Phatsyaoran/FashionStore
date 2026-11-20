@@ -243,6 +243,33 @@
               </div>
               <span class="text-gray-400 font-bold">→</span>
             </router-link>
+            <router-link
+              to="/admin/coupons"
+              class="w-full p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 flex items-center justify-between transition-all"
+            >
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🎟️</span>
+                <div>
+                  <p class="font-bold text-xs text-gray-900">Quản Lý Mã Giảm Giá</p>
+                  <p class="text-[11px] text-gray-500">Tạo, sửa & bật/tắt Coupon</p>
+                </div>
+              </div>
+              <span class="text-gray-400 font-bold">→</span>
+            </router-link>
+
+            <router-link
+              to="/admin/categories"
+              class="w-full p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 flex items-center justify-between transition-all"
+            >
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🗂️</span>
+                <div>
+                  <p class="font-bold text-xs text-gray-900">Quản Lý Danh Mục</p>
+                  <p class="text-[11px] text-gray-500">Thêm, sửa & phân loại nhóm hàng</p>
+                </div>
+              </div>
+              <span class="text-gray-400 font-bold">→</span>
+            </router-link>
           </div>
         </div>
 

@@ -19,6 +19,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     boolean existsBySlug(String slug);
 
+    boolean existsByCategoryId(Long categoryId);
+
     List<Product> findByIsFlashSaleTrueAndFlashSaleEndTimeAfter(LocalDateTime now);
 
     @Query("SELECT p FROM Product p WHERE p.isFlashSale = true AND (p.flashSaleEndTime IS NULL OR p.flashSaleEndTime > :now) ORDER BY p.createdAt DESC")
