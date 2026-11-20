@@ -222,8 +222,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '@/services/api';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND } from '@/services/formatters';
 
+const toastStore = useToastStore();
 const orders = ref([]);
 const selectedPrintOrder = ref(null);
 const isExporting = ref(false);
@@ -248,7 +250,7 @@ async function exportOrdersCsv() {
     window.URL.revokeObjectURL(url);
   } catch (err) {
     console.error('Lỗi xuất file CSV đơn hàng:', err);
-    alert('Không thể xuất file CSV đơn hàng. Vui lòng thử lại!');
+    toastStore.error('Không thể xuất file CSV đơn hàng. Vui lòng thử lại!');
   } finally {
     isExporting.value = false;
   }
@@ -275,14 +277,14 @@ async function updateStatus(order) {
       if (res.data?.paymentStatus) {
         order.paymentStatus = res.data.paymentStatus;
       }
-      alert(`Đã cập nhật đơn #${order.orderCode} sang trạng thái: ${order.orderStatus}`);
+      toastStore.success(`Đã cập nhật đơn #${order.orderCode} sang trạng thái: ${order.orderStatus}`);
     } else {
       order.orderStatus = previousStatus;
-      alert(res.message || 'Không thể cập nhật trạng thái đơn hàng.');
+      toastStore.error(res.message || 'Không thể cập nhật trạng thái đơn hàng.');
     }
   } catch (err) {
     order.orderStatus = previousStatus;
-    alert(err.response?.data?.message || err.friendlyMessage || 'Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại!');
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại!');
   }
 }
 

@@ -130,9 +130,18 @@
           </div>
         </div>
 
-        <!-- In-stock badge -->
-        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+        <!-- Real Stock Badge -->
+        <span
+          v-if="isInStock"
+          class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"
+        >
           Còn hàng
+        </span>
+        <span
+          v-else
+          class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100"
+        >
+          Hết hàng
         </span>
       </div>
 
@@ -178,6 +187,18 @@ const productStore = useProductStore();
 const wishlistStore = useWishlistStore();
 
 const isFavorited = computed(() => wishlistStore.isInWishlist(props.product.id));
+
+const totalStock = computed(() => {
+  if (typeof props.product.totalStock === 'number') {
+    return props.product.totalStock;
+  }
+  if (Array.isArray(props.product.variants)) {
+    return props.product.variants.reduce((sum, v) => sum + (v.stockQuantity || 0), 0);
+  }
+  return 0;
+});
+
+const isInStock = computed(() => totalStock.value > 0);
 
 // Fallback image in case external URL fails
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80';

@@ -333,7 +333,10 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue';
 import api from '@/services/api';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
+
+const toastStore = useToastStore();
 
 const stats = reactive({
   revenue: 0,
@@ -403,7 +406,7 @@ async function saveStock(variantId) {
   if (savingVariantId.value) return;
   const newQty = editStockInputs[variantId];
   if (newQty === undefined || newQty < 0) {
-    alert('Số lượng tồn kho không hợp lệ');
+    toastStore.error('Số lượng tồn kho không hợp lệ');
     return;
   }
 
@@ -413,7 +416,7 @@ async function saveStock(variantId) {
       stockQuantity: Number(newQty)
     });
     if (res.success) {
-      alert(res.message || 'Cập nhật số lượng tồn kho thành công!');
+      toastStore.success(res.message || 'Cập nhật số lượng tồn kho thành công!');
       await loadLowStock();
     } else {
       throw new Error(res.message || 'Cập nhật tồn kho thất bại');
@@ -423,7 +426,7 @@ async function saveStock(variantId) {
     if (found) {
       editStockInputs[variantId] = found.stockQuantity;
     }
-    alert(err.response?.data?.message || err.friendlyMessage || err.message || 'Không thể cập nhật tồn kho. Vui lòng thử lại!');
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || err.message || 'Không thể cập nhật tồn kho. Vui lòng thử lại!');
   } finally {
     savingVariantId.value = null;
   }

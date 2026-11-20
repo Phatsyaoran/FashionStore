@@ -341,11 +341,20 @@ function resetFilters() {
   fetchProducts(0);
 }
 
-// Theo dõi khi route query thay đổi (từ Search bar hoặc Flash Sale menu)
+// Theo dõi khi route query thay đổi (từ Search bar, Danh mục, Flash Sale hoặc quay về /catalog)
 watch(() => route.query, (newQ) => {
-  if (newQ.keyword !== undefined) filters.keyword = newQ.keyword;
-  if (newQ.categorySlug !== undefined) filters.categorySlug = newQ.categorySlug;
-  if (newQ.isFlashSale !== undefined) filters.isFlashSale = newQ.isFlashSale === 'true';
+  filters.keyword = newQ.keyword ? String(newQ.keyword) : '';
+  filters.categorySlug = newQ.categorySlug ? String(newQ.categorySlug) : '';
+  filters.isFlashSale = newQ.isFlashSale === 'true';
+
+  if (Object.keys(newQ).length === 0) {
+    filters.minPrice = null;
+    filters.maxPrice = null;
+    filters.size = '';
+    filters.color = '';
+    filters.sort = 'latest';
+  }
+
   fetchProducts(0);
 });
 

@@ -89,9 +89,11 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
+import { useToastStore } from '@/stores/toastStore';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 const form = reactive({
   fullName: '',
@@ -130,7 +132,7 @@ async function handleRegister() {
   try {
     const res = await authStore.register(form);
     if (res.success) {
-      alert('Đăng ký tài khoản thành công!');
+      toastStore.success('Đăng ký tài khoản thành công!');
       router.push('/');
     } else {
       errorMsg.value = res.message;

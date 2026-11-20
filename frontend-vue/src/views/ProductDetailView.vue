@@ -64,12 +64,15 @@
 
           <!-- Reviews summary -->
           <div class="flex items-center gap-3 mt-3 text-xs">
-            <div class="flex items-center text-amber-500 font-bold">
-              <span>★</span>
-              <span class="ml-1 text-gray-900">{{ reviewStats.ratingAverage || product.ratingAverage || 5.0 }}</span>
-            </div>
-            <span class="text-gray-300">|</span>
-            <span class="text-gray-500 font-medium">{{ reviewStats.totalReviews || product.reviewCount || 0 }} đánh giá thực tế</span>
+            <template v-if="(reviewStats.totalReviews || product.reviewCount || 0) > 0">
+              <div class="flex items-center text-amber-500 font-bold">
+                <span>★</span>
+                <span class="ml-1 text-gray-900">{{ reviewStats.ratingAverage || product.ratingAverage }}</span>
+              </div>
+              <span class="text-gray-300">|</span>
+              <span class="text-gray-500 font-medium">{{ reviewStats.totalReviews || product.reviewCount }} đánh giá thực tế</span>
+            </template>
+            <span v-else class="text-gray-400 font-medium">Chưa có đánh giá nào</span>
             <span class="text-gray-300">|</span>
             <span class="text-emerald-700 font-medium">SKU: <code class="font-mono">{{ currentVariant?.sku || 'N/A' }}</code></span>
           </div>
@@ -295,11 +298,11 @@
                     class="bg-gray-800 text-white text-[11px] font-bold rounded-lg px-2 py-1 border border-white/20 focus:outline-none focus:ring-1 focus:ring-rose-500"
                   >
                     <option
-                      v-for="v in mixMatchProducts[0].variants"
-                      :key="v.id"
-                      :value="v.size"
+                      v-for="sz in getUniqueSizes(mixMatchProducts[0])"
+                      :key="sz"
+                      :value="sz"
                     >
-                      {{ v.size }}
+                      {{ sz }}
                     </option>
                   </select>
                 </div>
@@ -341,11 +344,11 @@
                     class="bg-gray-800 text-white text-[11px] font-bold rounded-lg px-2 py-1 border border-white/20 focus:outline-none focus:ring-1 focus:ring-rose-500"
                   >
                     <option
-                      v-for="v in mixMatchProducts[1].variants"
-                      :key="v.id"
-                      :value="v.size"
+                      v-for="sz in getUniqueSizes(mixMatchProducts[1])"
+                      :key="sz"
+                      :value="sz"
                     >
-                      {{ v.size }}
+                      {{ sz }}
                     </option>
                   </select>
                 </div>
@@ -427,18 +430,29 @@
       <div v-else class="space-y-10">
         
         <!-- FIT OVERVIEW & RATING BREAKDOWN (Yêu cầu Phase 8) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-rose-50/50 via-white to-amber-50/40 p-6 rounded-3xl border border-rose-100">
+        <div
+          v-if="(reviewStats.totalReviews || 0) === 0"
+          class="bg-gray-50 border border-dashed border-gray-200 rounded-3xl p-8 text-center space-y-2"
+        >
+          <span class="text-3xl block">💬</span>
+          <h3 class="text-sm font-extrabold text-gray-800">Chưa có đánh giá nào</h3>
+          <p class="text-xs text-gray-500 max-w-md mx-auto">
+            Sản phẩm này hiện chưa có đánh giá từ khách hàng. Hãy là người đầu tiên chia sẻ cảm nhận về chất liệu và độ vừa vặn bên dưới!
+          </p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-rose-50/50 via-white to-amber-50/40 p-6 rounded-3xl border border-rose-100">
           
           <!-- Rating Average Box -->
           <div class="flex items-center gap-6 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-6">
             <div class="text-center">
               <div class="text-5xl font-black text-rose-600 leading-none">
-                {{ reviewStats.ratingAverage || 5.0 }}
+                {{ reviewStats.ratingAverage ?? 0 }}
               </div>
               <div class="flex items-center justify-center text-amber-500 text-sm mt-1.5">
                 ★★★★★
               </div>
-              <p class="text-[11px] text-gray-500 mt-1">Dựa trên {{ reviewStats.totalReviews || 0 }} đánh giá</p>
+              <p class="text-[11px] text-gray-500 mt-1">Dựa trên {{ reviewStats.totalReviews }} đánh giá</p>
             </div>
 
             <!-- Star distribution bars -->
@@ -463,7 +477,7 @@
                 <span>🧍‍♂️</span> Tỷ lệ cảm nhận độ vừa vặn thực tế:
               </span>
               <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 text-[11px]">
-                {{ reviewStats.fitPercent || 90 }}% đánh giá chuẩn form
+                {{ reviewStats.fitPercent ?? 0 }}% đánh giá chuẩn form
               </span>
             </div>
 
@@ -472,10 +486,10 @@
               <div>
                 <div class="flex justify-between text-[11px] mb-1 font-semibold text-emerald-800">
                   <span>✓ Vừa vặn chuẩn phom</span>
-                  <span>{{ reviewStats.fitPercent || 90 }}%</span>
+                  <span>{{ reviewStats.fitPercent ?? 0 }}%</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div class="bg-emerald-500 h-full rounded-full" :style="{ width: `${reviewStats.fitPercent || 90}%` }"></div>
+                  <div class="bg-emerald-500 h-full rounded-full" :style="{ width: `${reviewStats.fitPercent ?? 0}%` }"></div>
                 </div>
               </div>
 
@@ -483,10 +497,10 @@
               <div>
                 <div class="flex justify-between text-[11px] mb-1 font-semibold text-amber-800">
                   <span>Hơi ôm / Hơi chật so với dáng</span>
-                  <span>{{ reviewStats.tightPercent || 6 }}%</span>
+                  <span>{{ reviewStats.tightPercent ?? 0 }}%</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div class="bg-amber-500 h-full rounded-full" :style="{ width: `${reviewStats.tightPercent || 6}%` }"></div>
+                  <div class="bg-amber-500 h-full rounded-full" :style="{ width: `${reviewStats.tightPercent ?? 0}%` }"></div>
                 </div>
               </div>
 
@@ -494,10 +508,10 @@
               <div>
                 <div class="flex justify-between text-[11px] mb-1 font-semibold text-indigo-800">
                   <span>Hơi rộng thoải mái / Oversize</span>
-                  <span>{{ reviewStats.loosePercent || 4 }}%</span>
+                  <span>{{ reviewStats.loosePercent ?? 0 }}%</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div class="bg-indigo-500 h-full rounded-full" :style="{ width: `${reviewStats.loosePercent || 4}%` }"></div>
+                  <div class="bg-indigo-500 h-full rounded-full" :style="{ width: `${reviewStats.loosePercent ?? 0}%` }"></div>
                 </div>
               </div>
             </div>
@@ -778,11 +792,13 @@ import { useRoute } from 'vue-router';
 import api from '@/services/api';
 import { useCartStore } from '@/stores/cartStore';
 import { useProductStore } from '@/stores/productStore';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, formatDateTime, onImageError } from '@/services/formatters';
 import SmartSizePredictorModal from '@/components/SmartSizePredictorModal.vue';
 import RecentlyViewed from '@/components/RecentlyViewed.vue';
 
 const route = useRoute();
+const toastStore = useToastStore();
 const cartStore = useCartStore();
 const productStore = useProductStore();
 
@@ -884,14 +900,14 @@ async function submitReview() {
   try {
     const res = await api.post(`/products/${product.value.id}/reviews`, newReview);
     if (res.success) {
-      alert('Cảm ơn bạn! Đánh giá đã được ghi nhận thành công.');
+      toastStore.success('Cảm ơn bạn! Đánh giá đã được ghi nhận thành công.');
       newReview.comment = '';
       await loadReviews(product.value.id);
     } else {
-      alert(res.message || 'Không thể gửi đánh giá.');
+      toastStore.error(res.message || 'Không thể gửi đánh giá.');
     }
   } catch (err) {
-    alert(err.response?.data?.message || 'Lỗi khi gửi đánh giá.');
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Lỗi khi gửi đánh giá.');
   } finally {
     submittingReview.value = false;
   }
@@ -939,8 +955,13 @@ function handleAddToCart() {
   if (!product.value || !currentVariant.value) return;
   const res = cartStore.addToCart(product.value, currentVariant.value, quantity.value);
   if (!res.success) {
-    alert(res.message);
+    toastStore.error(res.message);
   }
+}
+
+function getUniqueSizes(prod) {
+  if (!prod || !Array.isArray(prod.variants)) return [];
+  return Array.from(new Set(prod.variants.map(v => v.size).filter(Boolean)));
 }
 
 // Mix & Match State & Logic (Phase 10)
@@ -999,7 +1020,7 @@ function handleAddSetToCart() {
   });
 
   cartStore.isDrawerOpen = true;
-  alert(`🎉 Đã thêm thành công cả bộ phối đồ (${addedCount} món) vào giỏ hàng!`);
+  toastStore.success(`Đã thêm thành công cả bộ phối đồ (${addedCount} món) vào giỏ hàng!`);
 }
 
 watch(() => route.params.slug, () => {

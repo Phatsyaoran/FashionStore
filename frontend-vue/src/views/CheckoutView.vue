@@ -287,12 +287,14 @@ import { ref, reactive, computed, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 import api from '@/services/api';
 
 const router = useRouter();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 const submitting = ref(false);
 const confirming = ref(false);
@@ -362,23 +364,23 @@ async function handleCreateOrder() {
   if (submitting.value) return;
 
   if (cartStore.items.length === 0) {
-    alert('Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.');
+    toastStore.error('Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.');
     return;
   }
 
   if (!form.customerName.trim()) {
-    alert('Vui lòng nhập họ và tên người nhận hàng.');
+    toastStore.error('Vui lòng nhập họ và tên người nhận hàng.');
     return;
   }
 
   const cleanPhone = form.customerPhone.trim();
   if (!cleanPhone || !/^0\d{9,10}$/.test(cleanPhone)) {
-    alert('Vui lòng nhập số điện thoại người nhận hợp lệ (10 chữ số, bắt đầu bằng số 0).');
+    toastStore.error('Vui lòng nhập số điện thoại người nhận hợp lệ (10 chữ số, bắt đầu bằng số 0).');
     return;
   }
 
   if (!form.shippingAddress.trim()) {
-    alert('Vui lòng nhập địa chỉ nhận hàng chi tiết.');
+    toastStore.error('Vui lòng nhập địa chỉ nhận hàng chi tiết.');
     return;
   }
 
@@ -406,15 +408,15 @@ async function handleCreateOrder() {
         showVietQrModal.value = true;
         startTimer();
       } else {
-        alert('Đặt hàng thành công! Mã đơn: ' + res.data.orderCode);
+        toastStore.success('Đặt hàng thành công! Mã đơn: ' + res.data.orderCode);
         router.push(`/order-tracking?orderCode=${res.data.orderCode}`);
       }
     } else {
-      alert(res.message || 'Không thể tạo đơn hàng');
+      toastStore.error(res.message || 'Không thể tạo đơn hàng');
     }
   } catch (err) {
-    const msg = err.response?.data?.message || 'Lỗi khi tạo đơn hàng, vui lòng thử lại';
-    alert(msg);
+    const msg = err.response?.data?.message || err.friendlyMessage || 'Lỗi khi tạo đơn hàng, vui lòng thử lại';
+    toastStore.error(msg);
   } finally {
     submitting.value = false;
   }
@@ -426,14 +428,14 @@ async function handleConfirmPayment() {
   try {
     const res = await api.post(`/orders/${createdOrder.value.orderCode}/confirm-payment`);
     if (res.success) {
-      alert(res.message || 'Xác nhận thanh toán thành công!');
+      toastStore.success(res.message || 'Xác nhận thanh toán thành công!');
       showVietQrModal.value = false;
       router.push(`/order-tracking?orderCode=${createdOrder.value.orderCode}`);
     } else {
-      alert(res.message || 'Không thể xác nhận thanh toán. Vui lòng thử lại!');
+      toastStore.error(res.message || 'Không thể xác nhận thanh toán. Vui lòng thử lại!');
     }
   } catch (err) {
-    alert(err.response?.data?.message || err.friendlyMessage || 'Lỗi kết nối khi xác nhận thanh toán. Vui lòng thử lại!');
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Lỗi kết nối khi xác nhận thanh toán. Vui lòng thử lại!');
   } finally {
     confirming.value = false;
   }

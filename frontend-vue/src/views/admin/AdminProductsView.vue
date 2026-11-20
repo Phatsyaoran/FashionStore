@@ -267,8 +267,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '@/services/api';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 
+const toastStore = useToastStore();
 const products = ref([]);
 const isExporting = ref(false);
 const togglingId = ref(null);
@@ -298,14 +300,14 @@ async function deleteProduct(item) {
   try {
     const res = await api.delete(`/admin/products/${item.id}`);
     if (res.success) {
-      alert(res.message || `Đã xóa sản phẩm "${item.name}" thành công!`);
+      toastStore.success(res.message || `Đã xóa sản phẩm "${item.name}" thành công!`);
       products.value = products.value.filter(p => p.id !== item.id);
     } else {
-      alert(res.message || 'Không thể xóa sản phẩm.');
+      toastStore.error(res.message || 'Không thể xóa sản phẩm.');
     }
   } catch (err) {
-    const msg = err.response?.data?.message || 'Lỗi khi xóa sản phẩm. Sản phẩm có thể đã phát sinh đơn hàng.';
-    alert(msg);
+    const msg = err.response?.data?.message || err.friendlyMessage || 'Lỗi khi xóa sản phẩm. Sản phẩm có thể đã phát sinh đơn hàng.';
+    toastStore.error(msg);
   } finally {
     deletingId.value = null;
   }
@@ -320,11 +322,11 @@ async function toggleFlashSale(item) {
       item.isFlashSale = res.data.isFlashSale;
       item.flashSaleEndTime = res.data.flashSaleEndTime;
       const stateStr = item.isFlashSale ? 'BẬT' : 'TẮT';
-      alert(`Đã ${stateStr} Flash Sale cho sản phẩm "${item.name}"`);
+      toastStore.success(`Đã ${stateStr} Flash Sale cho sản phẩm "${item.name}"`);
     }
   } catch (err) {
     console.error('Lỗi bật/tắt flash sale:', err);
-    alert('Không thể cập nhật Flash Sale. Vui lòng thử lại!');
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Không thể cập nhật Flash Sale. Vui lòng thử lại!');
   } finally {
     togglingId.value = null;
   }
@@ -351,7 +353,7 @@ async function exportInventoryCsv() {
     window.URL.revokeObjectURL(url);
   } catch (err) {
     console.error('Lỗi xuất file CSV tồn kho:', err);
-    alert('Không thể xuất file CSV tồn kho. Vui lòng thử lại!');
+    toastStore.error('Không thể xuất file CSV tồn kho. Vui lòng thử lại!');
   } finally {
     isExporting.value = false;
   }
@@ -370,7 +372,7 @@ async function openStockModal(product) {
     }
   } catch (err) {
     console.error('Lỗi nạp biến thể sản phẩm:', err);
-    alert('Không thể nạp biến thể sản phẩm.');
+    toastStore.error('Không thể nạp biến thể sản phẩm.');
   } finally {
     loadingVariants.value = false;
   }
@@ -389,7 +391,7 @@ async function saveVariantStock(variant) {
       stockQuantity: variant.stockQuantity
     });
     if (res.success) {
-      alert(`Đã cập nhật tồn kho SKU: ${variant.sku} thành ${variant.stockQuantity} chiếc`);
+      toastStore.success(`Đã cập nhật tồn kho SKU: ${variant.sku} thành ${variant.stockQuantity} chiếc`);
       // Cập nhật lại tổng tồn kho của sản phẩm đang xem
       const total = productVariants.value.reduce((sum, v) => sum + (v.stockQuantity || 0), 0);
       if (selectedProductForStock.value) {
@@ -402,7 +404,7 @@ async function saveVariantStock(variant) {
     }
   } catch (err) {
     console.error('Lỗi lưu tồn kho:', err);
-    alert('Không thể lưu số lượng tồn kho.');
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Không thể lưu số lượng tồn kho.');
   } finally {
     savingVariantId.value = null;
   }

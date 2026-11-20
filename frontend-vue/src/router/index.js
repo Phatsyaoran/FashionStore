@@ -11,6 +11,7 @@ import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminProductsView from '@/views/admin/AdminProductsView.vue';
 import AdminOrdersView from '@/views/admin/AdminOrdersView.vue';
 import { useAuthStore } from '@/stores/authStore';
+import { useToastStore } from '@/stores/toastStore';
 
 const routes = [
   {
@@ -94,7 +95,7 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   if (to.meta.requiresAdmin) {
     if (!authStore.isAuthenticated || !authStore.isAdmin) {
-      alert('Vui lòng đăng nhập bằng tài khoản Quản Trị Viên (Admin) để truy cập khu vực này.');
+      useToastStore().error('Vui lòng đăng nhập bằng tài khoản Quản Trị Viên (Admin) để truy cập khu vực này.');
       next({ name: 'login' });
       return;
     }

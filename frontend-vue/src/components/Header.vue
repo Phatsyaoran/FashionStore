@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-100 shadow-soft transition-all">
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-100 shadow-soft transition-all no-print">
     <!-- Top Announcement Bar (Coolmate / Uniqlo Style) -->
     <div class="bg-gradient-to-r from-gray-950 via-gray-900 to-rose-950 text-white text-[11px] py-2 px-4 font-semibold tracking-wide border-b border-white/5">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -17,18 +17,32 @@
 
     <!-- Main Navigation Bar -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+      <div class="flex items-center justify-between h-16 sm:h-20 gap-3 sm:gap-4">
         
-        <!-- Logo -->
-        <router-link to="/" class="flex items-center gap-2.5 flex-shrink-0 group">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-200 group-hover:scale-105 transition-transform">
-            <span class="text-xl font-black">F</span>
-          </div>
-          <div>
-            <span class="text-xl font-extrabold tracking-tight text-gray-900 block leading-tight">FASHION<span class="text-rose-600">.VN</span></span>
-            <span class="text-[10px] text-gray-400 uppercase tracking-widest block font-semibold">Phong cách thời thượng</span>
-          </div>
-        </router-link>
+        <!-- Left: Hamburger (Mobile/Tablet) + Logo -->
+        <div class="flex items-center gap-2.5 flex-shrink-0">
+          <button
+            type="button"
+            @click="isMobileMenuOpen = true"
+            class="lg:hidden p-2 -ml-1 rounded-xl text-gray-700 hover:bg-gray-100 hover:text-rose-600 transition-colors"
+            aria-label="Mở menu điều hướng"
+          >
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <!-- Logo -->
+          <router-link to="/" class="flex items-center gap-2.5 flex-shrink-0 group">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-200 group-hover:scale-105 transition-transform">
+              <span class="text-lg sm:text-xl font-black">F</span>
+            </div>
+            <div>
+              <span class="text-lg sm:text-xl font-extrabold tracking-tight text-gray-900 block leading-tight">FASHION<span class="text-rose-600">.VN</span></span>
+              <span class="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-widest block font-semibold">Phong cách thời thượng</span>
+            </div>
+          </router-link>
+        </div>
 
         <!-- Search Bar (Desktop) with Instant Search Dropdown (Phase 10) -->
         <div class="hidden md:flex flex-1 max-w-md mx-4 relative" ref="searchContainerRef">
@@ -149,38 +163,64 @@
         <!-- Right User Actions -->
         <div class="flex items-center gap-3">
           
-          <!-- Auth Menu -->
-          <div v-if="authStore.isAuthenticated" class="relative group">
-            <button class="flex items-center gap-2 py-1.5 px-3 rounded-full hover:bg-gray-100 transition-colors text-xs font-semibold text-gray-700">
+          <!-- Auth Menu (Click toggle for touch & desktop) -->
+          <div v-if="authStore.isAuthenticated" class="relative" ref="userMenuRef">
+            <button
+              type="button"
+              @click.stop="isUserMenuOpen = !isUserMenuOpen"
+              class="flex items-center gap-2 py-1.5 px-2.5 sm:px-3 rounded-full hover:bg-gray-100 transition-colors text-xs font-semibold text-gray-700"
+              :aria-expanded="isUserMenuOpen"
+            >
               <span class="w-7 h-7 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
                 {{ (authStore.user?.fullName || 'U').charAt(0).toUpperCase() }}
               </span>
               <span class="hidden sm:inline max-w-[100px] truncate">{{ authStore.user?.fullName }}</span>
+              <svg class="w-3.5 h-3.5 text-gray-400 hidden sm:block transition-transform" :class="{ 'rotate-180': isUserMenuOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
 
             <!-- Dropdown -->
-            <div class="absolute right-0 mt-1 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 hidden group-hover:block transition-all z-50">
-              <div class="px-4 py-2 border-b border-gray-100 text-xs">
-                <p class="font-bold text-gray-900 truncate">{{ authStore.user?.fullName }}</p>
-                <p class="text-gray-400 truncate">{{ authStore.user?.email }}</p>
+            <transition
+              enter-active-class="transition duration-150 ease-out"
+              enter-from-class="opacity-0 scale-95 -translate-y-1"
+              enter-to-class="opacity-100 scale-100 translate-y-0"
+              leave-active-class="transition duration-100 ease-in"
+              leave-from-class="opacity-100 scale-100 translate-y-0"
+              leave-to-class="opacity-0 scale-95 -translate-y-1"
+            >
+              <div
+                v-if="isUserMenuOpen"
+                class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50"
+              >
+                <div class="px-4 py-2 border-b border-gray-100 text-xs">
+                  <p class="font-bold text-gray-900 truncate">{{ authStore.user?.fullName }}</p>
+                  <p class="text-gray-400 truncate">{{ authStore.user?.email }}</p>
+                </div>
+                <router-link
+                  v-if="authStore.isAdmin"
+                  to="/admin"
+                  @click="isUserMenuOpen = false"
+                  class="block px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50"
+                >
+                  🛠️ Quản trị Admin
+                </router-link>
+                <router-link
+                  to="/order-tracking"
+                  @click="isUserMenuOpen = false"
+                  class="block px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50"
+                >
+                  📦 Tra cứu đơn hàng
+                </router-link>
+                <button
+                  type="button"
+                  @click="handleLogout"
+                  class="w-full text-left px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 border-t border-gray-50 font-semibold"
+                >
+                  Đăng xuất
+                </button>
               </div>
-              <router-link
-                v-if="authStore.isAdmin"
-                to="/admin"
-                class="block px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50"
-              >
-                🛠️ Quản trị Admin
-              </router-link>
-              <router-link to="/order-tracking" class="block px-4 py-2 text-xs text-gray-700 hover:bg-gray-50">
-                📦 Đơn hàng của tôi
-              </router-link>
-              <button
-                @click="authStore.logout"
-                class="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 border-t border-gray-50"
-              >
-                Đăng xuất
-              </button>
-            </div>
+            </transition>
           </div>
 
           <div v-else class="flex items-center gap-1.5">
@@ -233,6 +273,181 @@
 
       </div>
     </div>
+
+    <!-- MOBILE NAVIGATION DRAWER (< lg) -->
+    <transition
+      enter-active-class="transition-opacity duration-200 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-150 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="isMobileMenuOpen" class="fixed inset-0 z-50 lg:hidden flex" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="isMobileMenuOpen = false"></div>
+
+        <div class="relative w-[85vw] max-w-xs bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden">
+          <!-- Drawer Top -->
+          <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/80">
+            <router-link to="/" @click="isMobileMenuOpen = false" class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white font-black text-sm">
+                F
+              </div>
+              <span class="text-base font-extrabold text-gray-900">FASHION<span class="text-rose-600">.VN</span></span>
+            </router-link>
+            <button
+              type="button"
+              @click="isMobileMenuOpen = false"
+              class="p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-200/70 transition-colors"
+              aria-label="Đóng menu"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Mobile Search Bar with Instant Results -->
+          <div class="p-4 border-b border-gray-100">
+            <form @submit.prevent="handleMobileSearch" class="relative">
+              <input
+                type="text"
+                v-model="searchKeyword"
+                @input="onSearchInput"
+                placeholder="Tìm áo thun, sơ mi, quần jean..."
+                class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 text-xs text-gray-800"
+              />
+              <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+              <button
+                v-if="searchKeyword"
+                type="button"
+                @click="clearSearch"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold"
+              >
+                ✕
+              </button>
+            </form>
+
+            <!-- Instant Search Results inside Drawer -->
+            <div v-if="searchKeyword.trim().length > 0" class="mt-2 bg-gray-50 rounded-xl border border-gray-100 max-h-56 overflow-y-auto divide-y divide-gray-100">
+              <div v-if="isSearching" class="p-3 text-center text-[11px] text-gray-400">
+                Đang tìm kiếm...
+              </div>
+              <div v-else-if="searchResults.length === 0" class="p-3 text-center text-[11px] text-gray-500">
+                Không tìm thấy sản phẩm khớp "{{ searchKeyword }}"
+              </div>
+              <div
+                v-else
+                v-for="product in searchResults"
+                :key="product.id"
+                @click="selectMobileSearchResult(product)"
+                class="p-2 flex items-center gap-2.5 hover:bg-rose-50 cursor-pointer"
+              >
+                <img
+                  :src="product.thumbnailUrl"
+                  :alt="product.name"
+                  @error="onImageError"
+                  class="w-10 h-12 object-cover rounded-lg bg-gray-100 shrink-0"
+                />
+                <div class="min-w-0 flex-1">
+                  <div class="text-xs font-bold text-gray-800 truncate">{{ product.name }}</div>
+                  <div class="text-[11px] font-extrabold text-rose-600">{{ formatVND(product.salePrice || product.basePrice) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scrollable Menu Body -->
+          <div class="flex-1 overflow-y-auto p-4 space-y-5">
+            <!-- Main Links -->
+            <nav class="space-y-1 text-sm font-bold text-gray-800">
+              <router-link to="/" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600">
+                <span>🏠</span> Trang Chủ
+              </router-link>
+              <router-link to="/catalog" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600">
+                <span>🛍️</span> Tất Cả Sản Phẩm
+              </router-link>
+              <router-link to="/catalog?isFlashSale=true" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-rose-50/70 text-rose-600">
+                <span>⚡</span> Săn Flash Sale
+              </router-link>
+              <router-link to="/order-tracking" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600">
+                <span>📦</span> Tra Cứu Đơn Hàng
+              </router-link>
+              <router-link to="/cart" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600">
+                <span>🛒</span> Giỏ Hàng ({{ cartStore.totalItems }})
+              </router-link>
+            </nav>
+
+            <!-- Categories -->
+            <div v-if="mobileCategories.length > 0" class="pt-3 border-t border-gray-100">
+              <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Danh Mục Thời Trang</p>
+              <div class="space-y-1">
+                <router-link
+                  v-for="cat in mobileCategories"
+                  :key="cat.id"
+                  :to="`/catalog?categorySlug=${cat.slug}`"
+                  @click="isMobileMenuOpen = false"
+                  class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:text-rose-600"
+                >
+                  <span>{{ cat.name }}</span>
+                  <span class="text-[10px] text-gray-400">{{ cat.productCount || 0 }}</span>
+                </router-link>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer Footer: Account -->
+          <div class="p-4 border-t border-gray-100 bg-gray-50/70">
+            <div v-if="authStore.isAuthenticated" class="space-y-2">
+              <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs">
+                  {{ (authStore.user?.fullName || 'U').charAt(0).toUpperCase() }}
+                </span>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-gray-900 truncate">{{ authStore.user?.fullName }}</p>
+                  <p class="text-[11px] text-gray-400 truncate">{{ authStore.user?.email }}</p>
+                </div>
+              </div>
+              <div class="flex gap-2 pt-1">
+                <router-link
+                  v-if="authStore.isAdmin"
+                  to="/admin"
+                  @click="isMobileMenuOpen = false"
+                  class="flex-1 text-center py-2 px-3 rounded-xl bg-gray-900 text-white text-xs font-bold"
+                >
+                  🛠️ Admin
+                </router-link>
+                <button
+                  type="button"
+                  @click="handleLogout"
+                  class="flex-1 py-2 px-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-600 text-xs font-bold"
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            </div>
+            <div v-else class="flex gap-2">
+              <router-link
+                to="/login"
+                @click="isMobileMenuOpen = false"
+                class="flex-1 text-center py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold shadow-sm"
+              >
+                Đăng nhập
+              </router-link>
+              <router-link
+                to="/register"
+                @click="isMobileMenuOpen = false"
+                class="flex-1 text-center py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 text-xs font-bold"
+              >
+                Đăng ký
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
 
     <!-- CART DRAWER (SLIDE-OVER) WITH FREE SHIPPING PROGRESS BAR -->
     <div v-if="cartStore.isDrawerOpen" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
@@ -503,6 +718,10 @@ const isSearchOpen = ref(false);
 const isSearching = ref(false);
 const searchResults = ref([]);
 const searchContainerRef = ref(null);
+const userMenuRef = ref(null);
+const isUserMenuOpen = ref(false);
+const isMobileMenuOpen = ref(false);
+const mobileCategories = ref([]);
 const isWishlistOpen = ref(false);
 let searchDebounceTimer = null;
 
@@ -538,7 +757,7 @@ async function fetchSearchResults(keyword) {
     const res = await api.get('/products', {
       params: {
         keyword: keyword,
-        size: 5
+        pageSize: 5
       }
     });
     if (res.success && res.data) {
@@ -576,6 +795,24 @@ function handleSearch() {
   }
 }
 
+function selectMobileSearchResult(product) {
+  isMobileMenuOpen.value = false;
+  selectSearchResult(product);
+}
+
+function handleMobileSearch() {
+  if (searchKeyword.value.trim()) {
+    isMobileMenuOpen.value = false;
+    handleSearch();
+  }
+}
+
+function handleLogout() {
+  isUserMenuOpen.value = false;
+  isMobileMenuOpen.value = false;
+  authStore.logout();
+}
+
 function openQuickViewFromWishlist(item) {
   isWishlistOpen.value = false;
   productStore.openQuickView(item);
@@ -585,10 +822,25 @@ function handleClickOutside(event) {
   if (searchContainerRef.value && !searchContainerRef.value.contains(event.target)) {
     isSearchOpen.value = false;
   }
+  if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
+    isUserMenuOpen.value = false;
+  }
+}
+
+async function loadMobileCategories() {
+  try {
+    const res = await api.get('/categories');
+    if (res.success && Array.isArray(res.data)) {
+      mobileCategories.value = res.data;
+    }
+  } catch {
+    // Bỏ qua nếu chưa tải được danh mục phụ
+  }
 }
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
+  loadMobileCategories();
 });
 
 onUnmounted(() => {

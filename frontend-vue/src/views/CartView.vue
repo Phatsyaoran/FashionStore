@@ -180,18 +180,22 @@
 <script setup>
 import { ref } from 'vue';
 import { useCartStore } from '@/stores/cartStore';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 import FreeShippingBar from '@/components/FreeShippingBar.vue';
 
 const cartStore = useCartStore();
+const toastStore = useToastStore();
 const couponInput = ref('');
 
 async function handleApplyCoupon() {
   if (!couponInput.value) return;
   const res = await cartStore.applyCouponCode(couponInput.value);
-  alert(res.message);
   if (res.success) {
+    toastStore.success(res.message);
     couponInput.value = '';
+  } else {
+    toastStore.error(res.message);
   }
 }
 </script>

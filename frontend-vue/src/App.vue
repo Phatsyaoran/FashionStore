@@ -3,6 +3,9 @@
     <!-- Main Header -->
     <Header />
 
+    <!-- Global Toast Notifications -->
+    <ToastContainer />
+
     <!-- Main Router Content -->
     <main class="flex-1">
       <router-view />
@@ -28,4 +31,5 @@ import Footer from '@/components/Footer.vue';
 import QuickViewModal from '@/components/QuickViewModal.vue';
 import ChatWidget from '@/components/ChatWidget.vue';
 import SocialProofToast from '@/components/SocialProofToast.vue';
+import ToastContainer from '@/components/ToastContainer.vue';
 </script>

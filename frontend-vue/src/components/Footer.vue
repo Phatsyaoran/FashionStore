@@ -20,23 +20,23 @@
 
         <!-- Col 2 -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Về Chúng Tôi</h4>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Khám Phá Cửa Hàng</h4>
           <ul class="space-y-2">
+            <li><router-link to="/" class="hover:text-rose-400 transition-colors">Trang chủ FashionStore</router-link></li>
             <li><router-link to="/catalog" class="hover:text-rose-400 transition-colors">Bộ sưu tập mới nhất</router-link></li>
             <li><router-link to="/catalog?isFlashSale=true" class="hover:text-rose-400 transition-colors">Săn Flash Sale giá sốc</router-link></li>
-            <li><a href="#" class="hover:text-rose-400 transition-colors">Câu chuyện thương hiệu</a></li>
-            <li><a href="#" class="hover:text-rose-400 transition-colors">Hệ thống showroom toàn quốc</a></li>
+            <li><router-link to="/cart" class="hover:text-rose-400 transition-colors">Giỏ hàng của bạn</router-link></li>
           </ul>
         </div>
 
         <!-- Col 3 -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Chính Sách Khách Hàng</h4>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Hỗ Trợ Khách Hàng</h4>
           <ul class="space-y-2">
             <li><router-link to="/order-tracking" class="hover:text-rose-400 transition-colors">Tra cứu tiến độ đơn hàng</router-link></li>
-            <li><a href="#" class="hover:text-rose-400 transition-colors">Chính sách đổi trả trong 30 ngày</a></li>
-            <li><a href="#" class="hover:text-rose-400 transition-colors">Bảo hành đường may & nút áo trọn đời</a></li>
-            <li><a href="#" class="hover:text-rose-400 transition-colors">Chính sách vận chuyển & Freeship từ 500k</a></li>
+            <li><router-link to="/login" class="hover:text-rose-400 transition-colors">Đăng nhập tài khoản</router-link></li>
+            <li><router-link to="/register" class="hover:text-rose-400 transition-colors">Đăng ký thành viên mới</router-link></li>
+            <li><router-link to="/checkout" class="hover:text-rose-400 transition-colors">Thanh toán & Freeship từ 500k</router-link></li>
           </ul>
         </div>
 

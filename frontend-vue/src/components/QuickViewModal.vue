@@ -164,10 +164,12 @@
 import { ref, computed, watch } from 'vue';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 import api from '@/services/api';
 
 const productStore = useProductStore();
+const toastStore = useToastStore();
 const cartStore = useCartStore();
 
 const product = computed(() => productStore.quickViewProduct);
@@ -231,7 +233,7 @@ function handleAddToCart() {
   if (res.success) {
     productStore.closeQuickView();
   } else {
-    alert(res.message);
+    toastStore.error(res.message);
   }
 }
 </script>

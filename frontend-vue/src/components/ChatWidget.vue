@@ -415,10 +415,21 @@ function copyCouponCode(code) {
   }, 2000);
 }
 
+function escapeHtml(raw) {
+  return String(raw)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function formatMessageText(text) {
   if (!text) return '';
+  // Escape HTML trước để chặn XSS
+  let formatted = escapeHtml(text);
   // Convert markdown **bold** to <strong>bold</strong>
-  let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   // Convert markdown `code` to <code>
   formatted = formatted.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-gray-100 text-rose-600 font-mono text-[11px]">$1</code>');
   return formatted;
