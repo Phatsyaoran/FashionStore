@@ -1,6 +1,7 @@
 package com.fashion.store.service;
 
 import com.fashion.store.dto.AuthResponse;
+import com.fashion.store.dto.ChangePasswordRequest;
 import com.fashion.store.dto.LoginRequest;
 import com.fashion.store.dto.RegisterRequest;
 import com.fashion.store.entity.User;
@@ -75,5 +76,23 @@ public class AuthServiceImpl implements AuthService {
                 .address(saved.getAddress())
                 .role(saved.getRole())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String email, ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email.trim().toLowerCase())
+                .orElseThrow(() -> new BadRequestException("Không tìm thấy tài khoản người dùng"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new BadRequestException("Mật khẩu hiện tại không chính xác");
+        }
+
+        if (request.getCurrentPassword().equals(request.getNewPassword())) {
+            throw new BadRequestException("Mật khẩu mới phải khác mật khẩu hiện tại");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

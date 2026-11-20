@@ -271,6 +271,35 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponseDTO> getMyOrders(String userEmail) {
+        User user = userRepository.findByEmail(userEmail.trim().toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản người dùng"));
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
+                .map(this::mapToOrderResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public OrderResponseDTO cancelMyOrder(String orderCode, String userEmail) {
+        Order order = orderRepository.findByOrderCode(orderCode.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng: " + orderCode));
+
+        if (order.getUser() == null || !order.getUser().getEmail().equalsIgnoreCase(userEmail.trim())) {
+            throw new BadRequestException("Bạn không có quyền hủy đơn hàng này.");
+        }
+
+        if (!"PENDING".equalsIgnoreCase(order.getOrderStatus())) {
+            throw new BadRequestException("Chỉ có thể tự hủy đơn hàng khi đang ở trạng thái Chờ xác nhận (PENDING).");
+        }
+
+        OrderStatusUpdateRequest req = new OrderStatusUpdateRequest();
+        req.setStatus("CANCELLED");
+        return updateOrderStatus(orderCode, req);
+    }
+
     // ==========================================
     // HELPER MAPPING & VIETQR LINK GENERATION
     // ==========================================

@@ -7,12 +7,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -27,6 +31,40 @@ public class AdminController {
     public ResponseEntity<ApiResponse<DashboardStatsDTO>> getDashboardStats() {
         DashboardStatsDTO stats = adminService.getDashboardStats();
         return ResponseEntity.ok(ApiResponse.ok("Lấy dữ liệu thống kê thành công", stats));
+    }
+
+    @GetMapping("/stats/revenue")
+    @Operation(summary = "Thống kê doanh thu và số đơn theo từng ngày (7 ngày hoặc 30 ngày, loại trừ đơn CANCELLED)")
+    public ResponseEntity<ApiResponse<List<DailyRevenueDTO>>> getRevenueStats(
+            @RequestParam(defaultValue = "7") int days
+    ) {
+        List<DailyRevenueDTO> stats = adminService.getRevenueStats(days);
+        return ResponseEntity.ok(ApiResponse.ok("Lấy dữ liệu biểu đồ doanh thu thành công", stats));
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload ảnh sản phẩm trực tiếp lên máy chủ (/uploads/...)")
+    public ResponseEntity<ApiResponse<Map<String, String>>> uploadImage(@RequestParam("file") MultipartFile file) {
+        String url = adminService.uploadImage(file);
+        return ResponseEntity.ok(ApiResponse.ok("Tải ảnh lên thành công", Map.of("url", url)));
+    }
+
+    @PostMapping("/products")
+    @Operation(summary = "Tạo mới sản phẩm kèm danh sách biến thể Size/Màu")
+    public ResponseEntity<ApiResponse<ProductDTO>> createProduct(@Valid @RequestBody AdminProductRequest request) {
+        ProductDTO created = adminService.createProduct(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Tạo sản phẩm mới thành công", created));
+    }
+
+    @PutMapping("/products/{id}")
+    @Operation(summary = "Cập nhật thông tin sản phẩm và đồng bộ danh sách biến thể")
+    public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody AdminProductRequest request
+    ) {
+        ProductDTO updated = adminService.updateProduct(id, request);
+        return ResponseEntity.ok(ApiResponse.ok("Cập nhật sản phẩm thành công", updated));
     }
 
     @GetMapping("/dashboard/low-stock")

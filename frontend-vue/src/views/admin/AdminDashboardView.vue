@@ -80,6 +80,50 @@
       </div>
     </div>
 
+    <!-- BIỂU ĐỒ DOANH THU THEO NGÀY (Chart.js — 7 ngày / 30 ngày) -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+            <span>📈</span> Biểu Đồ Doanh Thu & Đơn Hàng Theo Ngày
+          </h3>
+          <p class="text-xs text-gray-500 mt-0.5">
+            Tổng doanh thu thực tế (đã loại trừ các đơn hủy CANCELLED) trong {{ selectedDays }} ngày gần nhất
+          </p>
+        </div>
+
+        <div class="inline-flex items-center bg-gray-100 p-1 rounded-xl self-start sm:self-auto">
+          <button
+            type="button"
+            @click="switchRevenueDays(7)"
+            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
+            :class="selectedDays === 7 ? 'bg-white text-rose-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+          >
+            7 ngày qua
+          </button>
+          <button
+            type="button"
+            @click="switchRevenueDays(30)"
+            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
+            :class="selectedDays === 30 ? 'bg-white text-rose-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+          >
+            30 ngày qua
+          </button>
+        </div>
+      </div>
+
+      <div class="relative h-72 w-full">
+        <div
+          v-if="loadingRevenue"
+          class="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-10 flex items-center justify-center text-xs text-gray-500 font-semibold"
+        >
+          <span class="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mr-2"></span>
+          Đang tải biểu đồ doanh thu...
+        </div>
+        <canvas ref="revenueChartCanvas"></canvas>
+      </div>
+    </div>
+
     <!-- BIỂU ĐỒ TRỰC QUAN DOANH THU & SỐ LƯỢNG ĐƠN THEO TRẠNG THÁI (Yêu cầu Phase 7) -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Status Distribution Bar Chart -->
@@ -331,12 +375,20 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { Chart, registerables } from 'chart.js';
 import api from '@/services/api';
 import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 
+Chart.register(...registerables);
+
 const toastStore = useToastStore();
+
+const revenueChartCanvas = ref(null);
+const selectedDays = ref(7);
+const loadingRevenue = ref(false);
+let revenueChartInstance = null;
 
 const stats = reactive({
   revenue: 0,
@@ -432,8 +484,125 @@ async function saveStock(variantId) {
   }
 }
 
+async function loadRevenueChart(days = selectedDays.value) {
+  loadingRevenue.value = true;
+  try {
+    const res = await api.get('/admin/stats/revenue', { params: { days } });
+    if (res.success && Array.isArray(res.data)) {
+      await nextTick();
+      renderRevenueChart(res.data);
+    }
+  } catch (err) {
+    console.error('Lỗi nạp biểu đồ doanh thu:', err);
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Không thể tải dữ liệu biểu đồ doanh thu.');
+  } finally {
+    loadingRevenue.value = false;
+  }
+}
+
+function renderRevenueChart(items) {
+  if (!revenueChartCanvas.value) return;
+  if (revenueChartInstance) {
+    revenueChartInstance.destroy();
+    revenueChartInstance = null;
+  }
+
+  const labels = items.map(i => i.label);
+  const revenues = items.map(i => Number(i.revenue || 0));
+  const counts = items.map(i => Number(i.orderCount || 0));
+
+  revenueChartInstance = new Chart(revenueChartCanvas.value, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Doanh thu (VNĐ)',
+          data: revenues,
+          backgroundColor: 'rgba(225, 29, 72, 0.78)',
+          hoverBackgroundColor: 'rgba(225, 29, 72, 0.95)',
+          borderRadius: 8,
+          maxBarThickness: 32,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Số đơn hàng',
+          type: 'line',
+          data: counts,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.18)',
+          borderWidth: 2.5,
+          tension: 0.35,
+          pointRadius: 3.5,
+          pointBackgroundColor: '#f59e0b',
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { usePointStyle: true, font: { size: 11, weight: 'bold' } }
+        },
+        tooltip: {
+          callbacks: {
+            label(ctx) {
+              if (ctx.datasetIndex === 0) {
+                return ` Doanh thu: ${formatVND(ctx.parsed.y)}`;
+              }
+              return ` Số đơn: ${ctx.parsed.y} đơn`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        },
+        y: {
+          beginAtZero: true,
+          position: 'left',
+          ticks: {
+            font: { size: 11 },
+            callback(val) {
+              if (val >= 1000000) return (val / 1000000).toFixed(1) + 'tr';
+              if (val >= 1000) return Math.round(val / 1000) + 'k';
+              return val;
+            }
+          }
+        },
+        y1: {
+          beginAtZero: true,
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: { stepSize: 1, precision: 0, font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+function switchRevenueDays(days) {
+  if (selectedDays.value === days) return;
+  selectedDays.value = days;
+  loadRevenueChart(days);
+}
+
 onMounted(() => {
   loadStats();
   loadLowStock();
+  loadRevenueChart(selectedDays.value);
+});
+
+onUnmounted(() => {
+  if (revenueChartInstance) {
+    revenueChartInstance.destroy();
+    revenueChartInstance = null;
+  }
 });
 </script>

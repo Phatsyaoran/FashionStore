@@ -206,11 +206,18 @@
                   🛠️ Quản trị Admin
                 </router-link>
                 <router-link
+                  to="/profile"
+                  @click="isUserMenuOpen = false"
+                  class="block px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50 font-semibold"
+                >
+                  📦 Đơn hàng của tôi
+                </router-link>
+                <router-link
                   to="/order-tracking"
                   @click="isUserMenuOpen = false"
-                  class="block px-4 py-2.5 text-xs text-gray-700 hover:bg-gray-50"
+                  class="block px-4 py-2.5 text-xs text-gray-500 hover:bg-gray-50"
                 >
-                  📦 Tra cứu đơn hàng
+                  🔍 Tra cứu vận đơn
                 </router-link>
                 <button
                   type="button"
@@ -412,6 +419,13 @@
               </div>
               <div class="flex gap-2 pt-1">
                 <router-link
+                  to="/profile"
+                  @click="isMobileMenuOpen = false"
+                  class="flex-1 text-center py-2 px-3 rounded-xl bg-rose-600 text-white text-xs font-bold"
+                >
+                  📦 Đơn của tôi
+                </router-link>
+                <router-link
                   v-if="authStore.isAdmin"
                   to="/admin"
                   @click="isMobileMenuOpen = false"
@@ -424,7 +438,7 @@
                   @click="handleLogout"
                   class="flex-1 py-2 px-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-600 text-xs font-bold"
                 >
-                  Đăng xuất
+                  Thoát
                 </button>
               </div>
             </div>

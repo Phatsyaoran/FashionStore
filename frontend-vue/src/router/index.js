@@ -7,6 +7,7 @@ import CheckoutView from '@/views/CheckoutView.vue';
 import OrderTrackingView from '@/views/OrderTrackingView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
+import ProfileView from '@/views/ProfileView.vue';
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminProductsView from '@/views/admin/AdminProductsView.vue';
 import AdminOrdersView from '@/views/admin/AdminOrdersView.vue';
@@ -55,6 +56,12 @@ const routes = [
     component: RegisterView
   },
   {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin',
     name: 'admin-dashboard',
     component: AdminDashboardView,
@@ -90,12 +97,18 @@ const router = createRouter({
   }
 });
 
-// Admin Route Guard
+// Route Guard (Auth & Admin)
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
   if (to.meta.requiresAdmin) {
     if (!authStore.isAuthenticated || !authStore.isAdmin) {
       useToastStore().error('Vui lòng đăng nhập bằng tài khoản Quản Trị Viên (Admin) để truy cập khu vực này.');
+      next({ name: 'login' });
+      return;
+    }
+  } else if (to.meta.requiresAuth) {
+    if (!authStore.isAuthenticated) {
+      useToastStore().info('Vui lòng đăng nhập để xem thông tin tài khoản và đơn hàng của bạn.');
       next({ name: 'login' });
       return;
     }

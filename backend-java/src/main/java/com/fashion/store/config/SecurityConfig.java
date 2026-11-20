@@ -57,6 +57,12 @@ public class SecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Authenticated customer endpoints
+                        .requestMatchers(
+                                "/api/orders/my-orders",
+                                "/api/orders/*/cancel",
+                                "/api/auth/change-password"
+                        ).authenticated()
                         // Public endpoints
                         .requestMatchers(
                                 "/api/categories/**",

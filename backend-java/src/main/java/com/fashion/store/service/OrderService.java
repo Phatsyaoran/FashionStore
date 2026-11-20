@@ -19,4 +19,8 @@ public interface OrderService {
     OrderResponseDTO updateOrderStatus(String orderCode, OrderStatusUpdateRequest request);
 
     List<OrderResponseDTO> getAllOrders();
+
+    List<OrderResponseDTO> getMyOrders(String userEmail);
+
+    OrderResponseDTO cancelMyOrder(String orderCode, String userEmail);
 }

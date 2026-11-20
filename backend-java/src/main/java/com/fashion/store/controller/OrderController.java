@@ -35,6 +35,23 @@ public class OrderController {
                 .body(ApiResponse.ok("Đặt hàng thành công", created));
     }
 
+    @GetMapping("/my-orders")
+    @Operation(summary = "Lấy danh sách đơn hàng của tài khoản đang đăng nhập (Yêu cầu JWT)")
+    public ResponseEntity<ApiResponse<List<OrderResponseDTO>>> getMyOrders(Authentication authentication) {
+        List<OrderResponseDTO> orders = orderService.getMyOrders(authentication.getName());
+        return ResponseEntity.ok(ApiResponse.ok("Lấy danh sách đơn hàng của bạn thành công", orders));
+    }
+
+    @PostMapping("/{orderCode}/cancel")
+    @Operation(summary = "Khách hàng tự hủy đơn hàng đang ở trạng thái PENDING (Tự hoàn tồn kho)")
+    public ResponseEntity<ApiResponse<OrderResponseDTO>> cancelMyOrder(
+            @PathVariable String orderCode,
+            Authentication authentication
+    ) {
+        OrderResponseDTO cancelled = orderService.cancelMyOrder(orderCode, authentication.getName());
+        return ResponseEntity.ok(ApiResponse.ok("Đã hủy đơn hàng và hoàn lại tồn kho thành công", cancelled));
+    }
+
     @GetMapping("/{orderCodeOrPhone}")
     @Operation(summary = "Tra cứu đơn hàng theo Mã đơn hoặc Số điện thoại")
     public ResponseEntity<ApiResponse<Object>> getOrder(@PathVariable String orderCodeOrPhone) {

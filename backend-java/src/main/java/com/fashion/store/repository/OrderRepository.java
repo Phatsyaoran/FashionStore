@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.paymentStatus = 'PAID' AND o.orderStatus <> 'CANCELLED'")
     BigDecimal calculateTotalRevenue();
+
+    @Query("SELECT o FROM Order o WHERE o.createdAt >= :startDate AND o.orderStatus <> 'CANCELLED' ORDER BY o.createdAt ASC")
+    List<Order> findActiveOrdersSince(@Param("startDate") LocalDateTime startDate);
 }
