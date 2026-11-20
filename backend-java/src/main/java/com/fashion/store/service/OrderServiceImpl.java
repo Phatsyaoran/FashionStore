@@ -53,10 +53,12 @@ public class OrderServiceImpl implements OrderService {
             throw new BadRequestException("Giỏ hàng không có sản phẩm");
         }
 
-        User user = null;
-        if (userEmail != null && !userEmail.isEmpty()) {
-            user = userRepository.findByEmail(userEmail).orElse(null);
+        if (userEmail == null || userEmail.trim().isEmpty()) {
+            throw new BadRequestException("Vui lòng đăng nhập để tiến hành đặt hàng");
         }
+
+        User user = userRepository.findByEmail(userEmail.trim().toLowerCase())
+                .orElseThrow(() -> new BadRequestException("Tài khoản không hợp lệ. Vui lòng đăng nhập lại để đặt hàng"));
 
         BigDecimal subTotal = BigDecimal.ZERO;
         List<OrderItem> orderItemsToSave = new ArrayList<>();
@@ -316,9 +318,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDTO> getMyOrders(String userEmail) {
         User user = userRepository.findByEmail(userEmail.trim().toLowerCase())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản người dùng"));
-        return orderRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
-                .map(this::mapToOrderResponseDTO)
-                .collect(Collectors.toList());
+        String phone = (user.getPhone() != null && !user.getPhone().trim().isEmpty()) ? user.getPhone().trim() : null;
+        List<Order> orders = orderRepository.findMyOrders(user.getId(), phone);
+        return mapOrdersBatch(orders);
     }
 
     @Override
@@ -327,7 +329,16 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByOrderCode(orderCode.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng: " + orderCode));
 
-        if (order.getUser() == null || !order.getUser().getEmail().equalsIgnoreCase(userEmail.trim())) {
+        User user = userRepository.findByEmail(userEmail.trim().toLowerCase())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản người dùng"));
+
+        boolean ownsByUser = order.getUser() != null && order.getUser().getId().equals(user.getId());
+        boolean ownsByPhone = order.getUser() == null
+                && user.getPhone() != null
+                && !user.getPhone().trim().isEmpty()
+                && user.getPhone().trim().equals(order.getCustomerPhone());
+
+        if (!ownsByUser && !ownsByPhone) {
             throw new BadRequestException("Bạn không có quyền hủy đơn hàng này.");
         }
 

@@ -67,10 +67,11 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
 const email = ref('');
@@ -90,7 +91,12 @@ async function handleLogin() {
   try {
     const res = await authStore.login(email.value, password.value);
     if (res.success) {
-      if (authStore.isAdmin) {
+      const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/')
+        ? route.query.redirect
+        : null;
+      if (redirect) {
+        router.push(redirect);
+      } else if (authStore.isAdmin) {
         router.push('/admin');
       } else {
         router.push('/');

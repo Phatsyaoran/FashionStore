@@ -187,11 +187,12 @@
     </div>
 
     <!-- MODAL NHẬP KHO NHANH BIẾN THỂ (Quick Stock Edit Modal) (Phase 11) -->
-    <div
-      v-if="selectedProductForStock"
-      class="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-xl max-h-[90vh] overflow-y-auto w-full space-y-6 shadow-2xl">
+    <Teleport to="body">
+      <div
+        v-if="selectedProductForStock"
+        class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+      >
+        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-xl max-h-[90vh] overflow-y-auto w-full space-y-6 shadow-2xl">
         <!-- Modal Header -->
         <div class="flex justify-between items-start pb-4 border-b border-gray-100">
           <div class="flex items-center gap-3">
@@ -300,15 +301,17 @@
             Hoàn tất đóng
           </button>
         </div>
+        </div>
       </div>
-    </div>
+    </Teleport>
 
     <!-- MODAL THÊM / CHỈNH SỬA SẢN PHẨM & BIẾN THỂ -->
-    <div
-      v-if="showProductModal"
-      class="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-3xl max-h-[90vh] overflow-y-auto w-full space-y-6 shadow-2xl">
+    <Teleport to="body">
+      <div
+        v-if="showProductModal"
+        class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+      >
+        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-3xl max-h-[90vh] overflow-y-auto w-full space-y-6 shadow-2xl">
         <div class="flex items-center justify-between pb-4 border-b border-gray-100">
           <div>
             <h3 class="text-base sm:text-lg font-black text-gray-900">
@@ -601,8 +604,9 @@
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </Teleport>
 
   </div>
 </template>

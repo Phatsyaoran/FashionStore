@@ -182,8 +182,9 @@
     </div>
 
     <!-- IN PHIẾU GIAO HÀNG CHUẨN KHỔ A6 (Yêu cầu Phase 7 + JsBarcode Code128) -->
-    <div v-if="selectedPrintOrder" class="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-white print:p-0">
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-4 shadow-2xl print:max-h-none print:shadow-none print:p-0 print:rounded-none">
+    <Teleport to="body">
+      <div v-if="selectedPrintOrder" class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-white print:p-0">
+        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-4 shadow-2xl print:max-h-none print:shadow-none print:p-0 print:rounded-none">
         <div class="flex justify-between items-center no-print pb-2 border-b border-gray-100">
           <div>
             <h3 class="font-bold text-base text-gray-900">Xem trước nhãn giao vận A6</h3>
@@ -299,8 +300,9 @@
             <span>🖨️</span> In Ngay (Khổ A6)
           </button>
         </div>
+        </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>
 

@@ -8,6 +8,7 @@ import OrderTrackingView from '@/views/OrderTrackingView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import ProfileView from '@/views/ProfileView.vue';
+import WishlistView from '@/views/WishlistView.vue';
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue';
 import AdminProductsView from '@/views/admin/AdminProductsView.vue';
 import AdminOrdersView from '@/views/admin/AdminOrdersView.vue';
@@ -45,13 +46,19 @@ const routes = [
     path: '/checkout',
     name: 'checkout',
     component: CheckoutView,
-    meta: { title: 'Thanh toán' }
+    meta: { requiresAuth: true, title: 'Thanh toán' }
   },
   {
     path: '/order-tracking',
     name: 'order-tracking',
     component: OrderTrackingView,
-    meta: { title: 'Tra cứu đơn hàng' }
+    meta: { requiresAuth: true, title: 'Tra cứu đơn hàng' }
+  },
+  {
+    path: '/wishlist',
+    name: 'wishlist',
+    component: WishlistView,
+    meta: { requiresAuth: true, title: 'Danh sách yêu thích' }
   },
   {
     path: '/login',
@@ -130,8 +137,16 @@ router.beforeEach((to, from, next) => {
     }
   } else if (to.meta.requiresAuth) {
     if (!authStore.isAuthenticated) {
-      useToastStore().info('Vui lòng đăng nhập để xem thông tin tài khoản và đơn hàng của bạn.');
-      next({ name: 'login' });
+      let msg = 'Vui lòng đăng nhập để tiếp tục.';
+      if (to.path.startsWith('/checkout')) {
+        msg = 'Vui lòng đăng nhập để tiến hành đặt hàng';
+      } else if (to.path.startsWith('/wishlist')) {
+        msg = 'Vui lòng đăng nhập để sử dụng danh sách yêu thích';
+      } else if (to.path.startsWith('/order-tracking')) {
+        msg = 'Vui lòng đăng nhập để tra cứu đơn hàng';
+      }
+      useToastStore().info(msg);
+      next({ name: 'login', query: { redirect: to.fullPath } });
       return;
     }
   }

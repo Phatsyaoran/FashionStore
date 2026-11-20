@@ -45,6 +45,28 @@
           >
             {{ activeImageIndex + 1 }} / {{ allGalleryImages.length }}
           </span>
+
+          <!-- Wishlist Heart Button -->
+          <button
+            type="button"
+            @click="handleToggleWishlist"
+            :title="isFavorited ? 'Bỏ khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'"
+            class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-md hover:scale-110 active:scale-95 transition-all"
+          >
+            <svg
+              class="w-5 h-5 transition-colors"
+              :class="isFavorited ? 'text-rose-600 fill-rose-600' : 'text-gray-400 hover:text-rose-500 fill-none'"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
         </div>
 
         <!-- Thumbnail Strip (Scrollable on Mobile) -->
@@ -826,17 +848,39 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import api from '@/services/api';
+import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useProductStore } from '@/stores/productStore';
+import { useWishlistStore } from '@/stores/wishlistStore';
 import { useToastStore } from '@/stores/toastStore';
 import { formatVND, formatDateTime, onImageError } from '@/services/formatters';
 import SmartSizePredictorModal from '@/components/SmartSizePredictorModal.vue';
 import RecentlyViewed from '@/components/RecentlyViewed.vue';
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+const wishlistStore = useWishlistStore();
 const toastStore = useToastStore();
+
+const isFavorited = computed(() => product.value ? wishlistStore.isInWishlist(product.value.id) : false);
+
+function handleToggleWishlist() {
+  if (!product.value) return;
+  if (!authStore.isAuthenticated) {
+    toastStore.info('Vui lòng đăng nhập để sử dụng danh sách yêu thích');
+    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    return;
+  }
+  const res = wishlistStore.toggleWishlist(product.value);
+  if (res?.added) {
+    toastStore.success(`Đã thêm "${product.value.name}" vào danh sách yêu thích`);
+  } else {
+    toastStore.info(`Đã bỏ "${product.value.name}" khỏi danh sách yêu thích`);
+  }
+}
 const cartStore = useCartStore();
 const productStore = useProductStore();
 

@@ -1,10 +1,11 @@
 <template>
-  <div v-if="productStore.isQuickViewOpen && product" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="productStore.closeQuickView"></div>
+  <Teleport to="body">
+    <div v-if="productStore.isQuickViewOpen && product" class="fixed inset-0 z-[9990] overflow-y-auto no-print" role="dialog" aria-modal="true">
+      <!-- Backdrop -->
+      <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm transition-opacity" @click="productStore.closeQuickView"></div>
 
-    <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-      <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-gray-100 max-h-[90vh] overflow-y-auto w-full">
+      <div class="relative z-[9995] flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-gray-100 max-h-[90vh] overflow-y-auto w-full">
         
         <!-- Close button -->
         <button
@@ -155,9 +156,10 @@
           </div>
         </div>
 
+        </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>

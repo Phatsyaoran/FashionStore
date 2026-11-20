@@ -157,7 +157,14 @@
           <router-link to="/catalog?isFlashSale=true" class="hover:text-rose-600 text-rose-600 flex items-center gap-1 font-bold">
             <span>⚡</span> Flash Sale
           </router-link>
-          <router-link to="/order-tracking" class="hover:text-rose-600 transition-colors" active-class="text-rose-600">Tra Cứu Đơn</router-link>
+          <router-link
+            v-if="authStore.isAuthenticated"
+            to="/order-tracking"
+            class="hover:text-rose-600 transition-colors"
+            active-class="text-rose-600"
+          >
+            Tra Cứu Đơn
+          </router-link>
         </nav>
 
         <!-- Right User Actions -->
@@ -239,10 +246,10 @@
             </router-link>
           </div>
 
-          <!-- Wishlist Drawer Button (Phase 10) -->
+          <!-- Wishlist Drawer Button (Phase 10 - Requires Auth) -->
           <button
             type="button"
-            @click="isWishlistOpen = true"
+            @click="handleOpenWishlist"
             class="relative p-2.5 rounded-full hover:bg-rose-50 text-gray-800 hover:text-rose-600 transition-colors flex items-center justify-center"
             aria-label="Yêu thích"
             title="Danh sách yêu thích"
@@ -251,7 +258,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             <span
-              v-if="wishlistStore.totalWishlist > 0"
+              v-if="authStore.isAuthenticated && wishlistStore.totalWishlist > 0"
               class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm"
             >
               {{ wishlistStore.totalWishlist }}
@@ -281,19 +288,20 @@
       </div>
     </div>
 
-    <!-- MOBILE NAVIGATION DRAWER (< lg) -->
-    <transition
-      enter-active-class="transition-opacity duration-200 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition-opacity duration-150 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div v-if="isMobileMenuOpen" class="fixed inset-0 z-50 lg:hidden flex" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="isMobileMenuOpen = false"></div>
+    <!-- MOBILE NAVIGATION DRAWER (< lg) — Teleported to body -->
+    <Teleport to="body">
+      <transition
+        enter-active-class="transition-opacity duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="isMobileMenuOpen" class="fixed inset-0 z-[9990] lg:hidden flex no-print" role="dialog" aria-modal="true">
+          <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm" @click="isMobileMenuOpen = false"></div>
 
-        <div class="relative w-[85vw] max-w-xs bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden">
+          <div class="relative z-[9995] w-[85vw] max-w-xs bg-white h-screen shadow-2xl flex flex-col overflow-hidden">
           <!-- Drawer Top -->
           <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/80">
             <router-link to="/" @click="isMobileMenuOpen = false" class="flex items-center gap-2">
@@ -379,8 +387,21 @@
               <router-link to="/catalog?isFlashSale=true" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-rose-50/70 text-rose-600">
                 <span>⚡</span> Săn Flash Sale
               </router-link>
-              <router-link to="/order-tracking" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600">
+              <router-link
+                v-if="authStore.isAuthenticated"
+                to="/order-tracking"
+                @click="isMobileMenuOpen = false"
+                class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600"
+              >
                 <span>📦</span> Tra Cứu Đơn Hàng
+              </router-link>
+              <router-link
+                v-if="authStore.isAuthenticated"
+                to="/wishlist"
+                @click="isMobileMenuOpen = false"
+                class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600"
+              >
+                <span>❤️</span> Yêu Thích ({{ wishlistStore.totalWishlist }})
               </router-link>
               <router-link to="/cart" @click="isMobileMenuOpen = false" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-rose-50 hover:text-rose-600">
                 <span>🛒</span> Giỏ Hàng ({{ cartStore.totalItems }})
@@ -459,16 +480,18 @@
               </router-link>
             </div>
           </div>
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </Teleport>
 
-    <!-- CART DRAWER (SLIDE-OVER) WITH FREE SHIPPING PROGRESS BAR -->
-    <div v-if="cartStore.isDrawerOpen" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="cartStore.toggleDrawer(false)"></div>
+    <!-- CART DRAWER (SLIDE-OVER) — Teleported to body -->
+    <Teleport to="body">
+      <div v-if="cartStore.isDrawerOpen" class="fixed inset-0 z-[9990] overflow-hidden no-print" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm transition-opacity" @click="cartStore.toggleDrawer(false)"></div>
 
-      <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="fixed inset-y-0 right-0 z-[9995] max-w-full flex pl-10">
+          <div class="w-screen max-w-md h-screen bg-white shadow-2xl flex flex-col">
           
           <!-- Drawer Header -->
           <div class="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
@@ -583,26 +606,28 @@
               >
                 Xem Giỏ Hàng
               </router-link>
-              <router-link
-                to="/checkout"
-                @click="cartStore.toggleDrawer(false)"
+              <button
+                type="button"
+                @click="handleProceedToCheckout"
                 class="py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold text-center shadow-md hover:shadow-lg transition-all"
               >
                 Thanh Toán →
-              </router-link>
+              </button>
             </div>
           </div>
 
+          </div>
         </div>
       </div>
-    </div>
+    </Teleport>
 
-    <!-- WISHLIST DRAWER (SLIDE-OVER) (Phase 10) -->
-    <div v-if="isWishlistOpen" class="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="isWishlistOpen = false"></div>
+    <!-- WISHLIST DRAWER (SLIDE-OVER) — Teleported to body -->
+    <Teleport to="body">
+      <div v-if="isWishlistOpen" class="fixed inset-0 z-[9990] overflow-hidden no-print" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm transition-opacity" @click="isWishlistOpen = false"></div>
 
-      <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        <div class="fixed inset-y-0 right-0 z-[9995] max-w-full flex pl-10">
+          <div class="w-screen max-w-md h-screen bg-white shadow-2xl flex flex-col">
           
           <!-- Drawer Header -->
           <div class="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
@@ -696,17 +721,18 @@
               Xóa tất cả
             </button>
             <router-link
-              to="/catalog"
+              to="/wishlist"
               @click="isWishlistOpen = false"
               class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
             >
-              Xem thêm sản phẩm →
+              Xem trang Yêu thích →
             </router-link>
           </div>
 
         </div>
+        </div>
       </div>
-    </div>
+    </Teleport>
   </header>
 </template>
 
@@ -718,6 +744,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useWishlistStore } from '@/stores/wishlistStore';
 import { useProductStore } from '@/stores/productStore';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 import FreeShippingBar from '@/components/FreeShippingBar.vue';
 
@@ -726,6 +753,7 @@ const authStore = useAuthStore();
 const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
 const productStore = useProductStore();
+const toastStore = useToastStore();
 
 const searchKeyword = ref('');
 const isSearchOpen = ref(false);
@@ -821,9 +849,29 @@ function handleMobileSearch() {
   }
 }
 
+function handleOpenWishlist() {
+  if (!authStore.isAuthenticated) {
+    toastStore.info('Vui lòng đăng nhập để sử dụng danh sách yêu thích');
+    router.push({ name: 'login', query: { redirect: '/wishlist' } });
+    return;
+  }
+  isWishlistOpen.value = true;
+}
+
+function handleProceedToCheckout() {
+  cartStore.toggleDrawer(false);
+  if (!authStore.isAuthenticated) {
+    toastStore.info('Vui lòng đăng nhập để tiến hành đặt hàng');
+    router.push({ name: 'login', query: { redirect: '/checkout' } });
+    return;
+  }
+  router.push('/checkout');
+}
+
 function handleLogout() {
   isUserMenuOpen.value = false;
   isMobileMenuOpen.value = false;
+  isWishlistOpen.value = false;
   authStore.logout();
 }
 

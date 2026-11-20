@@ -1,10 +1,11 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="close"></div>
+  <Teleport to="body">
+    <div v-if="isOpen" class="fixed inset-0 z-[9990] overflow-y-auto no-print" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <!-- Backdrop -->
+      <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm transition-opacity" @click="close"></div>
 
-    <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-      <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100 max-h-[90vh] overflow-y-auto w-full">
+      <div class="relative z-[9995] flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100 max-h-[90vh] overflow-y-auto w-full">
         
         <!-- Modal Header -->
         <div class="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4 text-white flex items-center justify-between">
@@ -148,9 +149,10 @@
           </button>
         </div>
 
+        </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup>

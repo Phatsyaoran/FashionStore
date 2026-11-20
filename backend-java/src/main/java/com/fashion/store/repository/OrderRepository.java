@@ -22,6 +22,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId " +
+           "OR (:phone IS NOT NULL AND :phone <> '' AND o.customerPhone = :phone) " +
+           "ORDER BY o.createdAt DESC")
+    List<Order> findMyOrders(@Param("userId") Long userId, @Param("phone") String phone);
+
     List<Order> findByCustomerPhoneOrderByCreatedAtDesc(String customerPhone);
 
     Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);

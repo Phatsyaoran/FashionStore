@@ -178,11 +178,12 @@
     </form>
 
     <!-- VIETQR POPUP MODAL (Chuẩn VietQR QuickLink MB Bank) -->
-    <div v-if="showVietQrModal" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
-      <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+    <Teleport to="body">
+      <div v-if="showVietQrModal" class="fixed inset-0 z-[9990] overflow-y-auto no-print" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-sm transition-opacity"></div>
 
-      <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100 p-6 space-y-6 max-h-[90vh] overflow-y-auto w-full">
+        <div class="relative z-[9995] flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+          <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100 p-6 space-y-6 max-h-[90vh] overflow-y-auto w-full">
           
           <!-- Modal Header -->
           <div class="text-center space-y-1">
@@ -276,8 +277,9 @@
           </div>
 
         </div>
+        </div>
       </div>
-    </div>
+    </Teleport>
 
   </div>
 </template>

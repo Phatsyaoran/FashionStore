@@ -33,10 +33,19 @@
         <div>
           <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Hỗ Trợ Khách Hàng</h4>
           <ul class="space-y-2">
-            <li><router-link to="/order-tracking" class="hover:text-rose-400 transition-colors">Tra cứu tiến độ đơn hàng</router-link></li>
-            <li><router-link to="/login" class="hover:text-rose-400 transition-colors">Đăng nhập tài khoản</router-link></li>
-            <li><router-link to="/register" class="hover:text-rose-400 transition-colors">Đăng ký thành viên mới</router-link></li>
-            <li><router-link to="/checkout" class="hover:text-rose-400 transition-colors">Thanh toán & Freeship từ 500k</router-link></li>
+            <li v-if="authStore.isAuthenticated">
+              <router-link to="/order-tracking" class="hover:text-rose-400 transition-colors">Tra cứu tiến độ đơn hàng</router-link>
+            </li>
+            <li v-if="authStore.isAuthenticated">
+              <router-link to="/wishlist" class="hover:text-rose-400 transition-colors">Danh sách yêu thích</router-link>
+            </li>
+            <li v-if="!authStore.isAuthenticated">
+              <router-link to="/login" class="hover:text-rose-400 transition-colors">Đăng nhập tài khoản</router-link>
+            </li>
+            <li v-if="!authStore.isAuthenticated">
+              <router-link to="/register" class="hover:text-rose-400 transition-colors">Đăng ký thành viên mới</router-link>
+            </li>
+            <li><router-link to="/cart" class="hover:text-rose-400 transition-colors">Giỏ hàng & Freeship từ 500k</router-link></li>
           </ul>
         </div>
 
@@ -67,4 +76,7 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/authStore';
+
+const authStore = useAuthStore();
 </script>

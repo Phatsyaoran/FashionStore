@@ -37,7 +37,7 @@
       <!-- Wishlist Heart Button -->
       <button
         type="button"
-        @click.stop="wishlistStore.toggleWishlist(product)"
+        @click.stop="handleToggleWishlist"
         :title="isFavorited ? 'Bỏ thích' : 'Thêm vào yêu thích'"
         class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center shadow-sm hover:scale-110 active:scale-90 transition-all duration-200"
       >
@@ -168,8 +168,11 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 import { useProductStore } from '@/stores/productStore';
 import { useWishlistStore } from '@/stores/wishlistStore';
+import { useToastStore } from '@/stores/toastStore';
 import { formatVND } from '@/services/formatters';
 
 const props = defineProps({
@@ -183,10 +186,28 @@ const props = defineProps({
   }
 });
 
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
 const productStore = useProductStore();
 const wishlistStore = useWishlistStore();
+const toastStore = useToastStore();
 
 const isFavorited = computed(() => wishlistStore.isInWishlist(props.product.id));
+
+function handleToggleWishlist() {
+  if (!authStore.isAuthenticated) {
+    toastStore.info('Vui lòng đăng nhập để sử dụng danh sách yêu thích');
+    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    return;
+  }
+  const res = wishlistStore.toggleWishlist(props.product);
+  if (res?.added) {
+    toastStore.success(`Đã thêm "${props.product.name}" vào danh sách yêu thích`);
+  } else {
+    toastStore.info(`Đã bỏ "${props.product.name}" khỏi danh sách yêu thích`);
+  }
+}
 
 const totalStock = computed(() => {
   if (typeof props.product.totalStock === 'number') {

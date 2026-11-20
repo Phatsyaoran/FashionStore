@@ -151,12 +151,13 @@
           </div>
         </div>
 
-        <router-link
-          to="/checkout"
+        <button
+          type="button"
+          @click="handleCheckout"
           class="block w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider text-center shadow-lg shadow-rose-200 hover:shadow-rose-300 transition-all"
         >
           Tiến Hành Đặt Hàng →
-        </router-link>
+        </button>
       </div>
 
     </div>
@@ -179,14 +180,27 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useToastStore } from '@/stores/toastStore';
 import { formatVND, onImageError } from '@/services/formatters';
 import FreeShippingBar from '@/components/FreeShippingBar.vue';
 
+const router = useRouter();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const toastStore = useToastStore();
 const couponInput = ref('');
+
+function handleCheckout() {
+  if (!authStore.isAuthenticated) {
+    toastStore.info('Vui lòng đăng nhập để tiến hành đặt hàng');
+    router.push({ name: 'login', query: { redirect: '/checkout' } });
+    return;
+  }
+  router.push('/checkout');
+}
 
 async function handleApplyCoupon() {
   if (!couponInput.value) return;

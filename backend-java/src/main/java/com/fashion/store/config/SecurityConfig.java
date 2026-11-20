@@ -3,8 +3,10 @@ package com.fashion.store.config;
 import com.fashion.store.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -37,6 +39,17 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
+    /**
+     * Ngăn Spring Boot tự động đăng ký JwtAuthenticationFilter ở tầng Servlet (chạy trước SecurityContextHolderFilter).
+     * Đảm bảo filter CHỈ chạy đúng 1 lần BÊN TRONG SecurityFilterChain.
+     */
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(JwtAuthenticationFilter filter) {
+        FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -57,10 +70,11 @@ public class SecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Authenticated customer endpoints
+                        // Cho phép CORS preflight OPTIONS đi qua không bị chặn 401
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Authenticated customer endpoints (Orders & Change Password)
                         .requestMatchers(
-                                "/api/orders/my-orders",
-                                "/api/orders/*/cancel",
+                                "/api/orders/**",
                                 "/api/auth/change-password"
                         ).authenticated()
                         // Public endpoints
@@ -69,7 +83,6 @@ public class SecurityConfig {
                                 "/api/products/**",
                                 "/api/auth/**",
                                 "/api/coupons/apply",
-                                "/api/orders/**",
                                 "/api/chat-assistant/**",
                                 "/uploads/**",
                                 "/swagger-ui/**",

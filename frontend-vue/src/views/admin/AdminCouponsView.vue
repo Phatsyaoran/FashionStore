@@ -106,11 +106,12 @@
     </div>
 
     <!-- Modal Create / Edit Coupon -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-5 shadow-2xl">
+    <Teleport to="body">
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+      >
+        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-5 shadow-2xl">
         <div class="flex items-center justify-between pb-3 border-b border-gray-100">
           <h3 class="text-base font-black text-gray-900">
             {{ editingId ? '✏️ Chỉnh Sửa Mã Giảm Giá' : '➕ Tạo Mã Giảm Giá Mới' }}
@@ -205,8 +206,9 @@
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>
 
