@@ -437,6 +437,47 @@
                 />
               </div>
             </div>
+
+            <!-- Album ảnh phụ (Product Gallery) -->
+            <div class="pt-3 border-t border-gray-200/70 space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="text-xs font-bold text-gray-800">
+                  Album ảnh phụ ({{ productForm.galleryImages.length }} ảnh)
+                </label>
+                <label class="px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[11px] font-bold cursor-pointer transition-colors inline-flex items-center gap-1">
+                  <span>{{ uploadingGallery ? 'Đang tải...' : '🖼️ + Thêm nhiều ảnh phụ' }}</span>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp"
+                    class="hidden"
+                    :disabled="uploadingGallery"
+                    @change="handleGalleryUpload"
+                  />
+                </label>
+              </div>
+
+              <div v-if="productForm.galleryImages.length > 0" class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                <div
+                  v-for="(imgUrl, idx) in productForm.galleryImages"
+                  :key="`${imgUrl}-${idx}`"
+                  class="relative group aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200"
+                >
+                  <img :src="imgUrl" alt="Gallery" @error="onImageError" class="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    @click="removeGalleryImage(idx)"
+                    class="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center"
+                    title="Xóa ảnh phụ"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <p v-else class="text-[11px] text-gray-400">
+                Chưa có ảnh phụ. Bạn có thể chọn nhiều ảnh cùng lúc để hiển thị album ở trang chi tiết sản phẩm.
+              </p>
+            </div>
           </div>
 
           <!-- Description -->
@@ -585,6 +626,7 @@ const showProductModal = ref(false);
 const editingProductId = ref(null);
 const savingProduct = ref(false);
 const uploadingImage = ref(false);
+const uploadingGallery = ref(false);
 
 const productForm = reactive({
   name: '',
@@ -595,6 +637,7 @@ const productForm = reactive({
   salePrice: null,
   isFlashSale: false,
   thumbnailUrl: '',
+  galleryImages: [],
   variants: []
 });
 
@@ -646,6 +689,7 @@ function openCreateModal() {
   productForm.salePrice = null;
   productForm.isFlashSale = false;
   productForm.thumbnailUrl = '';
+  productForm.galleryImages = [];
   productForm.variants = [
     { id: null, size: 'M', colorName: 'Đen', colorHex: '#111827', sku: '', price: 250000, stockQuantity: 20 }
   ];
@@ -667,6 +711,7 @@ async function openEditModal(item) {
       productForm.salePrice = d.salePrice ?? null;
       productForm.isFlashSale = !!d.isFlashSale;
       productForm.thumbnailUrl = d.thumbnailUrl || '';
+      productForm.galleryImages = Array.isArray(d.galleryImages) ? [...d.galleryImages] : [];
       productForm.variants = (d.variants && d.variants.length > 0)
         ? d.variants.map(v => ({
             id: v.id,
@@ -733,6 +778,39 @@ async function handleImageUpload(event) {
   }
 }
 
+async function handleGalleryUpload(event) {
+  const files = Array.from(event.target?.files || []);
+  if (files.length === 0) return;
+
+  uploadingGallery.value = true;
+  let uploadedCount = 0;
+  try {
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post('/admin/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.success && res.data?.url) {
+        productForm.galleryImages.push(res.data.url);
+        uploadedCount++;
+      }
+    }
+    if (uploadedCount > 0) {
+      toastStore.success(`Đã tải lên ${uploadedCount} ảnh phụ thành công!`);
+    }
+  } catch (err) {
+    toastStore.error(err.response?.data?.message || err.friendlyMessage || 'Có lỗi khi tải ảnh phụ.');
+  } finally {
+    uploadingGallery.value = false;
+    if (event.target) event.target.value = '';
+  }
+}
+
+function removeGalleryImage(idx) {
+  productForm.galleryImages.splice(idx, 1);
+}
+
 async function submitProductForm() {
   if (savingProduct.value) return;
 
@@ -756,6 +834,7 @@ async function submitProductForm() {
       salePrice: productForm.salePrice !== null && productForm.salePrice !== '' ? Number(productForm.salePrice) : null,
       isFlashSale: !!productForm.isFlashSale,
       thumbnailUrl: productForm.thumbnailUrl?.trim() || null,
+      galleryImages: productForm.galleryImages.filter(u => u && u.trim()),
       variants: productForm.variants.map(v => ({
         id: v.id || null,
         size: String(v.size || '').trim(),

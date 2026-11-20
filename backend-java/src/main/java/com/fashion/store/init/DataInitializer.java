@@ -5,6 +5,7 @@ import com.fashion.store.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,30 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) {
-        log.info(">>> Khởi chạy DataInitializer: Kiểm tra tài khoản mẫu...");
+        log.info(">>> Khởi chạy DataInitializer: Kiểm tra schema bổ sung & tài khoản mẫu...");
+
+        // 0. Đảm bảo bảng ProductImages tồn tại (tương thích ngược với ddl-auto=none)
+        try {
+            jdbcTemplate.execute(
+                    "IF OBJECT_ID('dbo.ProductImages', 'U') IS NULL " +
+                    "BEGIN " +
+                    "  CREATE TABLE dbo.ProductImages (" +
+                    "    Id BIGINT IDENTITY(1,1) PRIMARY KEY, " +
+                    "    ProductId BIGINT NOT NULL, " +
+                    "    ImageUrl NVARCHAR(500) NOT NULL, " +
+                    "    DisplayOrder INT NOT NULL DEFAULT 0, " +
+                    "    CONSTRAINT FK_ProductImages_Products FOREIGN KEY (ProductId) REFERENCES dbo.Products(Id) ON DELETE CASCADE" +
+                    "  ); " +
+                    "  CREATE INDEX IX_ProductImages_ProductId ON dbo.ProductImages(ProductId); " +
+                    "END"
+            );
+        } catch (Exception e) {
+            log.warn(">>> Không thể tự kiểm tra/tạo bảng ProductImages: {}", e.getMessage());
+        }
 
         // 1. Chỉ tạo mới tài khoản Admin nếu chưa tồn tại (KHÔNG ghi đè mật khẩu cũ)
         if (userRepository.findByEmail("admin@fashion.vn").isEmpty()) {

@@ -3,6 +3,7 @@ package com.fashion.store.service;
 import com.fashion.store.dto.*;
 import com.fashion.store.entity.Category;
 import com.fashion.store.entity.Product;
+import com.fashion.store.entity.ProductImage;
 import com.fashion.store.entity.ProductVariant;
 import com.fashion.store.entity.Review;
 import com.fashion.store.entity.User;
@@ -29,6 +30,7 @@ public class CatalogServiceImpl implements CatalogService {
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ProductImageRepository productImageRepository;
     private final ReviewRepository reviewRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
@@ -337,6 +339,11 @@ public class CatalogServiceImpl implements CatalogService {
     private ProductDetailDTO mapToProductDetailDTO(Product product) {
         List<ProductVariant> variants = productVariantRepository.findByProductId(product.getId());
         List<Review> reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(product.getId());
+        List<String> galleryImages = productImageRepository.findByProductIdOrderByDisplayOrderAscIdAsc(product.getId())
+                .stream()
+                .map(ProductImage::getImageUrl)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         List<ProductVariantDTO> variantDTOs = variants.stream()
                 .map(v -> ProductVariantDTO.builder()
@@ -375,6 +382,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .isFlashSale(product.getIsFlashSale())
                 .flashSaleEndTime(product.getFlashSaleEndTime())
                 .thumbnailUrl(product.getThumbnailUrl())
+                .galleryImages(galleryImages)
                 .ratingAverage(avgRating)
                 .reviewCount(reviewCount)
                 .totalStock(totalStock)

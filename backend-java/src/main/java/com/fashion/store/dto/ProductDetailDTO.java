@@ -28,6 +28,7 @@ public class ProductDetailDTO {
     private Boolean isFlashSale;
     private LocalDateTime flashSaleEndTime;
     private String thumbnailUrl;
+    private List<String> galleryImages;
     private Double ratingAverage;
     private Integer reviewCount;
     private Integer totalStock;

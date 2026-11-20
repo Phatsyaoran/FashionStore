@@ -20,12 +20,16 @@
       
       <!-- Left: Gallery Image (Sticky column for optimal browsing) -->
       <div class="space-y-4 lg:sticky lg:top-28 self-start">
-        <div class="relative bg-gray-100 rounded-3xl overflow-hidden aspect-[3/4] shadow-card border border-gray-100">
+        <div
+          class="relative bg-gray-100 rounded-3xl overflow-hidden aspect-[3/4] shadow-card border border-gray-100 select-none"
+          @touchstart="onGalleryTouchStart"
+          @touchend="onGalleryTouchEnd"
+        >
           <img
-            :src="product.thumbnailUrl"
+            :src="activeImageUrl"
             :alt="product.name"
-            @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80'"
-            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            @error="onImageError"
+            class="w-full h-full object-cover transition-all duration-500 hover:scale-105"
           />
           <span
             v-if="product.isFlashSale"
@@ -33,6 +37,37 @@
           >
             <span>⚡</span> Flash Sale
           </span>
+
+          <!-- Image counter pill when multiple images exist -->
+          <span
+            v-if="allGalleryImages.length > 1"
+            class="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full"
+          >
+            {{ activeImageIndex + 1 }} / {{ allGalleryImages.length }}
+          </span>
+        </div>
+
+        <!-- Thumbnail Strip (Scrollable on Mobile) -->
+        <div
+          v-if="allGalleryImages.length > 1"
+          class="flex items-center gap-2.5 overflow-x-auto pb-1"
+        >
+          <button
+            v-for="(imgUrl, idx) in allGalleryImages"
+            :key="`${imgUrl}-${idx}`"
+            type="button"
+            @click="activeImageIndex = idx"
+            class="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl overflow-hidden border-2 shrink-0 transition-all bg-gray-100"
+            :class="activeImageIndex === idx ? 'border-rose-600 ring-2 ring-rose-500/25 scale-[1.02]' : 'border-transparent opacity-70 hover:opacity-100'"
+          >
+            <img
+              :src="imgUrl"
+              :alt="`${product.name} - ảnh ${idx + 1}`"
+              @error="onImageError"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            />
+          </button>
         </div>
 
         <!-- 3 Quick Guarantee Badges under image -->
@@ -863,6 +898,7 @@ async function loadProductDetail() {
     const res = await api.get(`/products/${slug}`);
     if (res.success && res.data) {
       product.value = res.data;
+      activeImageIndex.value = 0;
       if (product.value.name) {
         document.title = `${product.value.name} | FashionStore`;
       }
@@ -927,6 +963,42 @@ const availableSizes = computed(() => {
   });
   return Array.from(set);
 });
+
+const activeImageIndex = ref(0);
+let galleryTouchStartX = 0;
+
+const allGalleryImages = computed(() => {
+  if (!product.value) return [];
+  const imgs = [];
+  if (product.value.thumbnailUrl) imgs.push(product.value.thumbnailUrl);
+  if (Array.isArray(product.value.galleryImages)) {
+    product.value.galleryImages.forEach(url => {
+      if (url && !imgs.includes(url)) imgs.push(url);
+    });
+  }
+  return imgs;
+});
+
+const activeImageUrl = computed(() => {
+  return allGalleryImages.value[activeImageIndex.value] || product.value?.thumbnailUrl || '';
+});
+
+function onGalleryTouchStart(e) {
+  galleryTouchStartX = e.changedTouches?.[0]?.screenX || 0;
+}
+
+function onGalleryTouchEnd(e) {
+  if (allGalleryImages.value.length <= 1) return;
+  const endX = e.changedTouches?.[0]?.screenX || 0;
+  const diff = galleryTouchStartX - endX;
+  if (Math.abs(diff) > 40) {
+    if (diff > 0) {
+      activeImageIndex.value = (activeImageIndex.value + 1) % allGalleryImages.value.length;
+    } else {
+      activeImageIndex.value = (activeImageIndex.value - 1 + allGalleryImages.value.length) % allGalleryImages.value.length;
+    }
+  }
+}
 
 const availableColors = computed(() => {
   if (!product.value || !product.value.variants) return [];

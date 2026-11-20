@@ -40,6 +40,8 @@ public class AdminProductRequest {
 
     private String thumbnailUrl;
 
+    private List<String> galleryImages;
+
     @Valid
     @NotEmpty(message = "Sản phẩm phải có ít nhất 1 biến thể (Size/Màu)")
     private List<AdminProductVariantRequest> variants;

@@ -1,5 +1,7 @@
 package com.fashion.store.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fashion.store.dto.*;
 import com.fashion.store.entity.Coupon;
 import com.fashion.store.entity.Product;
@@ -8,14 +10,22 @@ import com.fashion.store.exception.ResourceNotFoundException;
 import com.fashion.store.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -33,6 +43,17 @@ public class ChatAssistantServiceImpl implements ChatAssistantService {
     private final CouponRepository couponRepository;
     private final OrderService orderService;
 
+    @Value("${app.gemini.api-key:}")
+    private String geminiApiKey;
+
+    @Value("${app.gemini.model:gemini-2.5-flash}")
+    private String geminiModel;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(4))
+            .build();
+
     private static final List<String> DEFAULT_QUICK_REPLIES = List.of(
             "📏 Tư vấn chọn Size cho tôi",
             "🎁 Xin mã giảm giá hôm nay",
@@ -46,18 +67,35 @@ public class ChatAssistantServiceImpl implements ChatAssistantService {
         String msg = request.getMessage() != null ? request.getMessage().trim() : "";
         String lowerMsg = msg.toLowerCase();
 
-        // 1. Kiểm tra intent: Tra cứu đơn hàng (Order Tracking)
+        // 1. Luôn ưu tiên tra cứu chính xác khi khách gửi thẳng mã đơn DH...
         String orderCode = extractOrderCode(msg);
-        if (orderCode != null || (lowerMsg.contains("đơn") && containsAny(lowerMsg, "tra cứu", "kiểm tra", "tình trạng", "đến đâu", "vận chuyển", "mã"))) {
-            if (orderCode != null) {
-                return handleOrderTracking(orderCode);
-            } else {
-                return ChatAssistantResponse.builder()
-                        .intent("ORDER_TRACKING")
-                        .reply("Dạ bạn vui lòng cung cấp **Mã đơn hàng** (ví dụ: `DH1701234567` được gửi qua tin nhắn/email khi đặt hàng) để em tra cứu tình trạng vận chuyển tức thì cho bạn nhé! 🚚")
-                        .quickReplies(List.of("Kiểm tra đơn DH1700000001", "Trang chủ", "Tư vấn chọn Size"))
-                        .build();
+        if (orderCode != null) {
+            return handleOrderTracking(orderCode);
+        }
+
+        // 2. Nếu có GEMINI_API_KEY: gọi Gemini AI kèm RAG kho hàng thật, lỗi/timeout tự fallback rule-based
+        if (geminiApiKey != null && !geminiApiKey.trim().isEmpty() && !msg.isEmpty()) {
+            try {
+                ChatAssistantResponse aiResponse = handleWithGeminiRag(msg);
+                if (aiResponse != null) {
+                    return aiResponse;
+                }
+            } catch (Exception ex) {
+                log.warn(">>> Gemini API không khả dụng ({}), tự động fallback về rule-based.", ex.getMessage());
             }
+        }
+
+        return handleRuleBased(msg, lowerMsg);
+    }
+
+    private ChatAssistantResponse handleRuleBased(String msg, String lowerMsg) {
+        // 1. Kiểm tra intent: Tra cứu đơn hàng (Order Tracking)
+        if (lowerMsg.contains("đơn") && containsAny(lowerMsg, "tra cứu", "kiểm tra", "tình trạng", "đến đâu", "vận chuyển", "mã")) {
+            return ChatAssistantResponse.builder()
+                    .intent("ORDER_TRACKING")
+                    .reply("Dạ bạn vui lòng cung cấp **Mã đơn hàng** (ví dụ: `DH1701234567` được gửi qua tin nhắn/email khi đặt hàng) để em tra cứu tình trạng vận chuyển tức thì cho bạn nhé! 🚚")
+                    .quickReplies(List.of("Kiểm tra đơn DH1700000001", "Trang chủ", "Tư vấn chọn Size"))
+                    .build();
         }
 
         // 2. Kiểm tra intent: Hỏi mã giảm giá (Coupons)
@@ -86,6 +124,118 @@ public class ChatAssistantServiceImpl implements ChatAssistantService {
                         "• 👕 **Gợi ý phối đồ** theo nhu cầu và ngân sách (VD: đồ dưới 400k)\n" +
                         "• 📦 **Tra cứu đơn hàng** tự động theo mã vận đơn\n\n" +
                         "Bạn cần em hỗ trợ điều gì cứ nhắn ngay cho em nhé! 👇")
+                .quickReplies(DEFAULT_QUICK_REPLIES)
+                .build();
+    }
+
+    // ==========================================
+    // GEMINI AI + LIGHTWEIGHT INVENTORY RAG
+    // ==========================================
+
+    private ChatAssistantResponse handleWithGeminiRag(String userMessage) throws Exception {
+        // 1. Truy vấn kho hàng thật (tối đa 18 sản phẩm còn hàng) & mã giảm giá đang hoạt động
+        List<Product> latestProducts = productRepository.findLatestProducts(PageRequest.of(0, 18));
+        Map<String, ProductDTO> inStockBySlug = new LinkedHashMap<>();
+        StringBuilder inventoryContext = new StringBuilder();
+
+        for (Product p : latestProducts) {
+            List<ProductVariant> variants = productVariantRepository.findByProductId(p.getId());
+            List<String> availableSizes = variants.stream()
+                    .filter(v -> v.getStockQuantity() != null && v.getStockQuantity() > 0)
+                    .map(ProductVariant::getSize)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            if (!availableSizes.isEmpty()) {
+                ProductDTO dto = mapToProductDTO(p);
+                inStockBySlug.put(dto.getSlug(), dto);
+                BigDecimal price = p.getSalePrice() != null ? p.getSalePrice() : p.getBasePrice();
+                inventoryContext.append("- ")
+                        .append(p.getName())
+                        .append(" | Giá: ").append(formatVND(price))
+                        .append(" | Size còn: ").append(String.join(",", availableSizes))
+                        .append(" | slug: ").append(p.getSlug())
+                        .append("\n");
+            }
+        }
+
+        List<Coupon> activeCoupons = couponRepository.findActiveCoupons(LocalDateTime.now()).stream()
+                .filter(c -> c.getUsedCount() < c.getUsageLimit())
+                .limit(5)
+                .collect(Collectors.toList());
+
+        StringBuilder couponContext = new StringBuilder();
+        for (Coupon c : activeCoupons) {
+            couponContext.append("- Mã `").append(c.getCode()).append("`: giảm ")
+                    .append(c.getDiscountPercent()).append("% (tối đa ")
+                    .append(formatVND(c.getMaxDiscountAmount())).append(", đơn từ ")
+                    .append(formatVND(c.getMinOrderValue())).append(")\n");
+        }
+
+        String systemPrompt = "Bạn là nhân viên tư vấn thời trang thân thiện của FashionStore (Việt Nam). " +
+                "Hãy trả lời ngắn gọn (tối đa 4-6 dòng), lịch sự bằng tiếng Việt, dùng **in đậm** cho điểm nhấn. " +
+                "CHỈ gợi ý các sản phẩm CÓ THẬT trong danh sách kho bên dưới, tuyệt đối không bịa sản phẩm hay giá khác. " +
+                "Chính sách shop: Freeship đơn từ 500.000 VNĐ, đổi trả 60 ngày. " +
+                "Nếu bạn có gợi ý sản phẩm cụ thể từ kho, hãy kết thúc câu trả lời bằng đúng 1 dòng cuối theo mẫu: " +
+                "SLUGS: slug-1, slug-2 (tối đa 3 slug khớp chính xác danh sách kho).\n\n" +
+                "=== KHO HÀNG ĐANG CÒN ===\n" + inventoryContext +
+                "\n=== MÃ GIẢM GIÁ ĐANG HOẠT ĐỘNG ===\n" +
+                (couponContext.isEmpty() ? "Hiện chưa có mã giảm giá.\n" : couponContext);
+
+        Map<String, Object> payload = Map.of(
+                "system_instruction", Map.of("parts", List.of(Map.of("text", systemPrompt))),
+                "contents", List.of(Map.of("role", "user", "parts", List.of(Map.of("text", userMessage)))),
+                "generationConfig", Map.of("temperature", 0.5, "maxOutputTokens", 450)
+        );
+
+        String modelName = (geminiModel != null && !geminiModel.isBlank()) ? geminiModel.trim() : "gemini-2.5-flash";
+        String endpoint = "https://generativelanguage.googleapis.com/v1beta/models/"
+                + URLEncoder.encode(modelName, StandardCharsets.UTF_8)
+                + ":generateContent?key="
+                + URLEncoder.encode(geminiApiKey.trim(), StandardCharsets.UTF_8);
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint))
+                .timeout(Duration.ofSeconds(8))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(payload), StandardCharsets.UTF_8))
+                .build();
+
+        HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        if (httpResponse.statusCode() != 200) {
+            throw new IllegalStateException("HTTP " + httpResponse.statusCode());
+        }
+
+        JsonNode root = objectMapper.readTree(httpResponse.body());
+        JsonNode textNode = root.path("candidates").path(0).path("content").path("parts").path(0).path("text");
+        if (textNode.isMissingNode() || textNode.asText().isBlank()) {
+            return null;
+        }
+
+        String rawReply = textNode.asText().trim();
+        List<ProductDTO> matchedProducts = new ArrayList<>();
+        StringBuilder cleanedReply = new StringBuilder();
+
+        for (String line : rawReply.split("\\r?\\n")) {
+            if (line.trim().toUpperCase(Locale.ROOT).startsWith("SLUGS:")) {
+                String slugPart = line.substring(line.indexOf(':') + 1).trim();
+                for (String token : slugPart.split(",")) {
+                    String slug = token.trim().replace("`", "");
+                    if (inStockBySlug.containsKey(slug) && matchedProducts.size() < 3) {
+                        matchedProducts.add(inStockBySlug.get(slug));
+                    }
+                }
+            } else {
+                if (!cleanedReply.isEmpty()) cleanedReply.append("\n");
+                cleanedReply.append(line);
+            }
+        }
+
+        return ChatAssistantResponse.builder()
+                .intent("AI_ASSISTANT")
+                .reply(cleanedReply.toString().trim())
+                .suggestedProducts(matchedProducts.isEmpty() ? null : matchedProducts)
                 .quickReplies(DEFAULT_QUICK_REPLIES)
                 .build();
     }

@@ -222,7 +222,7 @@
               <span class="w-2 h-2 bg-rose-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
               <span class="w-2 h-2 bg-rose-500 rounded-full animate-bounce"></span>
             </div>
-            <span>Đang tra cứu kho hàng...</span>
+            <span>Trợ lý đang tư vấn...</span>
           </div>
         </div>
 
@@ -398,11 +398,13 @@ async function handleSend() {
 }
 
 function openProduct(product) {
-  if (productStore.openQuickView) {
-    productStore.openQuickView(product);
-  } else if (product.slug) {
+  if (product?.slug) {
     router.push(`/product/${product.slug}`);
-    isOpen.value = false;
+    if (window.innerWidth < 768) {
+      isOpen.value = false;
+    }
+  } else if (productStore.openQuickView) {
+    productStore.openQuickView(product);
   }
 }
 

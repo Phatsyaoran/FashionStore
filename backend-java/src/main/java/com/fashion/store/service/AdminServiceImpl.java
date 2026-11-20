@@ -5,6 +5,7 @@ import com.fashion.store.entity.Category;
 import com.fashion.store.entity.Coupon;
 import com.fashion.store.entity.Order;
 import com.fashion.store.entity.Product;
+import com.fashion.store.entity.ProductImage;
 import com.fashion.store.entity.ProductVariant;
 import com.fashion.store.exception.BadRequestException;
 import com.fashion.store.exception.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import com.fashion.store.repository.CategoryRepository;
 import com.fashion.store.repository.CouponRepository;
 import com.fashion.store.repository.OrderItemRepository;
 import com.fashion.store.repository.OrderRepository;
+import com.fashion.store.repository.ProductImageRepository;
 import com.fashion.store.repository.ProductRepository;
 import com.fashion.store.repository.ProductVariantRepository;
 import com.fashion.store.repository.ReviewRepository;
@@ -48,6 +50,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final ProductRepository productRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ProductImageRepository productImageRepository;
     private final CategoryRepository categoryRepository;
     private final CouponRepository couponRepository;
     private final OrderRepository orderRepository;
@@ -473,6 +476,8 @@ public class AdminServiceImpl implements AdminService {
             productVariantRepository.save(variant);
         }
 
+        syncGalleryImages(savedProduct, request.getGalleryImages());
+
         return mapToProductDTO(savedProduct);
     }
 
@@ -553,7 +558,29 @@ public class AdminServiceImpl implements AdminService {
             }
         }
 
+        if (request.getGalleryImages() != null) {
+            syncGalleryImages(savedProduct, request.getGalleryImages());
+        }
+
         return mapToProductDTO(savedProduct);
+    }
+
+    private void syncGalleryImages(Product product, List<String> galleryImages) {
+        productImageRepository.deleteByProductId(product.getId());
+        if (galleryImages == null || galleryImages.isEmpty()) {
+            return;
+        }
+        int order = 0;
+        for (String url : galleryImages) {
+            if (url != null && !url.trim().isEmpty()) {
+                ProductImage img = ProductImage.builder()
+                        .product(product)
+                        .imageUrl(url.trim())
+                        .displayOrder(order++)
+                        .build();
+                productImageRepository.save(img);
+            }
+        }
     }
 
     private String generateUniqueSlug(String input, Long currentProductId) {
