@@ -1,306 +1,307 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
           Quản Lý Sản Phẩm & Biến Thể
         </h1>
-        <p class="text-xs text-gray-500 mt-1">
-          Bật/tắt nhanh Flash Sale, nhập kho nhanh các biến thể và xuất báo cáo tồn kho (.CSV)
+        <p class="text-xs text-slate-500 mt-0.5">
+          Bật/tắt Flash Sale, nhập kho nhanh biến thể và xuất báo cáo tồn kho (.CSV)
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2.5">
-        <!-- Nút Thêm sản phẩm mới -->
+      <div class="flex flex-wrap items-center gap-2">
         <button
           type="button"
           @click="openCreateModal"
-          class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-md shadow-rose-600/20 transition-all flex items-center gap-1.5"
+          class="h-9 px-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold text-xs transition-colors inline-flex items-center gap-1.5"
         >
           <span>＋</span>
           <span>Thêm sản phẩm</span>
         </button>
 
-        <!-- Nút Xuất Tồn Kho (.CSV) (Phase 11) -->
         <button
           type="button"
           @click="exportInventoryCsv"
           :disabled="isExporting"
-          class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2"
+          class="h-9 px-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition-colors inline-flex items-center gap-1.5"
         >
           <span v-if="isExporting" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           <span>📥</span>
-          <span>Xuất Tồn Kho (.CSV)</span>
+          <span>Xuất CSV</span>
         </button>
 
         <router-link
           to="/admin"
-          class="text-xs font-bold text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors"
+          class="h-9 px-3 inline-flex items-center text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
         >
-          ← Về Dashboard
+          ← Tổng quan
         </router-link>
       </div>
     </div>
 
     <!-- Search Toolbar -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div class="relative flex-1 max-w-md">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="relative flex-1 min-w-[240px] max-w-md">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Tìm nhanh sản phẩm theo tên, danh mục hoặc slug..."
-          class="w-full pl-9 pr-8 py-2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white text-xs focus:outline-none focus:ring-2 focus:ring-rose-500"
+          class="w-full h-9 pl-9 pr-8 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900"
         />
-        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
         <button
           v-if="searchQuery"
           type="button"
           @click="searchQuery = ''"
-          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold"
         >
           ✕
         </button>
       </div>
-      <div class="text-xs text-gray-500 font-semibold">
-        Hiển thị <span class="font-black text-gray-900">{{ filteredProducts.length }}</span> / {{ products.length }} sản phẩm
+      <div class="text-xs text-slate-500 font-medium">
+        Hiển thị <span class="font-bold text-slate-900">{{ filteredProducts.length }}</span> / {{ products.length }} sản phẩm
       </div>
     </div>
 
     <!-- Products Table -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full min-w-[700px] text-left text-xs">
-          <thead class="bg-gray-50 border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-            <tr>
-              <th class="p-4">Hình ảnh</th>
-              <th class="p-4">Tên sản phẩm</th>
-              <th class="p-4">Danh mục</th>
-              <th class="p-4">Giá bán</th>
-              <th class="p-4 text-center">Bật/Tắt Flash Sale</th>
-              <th class="p-4">Tổng tồn kho</th>
-              <th class="p-4 text-right">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <tr v-for="item in filteredProducts" :key="item.id" class="hover:bg-gray-50 transition-colors">
-              <td class="p-4">
-                <img
-                  :src="item.thumbnailUrl"
-                  :alt="item.name"
-                  @error="onImageError"
-                  class="w-12 h-14 object-cover rounded-xl bg-gray-100 border border-gray-100"
-                />
-              </td>
-              <td class="p-4 font-bold text-gray-900 max-w-xs">
-                <span class="line-clamp-2">{{ item.name }}</span>
-              </td>
-              <td class="p-4 text-gray-500 font-medium">
+    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full min-w-[760px] text-left text-xs">
+        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+          <tr>
+            <th class="px-4 py-3 font-semibold">Ảnh</th>
+            <th class="px-4 py-3 font-semibold">Tên sản phẩm</th>
+            <th class="px-4 py-3 font-semibold">Danh mục</th>
+            <th class="px-4 py-3 font-semibold">Giá bán</th>
+            <th class="px-4 py-3 font-semibold text-center">Flash Sale</th>
+            <th class="px-4 py-3 font-semibold">Tồn kho</th>
+            <th class="px-4 py-3 font-semibold text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200/80">
+          <tr v-for="item in filteredProducts" :key="item.id" class="hover:bg-slate-50/80 transition-colors">
+            <td class="px-4 py-3">
+              <img
+                :src="item.thumbnailUrl"
+                :alt="item.name"
+                @error="onImageError"
+                class="w-11 h-14 object-cover rounded-lg bg-slate-100 border border-slate-200"
+              />
+            </td>
+            <td class="px-4 py-3 font-semibold text-slate-900 max-w-xs">
+              <span class="line-clamp-2">{{ item.name }}</span>
+            </td>
+            <td class="px-4 py-3 text-slate-500">
+              <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium text-[11px]">
                 {{ item.categoryName }}
-              </td>
-              <td class="p-4">
-                <div class="font-bold text-rose-600">
-                  {{ formatVND(item.salePrice || item.basePrice) }}
-                </div>
-                <div v-if="item.salePrice && item.basePrice > item.salePrice" class="text-[10px] text-gray-400 line-through">
-                  {{ formatVND(item.basePrice) }}
-                </div>
-              </td>
+              </span>
+            </td>
+            <td class="px-4 py-3">
+              <div class="font-bold text-slate-900">
+                {{ formatVND(item.salePrice || item.basePrice) }}
+              </div>
+              <div v-if="item.salePrice && item.basePrice > item.salePrice" class="text-[10px] text-slate-400 line-through">
+                {{ formatVND(item.basePrice) }}
+              </div>
+            </td>
 
-              <!-- BẬT/TẮT FLASH SALE NHANH (Yêu cầu Phase 11) -->
-              <td class="p-4 text-center">
-                <div class="flex flex-col items-center gap-1">
-                  <button
-                    type="button"
-                    @click="toggleFlashSale(item)"
-                    :disabled="togglingId === item.id"
-                    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-rose-500"
-                    :class="item.isFlashSale ? 'bg-rose-600' : 'bg-gray-200'"
-                    :title="item.isFlashSale ? 'Tắt Flash Sale' : 'Bật Flash Sale'"
-                  >
-                    <span
-                      class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out flex items-center justify-center text-[10px]"
-                      :class="item.isFlashSale ? 'translate-x-5' : 'translate-x-0'"
-                    >
-                      {{ item.isFlashSale ? '⚡' : '' }}
-                    </span>
-                  </button>
-                  <span class="text-[10px] font-bold" :class="item.isFlashSale ? 'text-rose-600' : 'text-gray-400'">
-                    {{ item.isFlashSale ? 'Đang bật' : 'Đang tắt' }}
-                  </span>
-                </div>
-              </td>
-
-              <!-- TỒN KHO & NHẬP KHO NHANH (Yêu cầu Phase 11) -->
-              <td class="p-4">
-                <div class="flex items-center gap-2">
+            <!-- BẬT/TẮT FLASH SALE NHANH -->
+            <td class="px-4 py-3 text-center">
+              <div class="flex flex-col items-center gap-1">
+                <button
+                  type="button"
+                  @click="toggleFlashSale(item)"
+                  :disabled="togglingId === item.id"
+                  class="relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+                  :class="item.isFlashSale ? 'bg-red-600' : 'bg-slate-200'"
+                  :title="item.isFlashSale ? 'Tắt Flash Sale' : 'Bật Flash Sale'"
+                >
                   <span
-                    class="font-bold px-2.5 py-1 rounded-lg text-xs"
-                    :class="item.totalStock > 5 ? 'bg-emerald-50 text-emerald-700' : (item.totalStock > 0 ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700')"
+                    class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out flex items-center justify-center text-[9px]"
+                    :class="item.isFlashSale ? 'translate-x-5' : 'translate-x-0'"
                   >
-                    {{ item.totalStock }} chiếc
+                    {{ item.isFlashSale ? '⚡' : '' }}
                   </span>
-                  <button
-                    type="button"
-                    @click="openStockModal(item)"
-                    class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[11px] font-bold transition-colors"
-                    title="Chỉnh sửa tồn kho từng biến thể"
-                  >
-                    ✏️ Sửa kho
-                  </button>
-                </div>
-              </td>
+                </button>
+                <span class="text-[10px] font-semibold" :class="item.isFlashSale ? 'text-red-600' : 'text-slate-400'">
+                  {{ item.isFlashSale ? 'Đang bật' : 'Tắt' }}
+                </span>
+              </div>
+            </td>
 
-              <td class="p-4 text-right">
-                <div class="inline-flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    @click="openEditModal(item)"
-                    class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-700 rounded-xl font-bold transition-colors"
-                    title="Chỉnh sửa sản phẩm & biến thể"
-                  >
-                    ✏️ Sửa
-                  </button>
-                  <router-link
-                    :to="`/product/${item.slug}`"
-                    target="_blank"
-                    class="px-2.5 py-1.5 bg-gray-100 hover:bg-rose-50 hover:text-rose-600 rounded-xl font-bold transition-colors inline-block"
-                  >
-                    Xem ↗
-                  </router-link>
-                  <button
-                    type="button"
-                    @click="deleteProduct(item)"
-                    :disabled="deletingId === item.id"
-                    class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 rounded-xl font-bold transition-colors inline-flex items-center gap-1 disabled:opacity-50"
-                    title="Xóa sản phẩm an toàn"
-                  >
-                    <span v-if="deletingId === item.id" class="w-3.5 h-3.5 border-2 border-rose-600 border-t-transparent rounded-full animate-spin"></span>
-                    <span v-else>🗑️</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <!-- TỒN KHO & NHẬP KHO NHANH -->
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <span
+                  class="font-semibold px-2.5 py-0.5 rounded-full text-[11px] border"
+                  :class="item.totalStock > 5
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : (item.totalStock > 0
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-red-50 text-red-700 border-red-200')"
+                >
+                  {{ item.totalStock }} chiếc
+                </span>
+                <button
+                  type="button"
+                  @click="openStockModal(item)"
+                  class="h-7 px-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-md text-[11px] font-semibold transition-colors"
+                  title="Chỉnh sửa tồn kho từng biến thể"
+                >
+                  Sửa kho
+                </button>
+              </div>
+            </td>
+
+            <td class="px-4 py-3 text-right">
+              <div class="inline-flex items-center gap-1.5">
+                <button
+                  type="button"
+                  @click="openEditModal(item)"
+                  class="h-8 px-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
+                  title="Chỉnh sửa sản phẩm & biến thể"
+                >
+                  Sửa
+                </button>
+                <router-link
+                  :to="`/product/${item.slug}`"
+                  target="_blank"
+                  class="h-8 px-2.5 inline-flex items-center bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
+                >
+                  Xem ↗
+                </router-link>
+                <button
+                  type="button"
+                  @click="deleteProduct(item)"
+                  :disabled="deletingId === item.id"
+                  class="h-8 px-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 rounded-lg font-semibold text-[11px] transition-colors inline-flex items-center gap-1 disabled:opacity-50"
+                  title="Xóa sản phẩm an toàn"
+                >
+                  <span v-if="deletingId === item.id" class="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                  <span v-else>Xóa</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- MODAL NHẬP KHO NHANH BIẾN THỂ (Quick Stock Edit Modal) (Phase 11) -->
+    <!-- MODAL NHẬP KHO NHANH BIẾN THỂ (Quick Stock Edit Modal) -->
     <Teleport to="body">
       <div
         v-if="selectedProductForStock"
-        class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+        class="fixed inset-0 z-[9990] bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-4 no-print"
       >
-        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-xl max-h-[90vh] overflow-y-auto w-full space-y-6 shadow-2xl">
-        <!-- Modal Header -->
-        <div class="flex justify-between items-start pb-4 border-b border-gray-100">
-          <div class="flex items-center gap-3">
-            <img
-              :src="selectedProductForStock.thumbnailUrl"
-              :alt="selectedProductForStock.name"
-              class="w-12 h-14 object-cover rounded-xl bg-gray-100"
-            />
-            <div>
-              <h3 class="font-extrabold text-sm text-gray-900 line-clamp-1">
-                {{ selectedProductForStock.name }}
-              </h3>
-              <p class="text-xs text-gray-500 mt-0.5">
-                Nhập kho nhanh từng phân loại Size & Màu sắc
-              </p>
+        <div class="relative z-[9995] bg-white rounded-2xl border border-slate-200 max-w-xl max-h-[90vh] flex flex-col overflow-hidden w-full shadow-2xl">
+          <!-- Modal Header -->
+          <div class="px-6 py-4 flex justify-between items-start border-b border-slate-200 shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+              <img
+                :src="selectedProductForStock.thumbnailUrl"
+                :alt="selectedProductForStock.name"
+                class="w-11 h-14 object-cover rounded-lg bg-slate-100 border border-slate-200 shrink-0"
+              />
+              <div class="min-w-0">
+                <h3 class="font-bold text-sm text-slate-900 line-clamp-1">
+                  {{ selectedProductForStock.name }}
+                </h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">
+                  Nhập kho nhanh từng phân loại Size & Màu sắc
+                </p>
+              </div>
             </div>
+            <button
+              @click="closeStockModal"
+              class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 font-bold shrink-0"
+            >
+              ✕
+            </button>
           </div>
-          <button
-            @click="closeStockModal"
-            class="text-gray-400 hover:text-gray-700 font-bold text-lg p-1"
-          >
-            ✕
-          </button>
-        </div>
 
-        <!-- Variants List -->
-        <div v-if="loadingVariants" class="py-12 text-center text-xs text-gray-400">
-          <span class="inline-block w-5 h-5 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mb-2"></span>
-          <div>Đang nạp danh sách biến thể...</div>
-        </div>
-
-        <div v-else class="space-y-3 max-h-96 overflow-y-auto pr-1">
-          <div
-            v-for="variant in productVariants"
-            :key="variant.id"
-            class="p-3.5 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between gap-3"
-          >
-            <!-- Variant Info -->
-            <div class="flex items-center gap-2.5">
-              <span
-                class="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-inner shrink-0"
-                :style="{ backgroundColor: variant.colorHex }"
-              ></span>
-              <div>
-                <div class="font-bold text-xs text-gray-900">
-                  Size {{ variant.size }} - {{ variant.colorName }}
-                </div>
-                <div class="font-mono text-[10px] text-gray-400">
-                  SKU: {{ variant.sku }}
-                </div>
-              </div>
+          <!-- Scrollable Variants List -->
+          <div class="flex-1 overflow-y-auto p-6">
+            <div v-if="loadingVariants" class="py-12 text-center text-xs text-slate-400">
+              <span class="inline-block w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mb-2"></span>
+              <div>Đang nạp danh sách biến thể...</div>
             </div>
 
-            <!-- Quick Adjustments -->
-            <div class="flex items-center gap-2">
-              <div class="flex items-center gap-1">
-                <button
-                  type="button"
-                  @click="adjustStock(variant, -5)"
-                  class="w-6 h-6 rounded-lg bg-white hover:bg-gray-200 border border-gray-200 font-bold text-[11px] text-gray-700"
-                >
-                  -5
-                </button>
-                <input
-                  type="number"
-                  min="0"
-                  v-model.number="variant.stockQuantity"
-                  class="w-16 px-2 py-1 bg-white border border-gray-200 rounded-lg text-center text-xs font-black text-gray-900 focus:outline-none focus:ring-1 focus:ring-rose-500"
-                />
-                <button
-                  type="button"
-                  @click="adjustStock(variant, 5)"
-                  class="w-6 h-6 rounded-lg bg-white hover:bg-gray-200 border border-gray-200 font-bold text-[11px] text-gray-700"
-                >
-                  +5
-                </button>
-                <button
-                  type="button"
-                  @click="adjustStock(variant, 10)"
-                  class="w-7 h-6 rounded-lg bg-white hover:bg-gray-200 border border-gray-200 font-bold text-[10px] text-gray-700"
-                >
-                  +10
-                </button>
-              </div>
-
-              <!-- Save button -->
-              <button
-                type="button"
-                @click="saveVariantStock(variant)"
-                :disabled="savingVariantId === variant.id"
-                class="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm"
+            <div v-else class="space-y-2.5">
+              <div
+                v-for="variant in productVariants"
+                :key="variant.id"
+                class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 flex flex-wrap items-center justify-between gap-3"
               >
-                {{ savingVariantId === variant.id ? '...' : 'Lưu' }}
-              </button>
+                <div class="flex items-center gap-2.5">
+                  <span
+                    class="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0"
+                    :style="{ backgroundColor: variant.colorHex }"
+                  ></span>
+                  <div>
+                    <div class="font-semibold text-xs text-slate-900">
+                      Size {{ variant.size }} - {{ variant.colorName }}
+                    </div>
+                    <div class="font-mono text-[10px] text-slate-400">
+                      SKU: {{ variant.sku }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-1">
+                    <button
+                      type="button"
+                      @click="adjustStock(variant, -5)"
+                      class="w-7 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-200 font-semibold text-[11px] text-slate-700"
+                    >
+                      -5
+                    </button>
+                    <input
+                      type="number"
+                      min="0"
+                      v-model.number="variant.stockQuantity"
+                      class="w-16 h-7 px-2 bg-white border border-slate-200 rounded-md text-center text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                    />
+                    <button
+                      type="button"
+                      @click="adjustStock(variant, 5)"
+                      class="w-7 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-200 font-semibold text-[11px] text-slate-700"
+                    >
+                      +5
+                    </button>
+                    <button
+                      type="button"
+                      @click="adjustStock(variant, 10)"
+                      class="w-8 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-200 font-semibold text-[10px] text-slate-700"
+                    >
+                      +10
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    @click="saveVariantStock(variant)"
+                    :disabled="savingVariantId === variant.id"
+                    class="h-7 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-semibold transition-colors"
+                  >
+                    {{ savingVariantId === variant.id ? '...' : 'Lưu' }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Modal Footer -->
-        <div class="pt-3 border-t border-gray-100 flex justify-end">
-          <button
-            type="button"
-            @click="closeStockModal"
-            class="px-5 py-2.5 bg-gray-900 text-white font-bold text-xs rounded-xl hover:bg-gray-800 transition-colors"
-          >
-            Hoàn tất đóng
-          </button>
-        </div>
+          <!-- Sticky Footer -->
+          <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+            <button
+              type="button"
+              @click="closeStockModal"
+              class="h-9 px-5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition-colors"
+            >
+              Hoàn tất đóng
+            </button>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -309,302 +310,307 @@
     <Teleport to="body">
       <div
         v-if="showProductModal"
-        class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+        class="fixed inset-0 z-[9990] bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-4 no-print"
       >
-        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-3xl max-h-[90vh] overflow-y-auto w-full space-y-6 shadow-2xl">
-        <div class="flex items-center justify-between pb-4 border-b border-gray-100">
-          <div>
-            <h3 class="text-base sm:text-lg font-black text-gray-900">
-              {{ editingProductId ? '✏️ Chỉnh Sửa Sản Phẩm' : '➕ Thêm Sản Phẩm Mới' }}
-            </h3>
-            <p class="text-xs text-gray-500 mt-0.5">
-              Upload ảnh trực tiếp hoặc nhập URL, và cấu hình đầy đủ danh sách biến thể Size/Màu
-            </p>
-          </div>
-          <button
-            type="button"
-            @click="closeProductModal"
-            class="text-gray-400 hover:text-gray-700 font-bold text-lg p-1"
-          >
-            ✕
-          </button>
-        </div>
-
-        <form @submit.prevent="submitProductForm" class="space-y-5">
-          <!-- Basic Info -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-bold text-gray-700 mb-1">Tên sản phẩm *</label>
-              <input
-                v-model="productForm.name"
-                type="text"
-                required
-                placeholder="VD: Áo Thun Cotton Compact Cổ Tròn"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-              />
-            </div>
-
+        <form
+          @submit.prevent="submitProductForm"
+          class="relative z-[9995] bg-white rounded-2xl border border-slate-200 max-w-3xl max-h-[90vh] flex flex-col overflow-hidden w-full shadow-2xl"
+        >
+          <!-- Sticky Header -->
+          <div class="px-6 py-4 flex items-center justify-between border-b border-slate-200 shrink-0">
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Danh mục *</label>
-              <select
-                v-model="productForm.categoryId"
-                required
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:ring-2 focus:ring-rose-500 focus:outline-none"
-              >
-                <option disabled value="">-- Chọn danh mục --</option>
-                <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                  {{ cat.name }}
-                </option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Slug URL (tùy chọn - tự sinh nếu để trống)</label>
-              <input
-                v-model="productForm.slug"
-                type="text"
-                placeholder="ao-thun-cotton-compact"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs font-mono focus:ring-2 focus:ring-rose-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Giá gốc (VNĐ) *</label>
-              <input
-                v-model.number="productForm.basePrice"
-                type="number"
-                min="0"
-                required
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Giá khuyến mãi (VNĐ, tùy chọn)</label>
-              <input
-                v-model.number="productForm.salePrice"
-                type="number"
-                min="0"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-              />
-            </div>
-
-            <div class="sm:col-span-2 flex items-center gap-2">
-              <input
-                id="isFlashSaleCheckbox"
-                v-model="productForm.isFlashSale"
-                type="checkbox"
-                class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500"
-              />
-              <label for="isFlashSaleCheckbox" class="text-xs font-bold text-gray-800 cursor-pointer">
-                ⚡ Kích hoạt Flash Sale cho sản phẩm này
-              </label>
-            </div>
-          </div>
-
-          <!-- Image Upload + URL -->
-          <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
-            <label class="block text-xs font-bold text-gray-800">Ảnh đại diện sản phẩm</label>
-            <div class="flex flex-col sm:flex-row gap-4 items-start">
-              <div class="w-24 h-28 rounded-2xl overflow-hidden bg-white border border-gray-200 shrink-0 flex items-center justify-center">
-                <img
-                  v-if="productForm.thumbnailUrl"
-                  :src="productForm.thumbnailUrl"
-                  alt="Preview"
-                  @error="onImageError"
-                  class="w-full h-full object-cover"
-                />
-                <span v-else class="text-[11px] text-gray-400 text-center px-2">Chưa có ảnh</span>
-              </div>
-
-              <div class="flex-1 space-y-2.5 w-full">
-                <div class="flex flex-wrap items-center gap-2">
-                  <label class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-rose-600 text-white text-xs font-bold cursor-pointer transition-colors inline-flex items-center gap-1.5">
-                    <span>{{ uploadingImage ? 'Đang tải lên...' : '📤 Upload ảnh từ máy' }}</span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      class="hidden"
-                      :disabled="uploadingImage"
-                      @change="handleImageUpload"
-                    />
-                  </label>
-                  <span class="text-[11px] text-gray-400">Hỗ trợ JPG, PNG, WEBP</span>
-                </div>
-
-                <input
-                  v-model="productForm.thumbnailUrl"
-                  type="text"
-                  placeholder="Hoặc dán đường dẫn ảnh (/uploads/... hoặc https://...)"
-                  class="w-full px-3.5 py-2 rounded-xl border border-gray-200 bg-white text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <!-- Album ảnh phụ (Product Gallery) -->
-            <div class="pt-3 border-t border-gray-200/70 space-y-2.5">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <label class="text-xs font-bold text-gray-800">
-                  Album ảnh phụ ({{ productForm.galleryImages.length }} ảnh)
-                </label>
-                <label class="px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[11px] font-bold cursor-pointer transition-colors inline-flex items-center gap-1">
-                  <span>{{ uploadingGallery ? 'Đang tải...' : '🖼️ + Thêm nhiều ảnh phụ' }}</span>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/jpeg,image/png,image/webp"
-                    class="hidden"
-                    :disabled="uploadingGallery"
-                    @change="handleGalleryUpload"
-                  />
-                </label>
-              </div>
-
-              <div v-if="productForm.galleryImages.length > 0" class="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                <div
-                  v-for="(imgUrl, idx) in productForm.galleryImages"
-                  :key="`${imgUrl}-${idx}`"
-                  class="relative group aspect-[3/4] rounded-xl overflow-hidden bg-white border border-gray-200"
-                >
-                  <img :src="imgUrl" alt="Gallery" @error="onImageError" class="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    @click="removeGalleryImage(idx)"
-                    class="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center"
-                    title="Xóa ảnh phụ"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-              <p v-else class="text-[11px] text-gray-400">
-                Chưa có ảnh phụ. Bạn có thể chọn nhiều ảnh cùng lúc để hiển thị album ở trang chi tiết sản phẩm.
+              <h3 class="text-base font-bold text-slate-900">
+                {{ editingProductId ? 'Chỉnh Sửa Sản Phẩm' : 'Thêm Sản Phẩm Mới' }}
+              </h3>
+              <p class="text-[11px] text-slate-500 mt-0.5">
+                Upload ảnh trực tiếp hoặc nhập URL, và cấu hình đầy đủ danh sách biến thể Size/Màu
               </p>
             </div>
-          </div>
-
-          <!-- Description -->
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Mô tả sản phẩm</label>
-            <textarea
-              v-model="productForm.description"
-              rows="3"
-              placeholder="Chất liệu, phom dáng, hướng dẫn bảo quản..."
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-            ></textarea>
-          </div>
-
-          <!-- Variants Editor -->
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-extrabold text-gray-900 uppercase tracking-wider">
-                Danh sách Biến thể (Size / Màu / Giá / Tồn kho) *
-              </label>
-              <button
-                type="button"
-                @click="addVariantRow"
-                class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white text-xs font-bold transition-colors"
-              >
-                + Thêm dòng biến thể
-              </button>
-            </div>
-
-            <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
-              <div
-                v-for="(v, idx) in productForm.variants"
-                :key="v.id || `new-${idx}`"
-                class="p-3 rounded-2xl bg-gray-50 border border-gray-200/80 grid grid-cols-2 sm:grid-cols-12 gap-2 items-center"
-              >
-                <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-gray-500 mb-0.5">Size *</label>
-                  <input
-                    v-model="v.size"
-                    type="text"
-                    required
-                    placeholder="M / L / 30"
-                    class="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-bold"
-                  />
-                </div>
-                <div class="sm:col-span-3">
-                  <label class="block text-[10px] font-bold text-gray-500 mb-0.5">Tên màu *</label>
-                  <div class="flex items-center gap-1.5">
-                    <input
-                      v-model="v.colorHex"
-                      type="color"
-                      class="w-7 h-7 rounded cursor-pointer border border-gray-200 shrink-0"
-                    />
-                    <input
-                      v-model="v.colorName"
-                      type="text"
-                      required
-                      placeholder="Đen / Trắng"
-                      class="w-full px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-xs"
-                    />
-                  </div>
-                </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-gray-500 mb-0.5">SKU</label>
-                  <input
-                    v-model="v.sku"
-                    type="text"
-                    placeholder="Tự sinh"
-                    class="w-full px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-[11px] font-mono"
-                  />
-                </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-gray-500 mb-0.5">Giá (VNĐ) *</label>
-                  <input
-                    v-model.number="v.price"
-                    type="number"
-                    min="0"
-                    required
-                    class="w-full px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-bold"
-                  />
-                </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-[10px] font-bold text-gray-500 mb-0.5">Tồn kho *</label>
-                  <input
-                    v-model.number="v.stockQuantity"
-                    type="number"
-                    min="0"
-                    required
-                    class="w-full px-2 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-bold text-center"
-                  />
-                </div>
-                <div class="sm:col-span-1 flex justify-end pt-3 sm:pt-4">
-                  <button
-                    type="button"
-                    @click="removeVariantRow(idx)"
-                    :disabled="productForm.variants.length <= 1"
-                    class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-100 disabled:opacity-30 transition-colors"
-                    title="Xóa dòng biến thể"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Modal Actions -->
-          <div class="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
             <button
               type="button"
               @click="closeProductModal"
-              class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-bold text-xs hover:bg-gray-50"
+              class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 font-bold"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Scrollable Form Body -->
+          <div class="flex-1 overflow-y-auto p-6 space-y-5">
+            <!-- Basic Info -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tên sản phẩm *</label>
+                <input
+                  v-model="productForm.name"
+                  type="text"
+                  required
+                  placeholder="VD: Áo Thun Cotton Compact Cổ Tròn"
+                  class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Danh mục *</label>
+                <select
+                  v-model="productForm.categoryId"
+                  required
+                  class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+                >
+                  <option disabled value="">-- Chọn danh mục --</option>
+                  <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                    {{ cat.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Slug URL (tùy chọn - tự sinh nếu để trống)</label>
+                <input
+                  v-model="productForm.slug"
+                  type="text"
+                  placeholder="ao-thun-cotton-compact"
+                  class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs font-mono focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Giá gốc (VNĐ) *</label>
+                <input
+                  v-model.number="productForm.basePrice"
+                  type="number"
+                  min="0"
+                  required
+                  class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Giá khuyến mãi (VNĐ, tùy chọn)</label>
+                <input
+                  v-model.number="productForm.salePrice"
+                  type="number"
+                  min="0"
+                  class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+                />
+              </div>
+
+              <div class="sm:col-span-2 flex items-center gap-2 pt-1">
+                <input
+                  id="isFlashSaleCheckbox"
+                  v-model="productForm.isFlashSale"
+                  type="checkbox"
+                  class="w-4 h-4 rounded accent-slate-900"
+                />
+                <label for="isFlashSaleCheckbox" class="text-xs font-semibold text-slate-800 cursor-pointer">
+                  ⚡ Kích hoạt Flash Sale cho sản phẩm này
+                </label>
+              </div>
+            </div>
+
+            <!-- Image Upload + URL -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+              <label class="block text-xs font-semibold text-slate-800">Ảnh đại diện sản phẩm</label>
+              <div class="flex flex-col sm:flex-row gap-4 items-start">
+                <div class="w-24 h-28 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center">
+                  <img
+                    v-if="productForm.thumbnailUrl"
+                    :src="productForm.thumbnailUrl"
+                    alt="Preview"
+                    @error="onImageError"
+                    class="w-full h-full object-cover"
+                  />
+                  <span v-else class="text-[11px] text-slate-400 text-center px-2">Chưa có ảnh</span>
+                </div>
+
+                <div class="flex-1 space-y-2.5 w-full">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <label class="h-9 px-3.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold cursor-pointer transition-colors inline-flex items-center gap-1.5">
+                      <span>{{ uploadingImage ? 'Đang tải lên...' : '📤 Upload ảnh từ máy' }}</span>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        class="hidden"
+                        :disabled="uploadingImage"
+                        @change="handleImageUpload"
+                      />
+                    </label>
+                    <span class="text-[11px] text-slate-400">Hỗ trợ JPG, PNG, WEBP</span>
+                  </div>
+
+                  <input
+                    v-model="productForm.thumbnailUrl"
+                    type="text"
+                    placeholder="Hoặc dán đường dẫn ảnh (/uploads/... hoặc https://...)"
+                    class="w-full h-9 px-3.5 rounded-lg border border-slate-200 bg-white text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <!-- Album ảnh phụ (Product Gallery) -->
+              <div class="pt-3 border-t border-slate-200 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <label class="text-xs font-semibold text-slate-800">
+                    Album ảnh phụ ({{ productForm.galleryImages.length }} ảnh)
+                  </label>
+                  <label class="h-8 px-3 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-[11px] font-semibold cursor-pointer transition-colors inline-flex items-center gap-1">
+                    <span>{{ uploadingGallery ? 'Đang tải...' : '🖼️ + Thêm nhiều ảnh phụ' }}</span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/jpeg,image/png,image/webp"
+                      class="hidden"
+                      :disabled="uploadingGallery"
+                      @change="handleGalleryUpload"
+                    />
+                  </label>
+                </div>
+
+                <div v-if="productForm.galleryImages.length > 0" class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  <div
+                    v-for="(imgUrl, idx) in productForm.galleryImages"
+                    :key="`${imgUrl}-${idx}`"
+                    class="relative group aspect-[3/4] rounded-lg overflow-hidden bg-white border border-slate-200"
+                  >
+                    <img :src="imgUrl" alt="Gallery" @error="onImageError" class="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      @click="removeGalleryImage(idx)"
+                      class="absolute top-1 right-1 w-5 h-5 rounded-full bg-slate-900/75 hover:bg-red-600 text-white text-[10px] font-bold flex items-center justify-center"
+                      title="Xóa ảnh phụ"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+                <p v-else class="text-[11px] text-slate-400">
+                  Chưa có ảnh phụ. Bạn có thể chọn nhiều ảnh cùng lúc để hiển thị album ở trang chi tiết sản phẩm.
+                </p>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mô tả sản phẩm</label>
+              <textarea
+                v-model="productForm.description"
+                rows="3"
+                placeholder="Chất liệu, phom dáng, hướng dẫn bảo quản..."
+                class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+              ></textarea>
+            </div>
+
+            <!-- Variants Editor -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  Danh sách Biến thể (Size / Màu / Giá / Tồn kho) *
+                </label>
+                <button
+                  type="button"
+                  @click="addVariantRow"
+                  class="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors"
+                >
+                  + Thêm dòng biến thể
+                </button>
+              </div>
+
+              <div class="space-y-2.5">
+                <div
+                  v-for="(v, idx) in productForm.variants"
+                  :key="v.id || `new-${idx}`"
+                  class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 grid grid-cols-2 sm:grid-cols-12 gap-2 items-center"
+                >
+                  <div class="sm:col-span-2">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Size *</label>
+                    <input
+                      v-model="v.size"
+                      type="text"
+                      required
+                      placeholder="M / L / 30"
+                      class="w-full h-8 px-2.5 rounded-md border border-slate-200 bg-white text-xs font-semibold"
+                    />
+                  </div>
+                  <div class="sm:col-span-3">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Tên màu *</label>
+                    <div class="flex items-center gap-1.5">
+                      <input
+                        v-model="v.colorHex"
+                        type="color"
+                        class="w-7 h-7 rounded cursor-pointer border border-slate-200 shrink-0"
+                      />
+                      <input
+                        v-model="v.colorName"
+                        type="text"
+                        required
+                        placeholder="Đen / Trắng"
+                        class="w-full h-8 px-2 rounded-md border border-slate-200 bg-white text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">SKU</label>
+                    <input
+                      v-model="v.sku"
+                      type="text"
+                      placeholder="Tự sinh"
+                      class="w-full h-8 px-2 rounded-md border border-slate-200 bg-white text-[11px] font-mono"
+                    />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Giá (VNĐ) *</label>
+                    <input
+                      v-model.number="v.price"
+                      type="number"
+                      min="0"
+                      required
+                      class="w-full h-8 px-2 rounded-md border border-slate-200 bg-white text-xs font-semibold"
+                    />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-0.5">Tồn kho *</label>
+                    <input
+                      v-model.number="v.stockQuantity"
+                      type="number"
+                      min="0"
+                      required
+                      class="w-full h-8 px-2 rounded-md border border-slate-200 bg-white text-xs font-semibold text-center"
+                    />
+                  </div>
+                  <div class="sm:col-span-1 flex justify-end pt-3 sm:pt-4">
+                    <button
+                      type="button"
+                      @click="removeVariantRow(idx)"
+                      :disabled="productForm.variants.length <= 1"
+                      class="p-1.5 rounded-md text-red-600 hover:bg-red-50 disabled:opacity-30 transition-colors"
+                      title="Xóa dòng biến thể"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sticky Footer Actions -->
+          <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
+            <button
+              type="button"
+              @click="closeProductModal"
+              class="h-9 px-4 rounded-lg border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               :disabled="savingProduct || uploadingImage"
-              class="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs shadow-md shadow-rose-200 transition-all"
+              class="h-9 px-5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-semibold text-xs transition-colors"
             >
               {{ savingProduct ? 'Đang lưu...' : (editingProductId ? 'Lưu Cập Nhật' : 'Tạo Sản Phẩm') }}
             </button>
           </div>
         </form>
-        </div>
       </div>
     </Teleport>
 

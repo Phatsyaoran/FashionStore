@@ -1,27 +1,27 @@
 <template>
   <div v-if="loading" class="py-32 text-center">
-    <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-rose-500 border-t-transparent"></div>
-    <p class="text-xs text-gray-500 mt-3 font-semibold">Đang nạp chi tiết sản phẩm...</p>
+    <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-[#7A1032] border-t-transparent"></div>
+    <p class="text-xs text-[#6B7280] mt-3 font-medium">Đang nạp chi tiết sản phẩm...</p>
   </div>
 
-  <div v-else-if="product" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+  <div v-else-if="product" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-12 sm:space-y-16">
     
     <!-- Breadcrumb -->
-    <div class="text-xs text-gray-500 flex items-center gap-2">
-      <router-link to="/" class="hover:text-rose-600">Trang chủ</router-link>
-      <span>/</span>
-      <router-link to="/catalog" class="hover:text-rose-600">Cửa hàng</router-link>
-      <span>/</span>
-      <span class="text-gray-900 font-semibold truncate">{{ product.name }}</span>
+    <div class="text-xs text-[#6B7280] flex items-center gap-2">
+      <router-link to="/" class="hover:text-[#7A1032] transition-colors">Trang chủ</router-link>
+      <span class="text-neutral-300">/</span>
+      <router-link to="/catalog" class="hover:text-[#7A1032] transition-colors">Cửa hàng</router-link>
+      <span class="text-neutral-300">/</span>
+      <span class="text-[#18181B] font-medium truncate">{{ product.name }}</span>
     </div>
 
     <!-- Main Detail Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
       
       <!-- Left: Gallery Image (Sticky column for optimal browsing) -->
-      <div class="space-y-4 lg:sticky lg:top-28 self-start">
+      <div class="lg:col-span-6 space-y-4 lg:sticky lg:top-24 self-start">
         <div
-          class="relative bg-gray-100 rounded-3xl overflow-hidden aspect-[3/4] shadow-card border border-gray-100 select-none"
+          class="relative bg-neutral-100 rounded-2xl overflow-hidden aspect-[3/4] border border-neutral-200/80 shadow-sm select-none"
           @touchstart="onGalleryTouchStart"
           @touchend="onGalleryTouchEnd"
         >
@@ -29,11 +29,11 @@
             :src="activeImageUrl"
             :alt="product.name"
             @error="onImageError"
-            class="w-full h-full object-cover transition-all duration-500 hover:scale-105"
+            class="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03]"
           />
           <span
             v-if="product.isFlashSale"
-            class="absolute top-5 left-5 bg-gradient-to-r from-rose-600 to-orange-500 text-white text-xs font-black uppercase px-3.5 py-1.5 rounded-full shadow-lg animate-pulse flex items-center gap-1.5"
+            class="absolute top-4 left-4 bg-[#7A1032] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-md shadow-sm flex items-center gap-1"
           >
             <span>⚡</span> Flash Sale
           </span>
@@ -41,7 +41,7 @@
           <!-- Image counter pill when multiple images exist -->
           <span
             v-if="allGalleryImages.length > 1"
-            class="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full"
+            class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-[#18181B] border border-neutral-200 text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-sm"
           >
             {{ activeImageIndex + 1 }} / {{ allGalleryImages.length }}
           </span>
@@ -51,11 +51,11 @@
             type="button"
             @click="handleToggleWishlist"
             :title="isFavorited ? 'Bỏ khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'"
-            class="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-md hover:scale-110 active:scale-95 transition-all"
+            class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm border border-neutral-200/80 flex items-center justify-center shadow-sm hover:border-[#C9963B] hover:scale-105 active:scale-95 transition-all"
           >
             <svg
               class="w-5 h-5 transition-colors"
-              :class="isFavorited ? 'text-rose-600 fill-rose-600' : 'text-gray-400 hover:text-rose-500 fill-none'"
+              :class="isFavorited ? 'text-[#7A1032] fill-[#7A1032]' : 'text-[#18181B] hover:text-[#7A1032] fill-none'"
               viewBox="0 0 24 24"
               stroke="currentColor"
               stroke-width="2"
@@ -79,8 +79,8 @@
             :key="`${imgUrl}-${idx}`"
             type="button"
             @click="activeImageIndex = idx"
-            class="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl overflow-hidden border-2 shrink-0 transition-all bg-gray-100"
-            :class="activeImageIndex === idx ? 'border-rose-600 ring-2 ring-rose-500/25 scale-[1.02]' : 'border-transparent opacity-70 hover:opacity-100'"
+            class="w-16 h-20 sm:w-20 sm:h-24 rounded-xl overflow-hidden border-2 shrink-0 transition-all bg-neutral-100"
+            :class="activeImageIndex === idx ? 'border-[#7A1032] opacity-100 shadow-sm' : 'border-neutral-200 opacity-70 hover:opacity-100'"
           >
             <img
               :src="imgUrl"
@@ -93,58 +93,58 @@
         </div>
 
         <!-- 3 Quick Guarantee Badges under image -->
-        <div class="grid grid-cols-3 gap-2 pt-2 text-center text-[11px] text-gray-500">
-          <div class="p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm flex flex-col items-center gap-1">
-            <span class="text-base">📸</span>
-            <span class="font-semibold text-gray-800">Ảnh thật 100%</span>
+        <div class="grid grid-cols-3 gap-2.5 pt-1 text-center text-[11px] text-[#6B7280]">
+          <div class="p-3 rounded-xl bg-white border border-neutral-200/80 flex flex-col items-center gap-1 shadow-sm">
+            <span class="text-sm">📸</span>
+            <span class="font-medium text-[#18181B]">Ảnh thật 100%</span>
           </div>
-          <div class="p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm flex flex-col items-center gap-1">
-            <span class="text-base">🔄</span>
-            <span class="font-semibold text-gray-800">Đổi trả 60 ngày</span>
+          <div class="p-3 rounded-xl bg-white border border-neutral-200/80 flex flex-col items-center gap-1 shadow-sm">
+            <span class="text-sm">🔄</span>
+            <span class="font-medium text-[#18181B]">Đổi trả 60 ngày</span>
           </div>
-          <div class="p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm flex flex-col items-center gap-1">
-            <span class="text-base">📦</span>
-            <span class="font-semibold text-gray-800">Đồng kiểm khi nhận</span>
+          <div class="p-3 rounded-xl bg-white border border-neutral-200/80 flex flex-col items-center gap-1 shadow-sm">
+            <span class="text-sm">📦</span>
+            <span class="font-medium text-[#18181B]">Đồng kiểm nhận</span>
           </div>
         </div>
       </div>
 
       <!-- Right: Product Actions & Selectors -->
-      <div class="space-y-6">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-rose-600">
+      <div class="lg:col-span-6 space-y-6">
+        <div class="space-y-2.5">
+          <span class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#7A1032]">
             {{ product.categoryName || 'Thời Trang' }}
           </span>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1 leading-snug">
+          <h1 class="text-2xl sm:text-3xl font-bold text-[#18181B] tracking-tight leading-snug">
             {{ product.name }}
           </h1>
 
           <!-- Reviews summary -->
-          <div class="flex items-center gap-3 mt-3 text-xs">
+          <div class="flex flex-wrap items-center gap-3 text-xs pt-0.5">
             <template v-if="(reviewStats.totalReviews || product.reviewCount || 0) > 0">
-              <div class="flex items-center text-amber-500 font-bold">
+              <div class="flex items-center text-[#C9963B] font-bold">
                 <span>★</span>
-                <span class="ml-1 text-gray-900">{{ reviewStats.ratingAverage || product.ratingAverage }}</span>
+                <span class="ml-1 text-[#18181B]">{{ reviewStats.ratingAverage || product.ratingAverage }}</span>
               </div>
-              <span class="text-gray-300">|</span>
-              <span class="text-gray-500 font-medium">{{ reviewStats.totalReviews || product.reviewCount }} đánh giá thực tế</span>
+              <span class="text-neutral-300">|</span>
+              <span class="text-[#6B7280]">{{ reviewStats.totalReviews || product.reviewCount }} đánh giá thực tế</span>
             </template>
-            <span v-else class="text-gray-400 font-medium">Chưa có đánh giá nào</span>
-            <span class="text-gray-300">|</span>
-            <span class="text-emerald-700 font-medium">SKU: <code class="font-mono">{{ currentVariant?.sku || 'N/A' }}</code></span>
+            <span v-else class="text-[#6B7280]">Chưa có đánh giá nào</span>
+            <span class="text-neutral-300">|</span>
+            <span class="text-[#6B7280]">SKU: <code class="font-mono text-[#7A1032] font-semibold">{{ currentVariant?.sku || 'N/A' }}</code></span>
           </div>
 
           <!-- Price Box -->
-          <div class="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-baseline gap-3">
-            <span class="text-3xl font-black text-rose-600">
+          <div class="mt-4 p-4 sm:p-5 rounded-xl bg-white border border-neutral-200/80 shadow-sm flex flex-wrap items-baseline gap-3">
+            <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#7A1032]">
               {{ formatVND(currentPrice) }}
             </span>
-            <span v-if="product.salePrice && product.basePrice > product.salePrice" class="text-base text-gray-400 line-through">
+            <span v-if="product.salePrice && product.basePrice > product.salePrice" class="text-sm sm:text-base text-neutral-400 line-through">
               {{ formatVND(product.basePrice) }}
             </span>
             <span
               v-if="product.discountPercent"
-              class="text-xs font-extrabold bg-rose-600 text-white px-2.5 py-0.5 rounded-full"
+              class="text-[11px] font-bold bg-[#7A1032]/10 text-[#7A1032] border border-[#7A1032]/20 px-2.5 py-0.5 rounded-md"
             >
               Tiết kiệm {{ product.discountPercent }}%
             </span>
@@ -152,49 +152,49 @@
         </div>
 
         <!-- Color Selector -->
-        <div class="space-y-2 pt-2">
-          <div class="flex justify-between items-center text-xs font-medium">
-            <span class="text-gray-700">Màu sắc đang chọn: <strong class="text-gray-900">{{ selectedColor }}</strong></span>
+        <div class="space-y-2.5 pt-2 border-t border-neutral-200/80">
+          <div class="flex justify-between items-center text-xs">
+            <span class="text-[#6B7280] font-medium">Màu sắc: <strong class="text-[#18181B]">{{ selectedColor }}</strong></span>
           </div>
-          <div class="flex flex-wrap gap-2.5">
+          <div class="flex flex-wrap gap-2">
             <button
               v-for="color in availableColors"
               :key="color.name"
               type="button"
               @click="selectedColor = color.name"
-              class="flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all"
-              :class="selectedColor === color.name ? 'border-rose-600 bg-rose-50 text-rose-700 ring-2 ring-rose-600/20' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
+              class="flex items-center gap-2 px-3.5 h-10 rounded-lg border text-xs font-semibold transition-all"
+              :class="selectedColor === color.name ? 'border-[#7A1032] bg-[#7A1032] text-white shadow-sm' : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
             >
-              <span class="w-4 h-4 rounded-full border border-gray-300 shadow-inner" :style="{ backgroundColor: color.hex }"></span>
+              <span class="w-3.5 h-3.5 rounded-full border border-neutral-300" :style="{ backgroundColor: color.hex }"></span>
               <span>{{ color.name }}</span>
             </button>
           </div>
         </div>
 
-        <!-- Size Selector & SMART SIZE PREDICTOR BUTTON (Phase 6) -->
-        <div class="space-y-2 pt-2">
-          <div class="flex items-center justify-between text-xs font-medium">
-            <span class="text-gray-700">Kích thước (Size): <strong class="text-gray-900">{{ selectedSize }}</strong></span>
+        <!-- Size Selector & SMART SIZE PREDICTOR BUTTON -->
+        <div class="space-y-2.5 pt-1">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="text-[#6B7280] font-medium">Kích thước (Size): <strong class="text-[#18181B]">{{ selectedSize }}</strong></span>
             
-            <!-- Nút Trợ lý Gợi ý Size Thông Minh -->
+            <!-- Nút Trợ lý Gợi ý Size Thông Minh (Luxury AI Glow) -->
             <button
               type="button"
               @click="isSizePredictorOpen = true"
-              class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-3 py-1 rounded-full border border-rose-200 transition-all shadow-sm"
+              class="ai-glow inline-flex items-center gap-1.5 text-xs font-semibold text-white luxury-gradient px-3.5 py-1.5 rounded-lg active:scale-[0.98] transition-all shadow-sm"
             >
               <span>📏</span>
-              <span>Tư vấn chọn Size chuẩn theo chiều cao & cân nặng</span>
+              <span>Tư vấn chọn Size AI</span>
             </button>
           </div>
 
-          <div class="flex flex-wrap gap-2.5">
+          <div class="flex flex-wrap gap-2">
             <button
               v-for="size in availableSizes"
               :key="size"
               type="button"
               @click="selectedSize = size"
-              class="w-12 h-11 rounded-xl border flex items-center justify-center text-xs font-bold transition-all"
-              :class="selectedSize === size ? 'border-rose-600 bg-rose-600 text-white shadow-md shadow-rose-200' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
+              class="min-w-[48px] h-11 px-3 rounded-lg border flex items-center justify-center text-xs font-bold transition-all"
+              :class="selectedSize === size ? 'border-[#7A1032] bg-[#7A1032] text-white shadow-sm' : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
             >
               {{ size }}
             </button>
@@ -202,30 +202,30 @@
         </div>
 
         <!-- Real-time Stock Indicator -->
-        <div class="pt-2 text-xs">
-          <div v-if="currentVariant && currentVariant.stockQuantity > 0" class="flex items-center gap-2 text-emerald-700 font-semibold">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            <span>Còn lại <strong>{{ currentVariant.stockQuantity }}</strong> sản phẩm sẵn sàng giao</span>
+        <div class="pt-1 text-xs">
+          <div v-if="currentVariant && currentVariant.stockQuantity > 0" class="flex items-center gap-2 text-emerald-700 font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Còn lại <strong class="font-bold text-emerald-800">{{ currentVariant.stockQuantity }}</strong> sản phẩm sẵn sàng giao</span>
           </div>
-          <div v-else class="flex items-center gap-2 text-rose-600 font-bold bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+          <div v-else class="flex items-center gap-2 text-[#7A1032] font-semibold bg-[#7A1032]/5 p-3 rounded-lg border border-[#7A1032]/20">
             <span>✕ Biến thể này tạm thời hết hàng. Vui lòng chọn màu hoặc size khác!</span>
           </div>
         </div>
 
         <!-- Add to cart & Quantity actions -->
-        <div class="pt-4 flex flex-col sm:flex-row gap-3">
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
           <!-- Counter -->
-          <div class="flex items-center border border-gray-200 rounded-2xl overflow-hidden bg-gray-50 h-12 w-32 justify-between px-2">
+          <div class="flex items-center border border-neutral-200 rounded-lg overflow-hidden bg-white h-12 w-full sm:w-32 justify-between px-2 shadow-sm">
             <button
               type="button"
               @click="quantity = Math.max(1, quantity - 1)"
-              class="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-bold"
+              class="w-9 h-9 flex items-center justify-center text-[#18181B] hover:bg-neutral-100 rounded-md text-sm font-bold transition-colors"
             >-</button>
-            <span class="font-bold text-sm text-gray-900">{{ quantity }}</span>
+            <span class="font-bold text-sm text-[#18181B]">{{ quantity }}</span>
             <button
               type="button"
               @click="quantity = currentVariant ? Math.min(currentVariant.stockQuantity, quantity + 1) : quantity + 1"
-              class="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-200 rounded-lg text-sm font-bold"
+              class="w-9 h-9 flex items-center justify-center text-[#18181B] hover:bg-neutral-100 rounded-md text-sm font-bold transition-colors"
             >+</button>
           </div>
 
@@ -234,10 +234,10 @@
             type="button"
             @click="handleAddToCart"
             :disabled="!currentVariant || currentVariant.stockQuantity <= 0"
-            class="flex-1 h-12 rounded-2xl text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2.5"
-            :class="(!currentVariant || currentVariant.stockQuantity <= 0) ? 'bg-gray-300 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700 active:scale-95 shadow-rose-200'"
+            class="btn-sheen silky-hover flex-1 h-12 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5"
+            :class="(!currentVariant || currentVariant.stockQuantity <= 0) ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed' : 'bg-[#7A1032] hover:bg-[#5C0B27] text-white active:scale-[0.98] shadow-sm hover:shadow-md'"
           >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-[#F3D078]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
             <span>Thêm Vào Giỏ Hàng</span>
@@ -245,17 +245,17 @@
         </div>
 
         <!-- Guarantee Policies -->
-        <div class="pt-6 border-t border-gray-100 grid grid-cols-2 gap-3 text-[11px] text-gray-600">
-          <div class="flex items-center gap-2">
+        <div class="pt-5 border-t border-neutral-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#6B7280]">
+          <div class="flex items-center gap-2.5">
             <span>🛡️</span> 100% Chính hãng phân phối
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2.5">
             <span>📦</span> Miễn phí đổi trả 30 ngày
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2.5">
             <span>🚚</span> Freeship toàn quốc đơn từ 500k
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2.5">
             <span>💬</span> Tư vấn hỗ trợ 24/7
           </div>
         </div>
@@ -263,218 +263,223 @@
 
     </div>
 
-    <!-- GỢI Ý PHỐI ĐỒ THEO SET (MIX & MATCH OUTFIT) (Yêu cầu Phase 10) -->
-    <div v-if="mixMatchProducts.length > 0" class="bg-gradient-to-br from-rose-950 via-gray-900 to-black text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-rose-800/40 relative overflow-hidden">
-      <!-- Ambient Glow -->
-      <div class="absolute -top-24 -right-24 w-80 h-80 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- GỢI Ý PHỐI ĐỒ THEO SET (MIX & MATCH OUTFIT — Unified Starfield + Inset Sparkling Star Border + Matched Center Divider) -->
+    <div
+      v-if="mixMatchProducts.length > 0"
+      v-reveal
+      class="relative rounded-2xl overflow-hidden luxury-gradient shadow-[0_20px_50px_-15px_rgba(74,8,32,0.35)]"
+    >
+      <!-- Unified Interactive Starfield covering entire frame -->
+      <StarfieldOverlay :min-stars="90" />
 
-      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-5 border-b border-white/10">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-600 flex items-center justify-center text-xl shadow-lg shadow-rose-600/40">
-            ✨
+      <!-- Inset Sparkling Starlight Border (8px inset ~2mm, 12px corner radius) -->
+      <SparkleBorderOverlay :inset="8" :radius="12" />
+
+      <!-- Header Band -->
+      <div class="relative z-20 px-5 pt-5 pb-4 sm:px-8 sm:pt-6 sm:pb-5 text-[#FFFDF9] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-white/15 text-[#F3D078] border border-[#F3D078]/40 rounded uppercase tracking-[0.14em]">
+              AI Outfit Set
+            </span>
+            <h2 class="text-lg sm:text-xl font-bold tracking-tight text-[#FFFDF9]">
+              Phối Đồ Chuẩn Gu (Mix & Match)
+            </h2>
           </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                Phối Đồ Chuẩn Gu (Mix & Match)
-              </h2>
-              <span class="px-2 py-0.5 text-[10px] font-black bg-rose-600 text-white rounded uppercase tracking-wider">
-                OUTFIT SET
-              </span>
-            </div>
-            <p class="text-xs text-rose-200 mt-0.5">Set đồ hoàn hảo được stylist gợi ý dành riêng cho món đồ bạn đang xem</p>
-          </div>
+          <p class="text-xs text-white/80 mt-1">Set đồ hoàn hảo được stylist AI gợi ý dành riêng cho món đồ bạn đang xem</p>
         </div>
 
-        <!-- Combo Savings Badge -->
-        <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-amber-300 font-bold">
-          <span>🎁</span> Tiết kiệm thời gian phối đồ • Mua trọn bộ 1-click
+        <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/15 border border-white/20 text-xs text-[#F3D078] font-medium">
+          <span>✨</span> Tiết kiệm thời gian phối đồ • Mua trọn bộ 1-click
         </div>
       </div>
 
-      <!-- Outfits Row -->
-      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
-        <!-- 3 Items in Set (Cols 1-3) -->
-        <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-          
-          <!-- Item 1: Current Product -->
-          <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 border border-white/15 flex flex-col justify-between h-full relative group">
-            <span class="absolute top-2 left-2 bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md uppercase z-10 shadow-sm">
-              Món 1 (Đang xem)
-            </span>
-            <div class="aspect-[3/4] rounded-xl overflow-hidden mb-2.5 bg-gray-800">
-              <img
-                :src="product.thumbnailUrl"
-                :alt="product.name"
-                @error="onImageError"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+      <!-- Single Standalone Sparkling Star Divider (aligned 8px inset with SparkleBorderOverlay) -->
+      <SparkleDivider class="relative z-20 mx-[8px] my-3" />
+
+      <!-- Outfits Row (Crisp White Cards floating cleanly inside the inset star border) -->
+      <div class="relative z-20 p-5 sm:p-6 pt-4 sm:pt-5">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5 items-stretch">
+          <!-- 3 Items in Set (Cols 1-3) -->
+          <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            
+            <!-- Item 1: Current Product -->
+            <div class="bg-white/95 backdrop-blur-sm rounded-xl p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between h-full relative group">
+              <span class="absolute top-3 left-3 bg-[#18181B]/85 text-[#F3D078] text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                Món 1 (Đang xem)
+              </span>
+              <div class="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-neutral-100">
+                <img
+                  :src="product.thumbnailUrl"
+                  :alt="product.name"
+                  @error="onImageError"
+                  class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                />
+              </div>
+              <div>
+                <h4 class="text-xs font-semibold text-[#18181B] line-clamp-1 mb-1">{{ product.name }}</h4>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-[#7A1032]">{{ formatVND(currentPrice) }}</span>
+                  <span class="text-[10px] text-[#6B7280] bg-neutral-100 px-2 py-0.5 rounded">
+                    Size: {{ selectedSize }}
+                  </span>
+                </div>
+              </div>
             </div>
+
+            <!-- Item 2: Mix-Match Product 1 -->
+            <div
+              v-if="mixMatchProducts[0]"
+              class="bg-white/95 backdrop-blur-sm rounded-xl p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between h-full relative group"
+            >
+              <span class="absolute top-3 left-3 bg-[#7A1032] text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                Món 2 (Gợi ý)
+              </span>
+              <router-link :to="`/product/${mixMatchProducts[0].slug}`" class="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-neutral-100 block">
+                <img
+                  :src="mixMatchProducts[0].thumbnailUrl"
+                  :alt="mixMatchProducts[0].name"
+                  @error="onImageError"
+                  class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                />
+              </router-link>
+              <div class="space-y-2">
+                <router-link :to="`/product/${mixMatchProducts[0].slug}`">
+                  <h4 class="text-xs font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-1 transition-colors">
+                    {{ mixMatchProducts[0].name }}
+                  </h4>
+                </router-link>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-[#7A1032]">
+                    {{ formatVND(mixMatchSelectedVariants[mixMatchProducts[0].id]?.price || mixMatchProducts[0].salePrice || mixMatchProducts[0].basePrice) }}
+                  </span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-[10px] text-[#6B7280]">Size:</span>
+                    <select
+                      v-model="mixMatchSelectedSizes[mixMatchProducts[0].id]"
+                      class="bg-white text-[#18181B] text-[11px] font-semibold rounded-md px-2 py-1 border border-neutral-200 focus:outline-none focus:ring-1 focus:ring-[#7A1032]"
+                    >
+                      <option
+                        v-for="sz in getUniqueSizes(mixMatchProducts[0])"
+                        :key="sz"
+                        :value="sz"
+                      >
+                        {{ sz }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 3: Mix-Match Product 2 -->
+            <div
+              v-if="mixMatchProducts[1]"
+              class="bg-white/95 backdrop-blur-sm rounded-xl p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between h-full relative group"
+            >
+              <span class="absolute top-3 left-3 bg-[#7A1032] text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10">
+                Món 3 (Gợi ý)
+              </span>
+              <router-link :to="`/product/${mixMatchProducts[1].slug}`" class="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-neutral-100 block">
+                <img
+                  :src="mixMatchProducts[1].thumbnailUrl"
+                  :alt="mixMatchProducts[1].name"
+                  @error="onImageError"
+                  class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                />
+              </router-link>
+              <div class="space-y-2">
+                <router-link :to="`/product/${mixMatchProducts[1].slug}`">
+                  <h4 class="text-xs font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-1 transition-colors">
+                    {{ mixMatchProducts[1].name }}
+                  </h4>
+                </router-link>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-[#7A1032]">
+                    {{ formatVND(mixMatchSelectedVariants[mixMatchProducts[1].id]?.price || mixMatchProducts[1].salePrice || mixMatchProducts[1].basePrice) }}
+                  </span>
+                  <div class="flex items-center gap-1">
+                    <span class="text-[10px] text-[#6B7280]">Size:</span>
+                    <select
+                      v-model="mixMatchSelectedSizes[mixMatchProducts[1].id]"
+                      class="bg-white text-[#18181B] text-[11px] font-semibold rounded-md px-2 py-1 border border-neutral-200 focus:outline-none focus:ring-1 focus:ring-[#7A1032]"
+                    >
+                      <option
+                        v-for="sz in getUniqueSizes(mixMatchProducts[1])"
+                        :key="sz"
+                        :value="sz"
+                      >
+                        {{ sz }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Summary Card (Col 4) -->
+          <div class="bg-white/95 backdrop-blur-sm rounded-xl p-5 border border-white/60 shadow-lg flex flex-col justify-between space-y-5 h-full">
             <div>
-              <h4 class="text-xs font-bold text-white line-clamp-1 mb-1">{{ product.name }}</h4>
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-extrabold text-amber-300">{{ formatVND(currentPrice) }}</span>
-                <span class="text-[10px] text-gray-300 bg-white/15 px-2 py-0.5 rounded">
-                  Size: {{ selectedSize }}
-                </span>
+              <span class="text-[11px] font-bold text-[#7A1032] uppercase tracking-[0.14em] block">
+                Trọn bộ phối chuẩn gu
+              </span>
+              <div class="text-xs text-[#6B7280] mt-1.5">
+                Gồm {{ 1 + mixMatchProducts.length }} món thời trang kết hợp hoàn hảo
               </div>
-            </div>
-          </div>
-
-          <!-- Item 2: Mix-Match Product 1 -->
-          <div
-            v-if="mixMatchProducts[0]"
-            class="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 border border-white/15 flex flex-col justify-between h-full relative group"
-          >
-            <span class="absolute top-2 left-2 bg-amber-500 text-gray-950 text-[9px] font-black px-2 py-0.5 rounded-md uppercase z-10 shadow-sm">
-              Món 2 (Gợi ý)
-            </span>
-            <router-link :to="`/product/${mixMatchProducts[0].slug}`" class="aspect-[3/4] rounded-xl overflow-hidden mb-2.5 bg-gray-800 block">
-              <img
-                :src="mixMatchProducts[0].thumbnailUrl"
-                :alt="mixMatchProducts[0].name"
-                @error="onImageError"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </router-link>
-            <div class="space-y-2">
-              <router-link :to="`/product/${mixMatchProducts[0].slug}`">
-                <h4 class="text-xs font-bold text-white hover:text-amber-300 line-clamp-1 transition-colors">
-                  {{ mixMatchProducts[0].name }}
-                </h4>
-              </router-link>
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-extrabold text-amber-300">
-                  {{ formatVND(mixMatchSelectedVariants[mixMatchProducts[0].id]?.price || mixMatchProducts[0].salePrice || mixMatchProducts[0].basePrice) }}
-                </span>
-                <!-- Size Selector for Item 2 -->
-                <div class="flex items-center gap-1">
-                  <span class="text-[10px] text-gray-300">Size:</span>
-                  <select
-                    v-model="mixMatchSelectedSizes[mixMatchProducts[0].id]"
-                    class="bg-gray-800 text-white text-[11px] font-bold rounded-lg px-2 py-1 border border-white/20 focus:outline-none focus:ring-1 focus:ring-rose-500"
-                  >
-                    <option
-                      v-for="sz in getUniqueSizes(mixMatchProducts[0])"
-                      :key="sz"
-                      :value="sz"
-                    >
-                      {{ sz }}
-                    </option>
-                  </select>
+              <div class="mt-5 pt-4 border-t border-neutral-200/80">
+                <span class="text-xs text-[#6B7280] block">Tổng giá trị cả set:</span>
+                <div class="text-2xl font-extrabold text-[#7A1032] mt-1">
+                  {{ formatVND(totalSetPrice) }}
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Item 3: Mix-Match Product 2 -->
-          <div
-            v-if="mixMatchProducts[1]"
-            class="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 border border-white/15 flex flex-col justify-between h-full relative group"
-          >
-            <span class="absolute top-2 left-2 bg-amber-500 text-gray-950 text-[9px] font-black px-2 py-0.5 rounded-md uppercase z-10 shadow-sm">
-              Món 3 (Gợi ý)
-            </span>
-            <router-link :to="`/product/${mixMatchProducts[1].slug}`" class="aspect-[3/4] rounded-xl overflow-hidden mb-2.5 bg-gray-800 block">
-              <img
-                :src="mixMatchProducts[1].thumbnailUrl"
-                :alt="mixMatchProducts[1].name"
-                @error="onImageError"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </router-link>
-            <div class="space-y-2">
-              <router-link :to="`/product/${mixMatchProducts[1].slug}`">
-                <h4 class="text-xs font-bold text-white hover:text-amber-300 line-clamp-1 transition-colors">
-                  {{ mixMatchProducts[1].name }}
-                </h4>
-              </router-link>
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-extrabold text-amber-300">
-                  {{ formatVND(mixMatchSelectedVariants[mixMatchProducts[1].id]?.price || mixMatchProducts[1].salePrice || mixMatchProducts[1].basePrice) }}
-                </span>
-                <!-- Size Selector for Item 3 -->
-                <div class="flex items-center gap-1">
-                  <span class="text-[10px] text-gray-300">Size:</span>
-                  <select
-                    v-model="mixMatchSelectedSizes[mixMatchProducts[1].id]"
-                    class="bg-gray-800 text-white text-[11px] font-bold rounded-lg px-2 py-1 border border-white/20 focus:outline-none focus:ring-1 focus:ring-rose-500"
-                  >
-                    <option
-                      v-for="sz in getUniqueSizes(mixMatchProducts[1])"
-                      :key="sz"
-                      :value="sz"
-                    >
-                      {{ sz }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <button
+              type="button"
+              @click="handleAddSetToCart"
+              class="btn-sheen silky-hover active:scale-[0.98] w-full h-11 px-4 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm"
+            >
+              <span>🛍️</span>
+              <span>Thêm Cả Bộ Vào Giỏ</span>
+            </button>
           </div>
 
         </div>
-
-        <!-- Right Summary Card (Col 4) -->
-        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 flex flex-col justify-between space-y-4 h-full">
-          <div>
-            <span class="text-[11px] font-bold text-gray-300 uppercase tracking-wider block">
-              Trọn bộ phối chuẩn gu
-            </span>
-            <div class="text-xs text-rose-200 mt-1">
-              Gồm {{ 1 + mixMatchProducts.length }} món thời trang kết hợp hoàn hảo
-            </div>
-            <div class="mt-4 pt-3 border-t border-white/10">
-              <span class="text-xs text-gray-300 block">Tổng giá trị cả set:</span>
-              <div class="text-2xl font-black text-amber-400 mt-0.5">
-                {{ formatVND(totalSetPrice) }}
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            @click="handleAddSetToCart"
-            class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-rose-600/40 hover:shadow-rose-600/60 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <span>🛍️</span>
-            <span>Thêm Cả Bộ Vào Giỏ</span>
-          </button>
-        </div>
-
       </div>
     </div>
 
     <!-- Description & Fit Reviews Tabs -->
-    <div class="mt-16 bg-white rounded-3xl border border-gray-100 p-6 sm:p-10 shadow-sm space-y-8">
+    <div v-reveal class="bg-white rounded-2xl border border-neutral-200/80 p-5 sm:p-8 shadow-sm space-y-8">
       
       <!-- Tab Headers -->
-      <div class="flex border-b border-gray-200 gap-6 text-sm font-bold">
+      <div class="flex border-b border-neutral-200/80 gap-6 text-xs sm:text-sm font-bold">
         <button
           @click="activeTab = 'desc'"
-          class="pb-3 border-b-2 transition-colors"
-          :class="activeTab === 'desc' ? 'border-rose-600 text-rose-600' : 'border-transparent text-gray-500 hover:text-gray-800'"
+          class="pb-3.5 border-b-2 transition-colors"
+          :class="activeTab === 'desc' ? 'border-[#7A1032] text-[#7A1032]' : 'border-transparent text-[#6B7280] hover:text-[#18181B]'"
         >
           Mô Tả Sản Phẩm
         </button>
         <button
           @click="activeTab = 'reviews'"
-          class="pb-3 border-b-2 transition-colors flex items-center gap-1.5"
-          :class="activeTab === 'reviews' ? 'border-rose-600 text-rose-600' : 'border-transparent text-gray-500 hover:text-gray-800'"
+          class="pb-3.5 border-b-2 transition-colors flex items-center gap-2"
+          :class="activeTab === 'reviews' ? 'border-[#7A1032] text-[#7A1032]' : 'border-transparent text-[#6B7280] hover:text-[#18181B]'"
         >
-          <span>Đánh Giá Thực Tế Từ Khách Hàng</span>
-          <span class="bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full text-xs font-bold">
+          <span>Đánh Giá Thực Tế</span>
+          <span class="bg-[#7A1032]/10 text-[#7A1032] px-2 py-0.5 rounded-md text-xs font-bold">
             {{ reviewStats.totalReviews || product.reviews?.length || 0 }}
           </span>
         </button>
       </div>
 
       <!-- Tab Content: Description -->
-      <div v-if="activeTab === 'desc'" class="prose max-w-none text-gray-700 text-sm leading-relaxed space-y-4">
+      <div v-if="activeTab === 'desc'" class="prose max-w-none text-[#18181B]/90 text-sm leading-relaxed space-y-5">
         <p>{{ product.description }}</p>
-        <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-2 text-xs">
-          <h4 class="font-bold text-gray-900">Hướng dẫn bảo quản trang phục:</h4>
-          <ul class="list-disc pl-5 space-y-1 text-gray-600">
+        <div class="bg-[#FAFAFA] rounded-xl p-5 border border-neutral-200/80 space-y-2 text-xs">
+          <h4 class="font-bold text-[#7A1032] uppercase tracking-wider text-[11px]">Hướng dẫn bảo quản trang phục</h4>
+          <ul class="list-disc pl-5 space-y-1.5 text-[#6B7280]">
             <li>Giặt ở nhiệt độ thường, lộn trái sản phẩm trước khi cho vào máy giặt.</li>
             <li>Không ngâm chung quần áo màu sáng với quần áo tối màu.</li>
             <li>Ủi ở nhiệt độ trung bình dưới 150°C, tránh ủi trực tiếp lên các chi tiết in ấn.</li>
@@ -483,92 +488,86 @@
         </div>
       </div>
 
-      <!-- Tab Content: Fit Reviews (Phase 8) -->
-      <div v-else class="space-y-10">
+      <!-- Tab Content: Fit Reviews -->
+      <div v-else class="space-y-8">
         
-        <!-- FIT OVERVIEW & RATING BREAKDOWN (Yêu cầu Phase 8) -->
         <div
           v-if="(reviewStats.totalReviews || 0) === 0"
-          class="bg-gray-50 border border-dashed border-gray-200 rounded-3xl p-8 text-center space-y-2"
+          class="bg-[#FAFAFA] border border-dashed border-neutral-300 rounded-xl p-8 text-center space-y-2"
         >
           <span class="text-3xl block">💬</span>
-          <h3 class="text-sm font-extrabold text-gray-800">Chưa có đánh giá nào</h3>
-          <p class="text-xs text-gray-500 max-w-md mx-auto">
+          <h3 class="text-sm font-bold text-[#18181B]">Chưa có đánh giá nào</h3>
+          <p class="text-xs text-[#6B7280] max-w-md mx-auto">
             Sản phẩm này hiện chưa có đánh giá từ khách hàng. Hãy là người đầu tiên chia sẻ cảm nhận về chất liệu và độ vừa vặn bên dưới!
           </p>
         </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-rose-50/50 via-white to-amber-50/40 p-6 rounded-3xl border border-rose-100">
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#FAFAFA] p-5 sm:p-6 rounded-xl border border-neutral-200/80">
           
           <!-- Rating Average Box -->
-          <div class="flex items-center gap-6 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-6">
+          <div class="flex items-center gap-6 border-b md:border-b-0 md:border-r border-neutral-200/80 pb-5 md:pb-0 md:pr-6">
             <div class="text-center">
-              <div class="text-5xl font-black text-rose-600 leading-none">
+              <div class="text-4xl sm:text-5xl font-extrabold text-[#7A1032] leading-none">
                 {{ reviewStats.ratingAverage ?? 0 }}
               </div>
-              <div class="flex items-center justify-center text-amber-500 text-sm mt-1.5">
+              <div class="flex items-center justify-center text-[#C9963B] text-sm mt-1.5">
                 ★★★★★
               </div>
-              <p class="text-[11px] text-gray-500 mt-1">Dựa trên {{ reviewStats.totalReviews }} đánh giá</p>
+              <p class="text-[11px] text-[#6B7280] mt-1">Dựa trên {{ reviewStats.totalReviews }} đánh giá</p>
             </div>
 
             <!-- Star distribution bars -->
-            <div class="flex-1 space-y-1 text-xs text-gray-500">
+            <div class="flex-1 space-y-1.5 text-xs text-[#6B7280]">
               <div v-for="s in [5, 4, 3, 2, 1]" :key="s" class="flex items-center gap-2">
-                <span class="w-8 font-semibold text-[11px]">{{ s }} sao</span>
-                <div class="flex-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                <span class="w-9 font-medium text-[11px]">{{ s }} sao</span>
+                <div class="flex-1 bg-neutral-200 rounded-full h-1.5 overflow-hidden">
                   <div
-                    class="bg-amber-400 h-full rounded-full"
+                    class="bg-[#C9963B] h-full rounded-full"
                     :style="{ width: `${calcStarPercent(s)}%` }"
                   ></div>
                 </div>
-                <span class="text-[10px] w-6 text-right text-gray-400">{{ reviewStats.starCounts?.[s] || 0 }}</span>
+                <span class="text-[10px] w-6 text-right text-[#6B7280]">{{ reviewStats.starCounts?.[s] || 0 }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Fit Feedback Stats Breakdown (Yêu cầu Phase 8) -->
+          <!-- Fit Feedback Stats Breakdown -->
           <div class="space-y-3 flex flex-col justify-center">
-            <div class="flex items-center justify-between text-xs font-bold text-gray-800">
-              <span class="flex items-center gap-1.5">
-                <span>🧍‍♂️</span> Tỷ lệ cảm nhận độ vừa vặn thực tế:
-              </span>
-              <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 text-[11px]">
-                {{ reviewStats.fitPercent ?? 0 }}% đánh giá chuẩn form
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#18181B]">
+              <span>Cảm nhận độ vừa vặn thực tế</span>
+              <span class="text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200 text-[11px]">
+                {{ reviewStats.fitPercent ?? 0 }}% chuẩn form
               </span>
             </div>
 
-            <div class="space-y-2 text-xs">
-              <!-- Fit (Vua van) -->
+            <div class="space-y-2.5 text-xs">
               <div>
-                <div class="flex justify-between text-[11px] mb-1 font-semibold text-emerald-800">
+                <div class="flex justify-between text-[11px] mb-1 font-medium text-[#6B7280]">
                   <span>✓ Vừa vặn chuẩn phom</span>
-                  <span>{{ reviewStats.fitPercent ?? 0 }}%</span>
+                  <span class="font-bold text-[#18181B]">{{ reviewStats.fitPercent ?? 0 }}%</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div class="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
                   <div class="bg-emerald-500 h-full rounded-full" :style="{ width: `${reviewStats.fitPercent ?? 0}%` }"></div>
                 </div>
               </div>
 
-              <!-- Tight (Chat) -->
               <div>
-                <div class="flex justify-between text-[11px] mb-1 font-semibold text-amber-800">
+                <div class="flex justify-between text-[11px] mb-1 font-medium text-[#6B7280]">
                   <span>Hơi ôm / Hơi chật so với dáng</span>
-                  <span>{{ reviewStats.tightPercent ?? 0 }}%</span>
+                  <span class="font-bold text-[#18181B]">{{ reviewStats.tightPercent ?? 0 }}%</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div class="bg-amber-500 h-full rounded-full" :style="{ width: `${reviewStats.tightPercent ?? 0}%` }"></div>
+                <div class="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-[#C9963B] h-full rounded-full" :style="{ width: `${reviewStats.tightPercent ?? 0}%` }"></div>
                 </div>
               </div>
 
-              <!-- Loose (Rong) -->
               <div>
-                <div class="flex justify-between text-[11px] mb-1 font-semibold text-indigo-800">
+                <div class="flex justify-between text-[11px] mb-1 font-medium text-[#6B7280]">
                   <span>Hơi rộng thoải mái / Oversize</span>
-                  <span>{{ reviewStats.loosePercent ?? 0 }}%</span>
+                  <span class="font-bold text-[#18181B]">{{ reviewStats.loosePercent ?? 0 }}%</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div class="bg-indigo-500 h-full rounded-full" :style="{ width: `${reviewStats.loosePercent ?? 0}%` }"></div>
+                <div class="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-[#5E1B55] h-full rounded-full" :style="{ width: `${reviewStats.loosePercent ?? 0}%` }"></div>
                 </div>
               </div>
             </div>
@@ -576,27 +575,27 @@
 
         </div>
 
-        <!-- FILTERS BY STAR & FIT FEEDBACK (Yêu cầu Phase 8) -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-gray-100">
+        <!-- FILTERS BY STAR & FIT FEEDBACK -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-neutral-200/80">
           <div class="flex flex-wrap gap-2 text-xs">
-            <span class="text-gray-400 font-semibold self-center mr-1">Lọc sao:</span>
+            <span class="text-[#6B7280] font-medium self-center mr-1">Lọc sao:</span>
             <button
               v-for="s in [0, 5, 4, 3, 2, 1]"
               :key="s"
               type="button"
               @click="filterStar = s"
-              class="px-3 py-1.5 rounded-xl border font-bold transition-all text-xs"
-              :class="filterStar === s ? 'border-rose-600 bg-rose-600 text-white shadow-sm' : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
+              class="px-3 py-1.5 rounded-lg border font-semibold transition-all text-xs"
+              :class="filterStar === s ? 'border-[#7A1032] bg-[#7A1032] text-white' : 'border-neutral-200 bg-white text-[#6B7280] hover:text-[#18181B] hover:border-[#C9963B]'"
             >
               {{ s === 0 ? 'Tất cả sao' : `${s} ★` }}
             </button>
           </div>
 
           <div class="flex items-center gap-2 text-xs">
-            <span class="text-gray-400 font-semibold">Độ vừa:</span>
+            <span class="text-[#6B7280] font-medium">Độ vừa:</span>
             <select
               v-model="filterFit"
-              class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 font-bold text-gray-800 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              class="h-9 bg-white border border-neutral-200 rounded-lg px-3 font-medium text-[#18181B] focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032]"
             >
               <option value="">Tất cả cảm nhận</option>
               <option value="VUA_VAN">Chỉ xem: Vừa vặn chuẩn</option>
@@ -606,115 +605,110 @@
           </div>
         </div>
 
-        <!-- REVIEWS LIST WITH DETAILED FIT TAGS (Yêu cầu Phase 8) -->
+        <!-- REVIEWS LIST -->
         <div class="space-y-4">
-          <div v-if="filteredReviews.length === 0" class="py-12 text-center text-xs text-gray-500 bg-gray-50 rounded-2xl">
+          <div v-if="filteredReviews.length === 0" class="py-12 text-center text-xs text-[#6B7280] bg-[#FAFAFA] rounded-xl border border-neutral-200/80">
             Không có đánh giá nào phù hợp với bộ lọc đã chọn.
           </div>
 
           <div
             v-for="rev in filteredReviews"
             :key="rev.id"
-            class="p-5 rounded-2xl bg-white border border-gray-100 hover:border-gray-200 shadow-sm transition-all space-y-3"
+            class="p-5 rounded-xl bg-white border border-neutral-200/80 space-y-3"
           >
-            <!-- Review Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div class="flex items-center gap-3">
-                <span class="w-9 h-9 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                <span class="w-9 h-9 rounded-full luxury-gradient text-white font-bold flex items-center justify-center text-xs">
                   {{ (rev.customerName || 'K').charAt(0).toUpperCase() }}
                 </span>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="font-bold text-xs text-gray-900">{{ rev.customerName }}</h4>
+                    <h4 class="font-bold text-xs text-[#18181B]">{{ rev.customerName }}</h4>
                     <span
                       v-if="rev.verifiedPurchase"
-                      class="text-[10px] text-emerald-600 font-medium bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-100"
+                      class="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200"
                     >
                       ✓ Đã mua hàng
                     </span>
                   </div>
-                  <div class="flex items-center text-amber-500 text-xs mt-0.5">
+                  <div class="flex items-center text-[#C9963B] text-xs mt-0.5">
                     <span v-for="star in 5" :key="star">{{ star <= rev.rating ? '★' : '☆' }}</span>
                   </div>
                 </div>
               </div>
 
-              <span class="text-[11px] text-gray-400">
+              <span class="text-[11px] text-[#6B7280]">
                 {{ formatDateTime(rev.createdAt) }}
               </span>
             </div>
 
-            <!-- CHUẨN TAG THÔNG SỐ CƠ THỂ VÀ ĐỘ VỪA VẶN (Yêu cầu Phase 8) -->
-            <div class="p-2.5 rounded-xl bg-gray-50/80 border border-gray-100 text-xs text-gray-700 flex flex-wrap items-center gap-2">
-              <span class="font-semibold text-gray-900 flex items-center gap-1">
+            <div class="p-2.5 rounded-lg bg-[#FAFAFA] border border-neutral-200/80 text-xs text-[#6B7280] flex flex-wrap items-center gap-2">
+              <span class="font-medium text-[#18181B] flex items-center gap-1">
                 <span>👤</span>
                 Khách cao {{ rev.customerHeightCm ? `${rev.customerHeightCm}cm` : '172cm' }} - {{ rev.customerWeightKg ? `${rev.customerWeightKg}kg` : '65kg' }}
               </span>
-              <span class="text-gray-300">|</span>
-              <span class="text-gray-600">
-                Phân loại: <strong class="text-gray-900">{{ rev.purchasedColor || 'Đen Basic' }}</strong> - <strong>Size {{ rev.purchasedSize || 'L' }}</strong>
+              <span class="text-neutral-300">|</span>
+              <span>
+                Phân loại: <strong class="text-[#18181B]">{{ rev.purchasedColor || 'Đen Basic' }}</strong> - <strong class="text-[#18181B]">Size {{ rev.purchasedSize || 'L' }}</strong>
               </span>
-              <span class="text-gray-300">|</span>
+              <span class="text-neutral-300">|</span>
               <span
-                class="px-2 py-0.5 rounded-md font-bold text-[11px]"
-                :class="rev.fitFeedback === 'CHAT' ? 'bg-amber-100 text-amber-800' : rev.fitFeedback === 'RONG' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'"
+                class="px-2 py-0.5 rounded font-semibold text-[11px]"
+                :class="rev.fitFeedback === 'CHAT' ? 'bg-amber-50 text-amber-800 border border-amber-200' : rev.fitFeedback === 'RONG' ? 'bg-purple-50 text-purple-800 border border-purple-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'"
               >
                 Độ vừa: {{ rev.fitFeedback === 'CHAT' ? 'Hơi chật so với dáng' : rev.fitFeedback === 'RONG' ? 'Hơi rộng thoải mái' : 'Vừa vặn chuẩn form' }}
               </span>
             </div>
 
-            <!-- Comment text -->
-            <p class="text-xs text-gray-800 leading-relaxed pt-1">
+            <p class="text-xs text-[#18181B]/90 leading-relaxed pt-1">
               {{ rev.comment }}
             </p>
           </div>
         </div>
 
-        <!-- FORM GỬI ĐÁNH GIÁ MỚI KÈM VÓC DÁNG (Yêu cầu Phase 8) -->
-        <div class="pt-8 border-t border-gray-200">
-          <div class="bg-gray-50/80 rounded-3xl p-6 sm:p-8 border border-gray-200 space-y-6">
+        <!-- FORM GỬI ĐÁNH GIÁ MỚI -->
+        <div class="pt-6 border-t border-neutral-200/80">
+          <div class="bg-[#FAFAFA] rounded-xl p-5 sm:p-7 border border-neutral-200/80 space-y-5">
             <div>
-              <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                <span>✍️</span> Gửi Đánh Giá & Chia Sẻ Vóc Dáng Của Bạn
+              <h3 class="text-base font-bold text-[#18181B]">
+                Gửi Đánh Giá & Chia Sẻ Vóc Dáng
               </h3>
-              <p class="text-xs text-gray-500 mt-1">
-                Thông số chiều cao, cân nặng và cảm nhận của bạn sẽ giúp cộng đồng chọn size chính xác nhất!
+              <p class="text-xs text-[#6B7280] mt-1">
+                Thông số chiều cao, cân nặng và cảm nhận của bạn sẽ giúp cộng đồng chọn size chính xác nhất.
               </p>
             </div>
 
             <form @submit.prevent="submitReview" class="space-y-4">
-              <!-- Rating Stars Picker -->
               <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Mức độ hài lòng *</label>
-                <div class="flex items-center gap-1.5 text-2xl text-amber-400 cursor-pointer">
+                <label class="block text-xs font-semibold text-[#6B7280] mb-1">Mức độ hài lòng *</label>
+                <div class="flex items-center gap-1.5 text-2xl text-[#C9963B] cursor-pointer">
                   <span
                     v-for="s in 5"
                     :key="s"
                     @click="newReview.rating = s"
-                    class="hover:scale-125 transition-transform"
+                    class="hover:scale-110 transition-transform"
                   >
                     {{ s <= newReview.rating ? '★' : '☆' }}
                   </span>
-                  <span class="ml-2 text-xs font-bold text-gray-700">
+                  <span class="ml-2 text-xs font-bold text-[#18181B]">
                     {{ newReview.rating }}/5 sao
                   </span>
                 </div>
               </div>
 
-              <!-- Inputs row 1: Name, Height, Weight -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-gray-700">Họ và tên</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-medium text-[#6B7280]">Họ và tên</label>
                   <input
                     type="text"
                     v-model="newReview.customerName"
                     placeholder="VD: Nguyễn Văn A (hoặc ẩn danh)"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032]"
                   />
                 </div>
 
-                <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-gray-700">Chiều cao (cm) *</label>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-medium text-[#6B7280]">Chiều cao (cm) *</label>
                   <input
                     type="number"
                     min="140"
@@ -722,12 +716,12 @@
                     v-model.number="newReview.customerHeightCm"
                     required
                     placeholder="172"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032]"
                   />
                 </div>
 
-                <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-gray-700">Cân nặng (kg) *</label>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-medium text-[#6B7280]">Cân nặng (kg) *</label>
                   <input
                     type="number"
                     min="35"
@@ -735,41 +729,40 @@
                     v-model.number="newReview.customerWeightKg"
                     required
                     placeholder="65"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032]"
                   />
                 </div>
               </div>
 
-              <!-- Inputs row 2: Size, Color, Fit Feedback -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-gray-700">Size bạn đã mua *</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-medium text-[#6B7280]">Size bạn đã mua *</label>
                   <select
                     v-model="newReview.purchasedSize"
                     required
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 font-semibold"
+                    class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] font-medium"
                   >
                     <option v-for="s in availableSizes" :key="s" :value="s">Size {{ s }}</option>
                   </select>
                 </div>
 
-                <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-gray-700">Màu sắc đã mua *</label>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-medium text-[#6B7280]">Màu sắc đã mua *</label>
                   <select
                     v-model="newReview.purchasedColor"
                     required
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 font-semibold"
+                    class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] font-medium"
                   >
                     <option v-for="c in availableColors" :key="c.name" :value="c.name">{{ c.name }}</option>
                   </select>
                 </div>
 
-                <div class="space-y-1">
-                  <label class="block text-xs font-semibold text-gray-700">Cảm nhận độ vừa vặn *</label>
+                <div class="space-y-1.5">
+                  <label class="block text-xs font-medium text-[#6B7280]">Cảm nhận độ vừa vặn *</label>
                   <select
                     v-model="newReview.fitFeedback"
                     required
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 font-bold"
+                    class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] font-semibold"
                   >
                     <option value="VUA_VAN">✓ Vừa vặn chuẩn form</option>
                     <option value="CHAT">Hơi chật so với form</option>
@@ -778,23 +771,21 @@
                 </div>
               </div>
 
-              <!-- Comment textarea -->
-              <div class="space-y-1">
-                <label class="block text-xs font-semibold text-gray-700">Nhận xét chi tiết *</label>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-medium text-[#6B7280]">Nhận xét chi tiết *</label>
                 <textarea
                   v-model="newReview.comment"
                   required
                   rows="3"
                   placeholder="Chia sẻ về chất vải, đường may, khả năng thấm hút mồ hôi và lời khuyên chọn size cho người mua sau..."
-                  class="w-full px-4 py-2.5 rounded-2xl border border-gray-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-200 text-xs bg-white text-[#18181B] placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032]"
                 ></textarea>
               </div>
 
-              <!-- Submit button -->
               <button
                 type="submit"
                 :disabled="submittingReview"
-                class="px-6 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                class="btn-sheen silky-hover active:scale-[0.98] h-11 px-6 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 disabled:opacity-50"
               >
                 <span v-if="submittingReview">Đang gửi đánh giá...</span>
                 <span v-else>Gửi Đánh Giá Ngay</span>
@@ -807,10 +798,10 @@
 
     </div>
 
-    <!-- SẢN PHẨM BẠN VỪA XEM (Phase 6) -->
+    <!-- SẢN PHẨM BẠN VỪA XEM -->
     <RecentlyViewed />
 
-    <!-- MODAL TRỢ LÝ GỢI Ý SIZE THÔNG MINH (Phase 6) -->
+    <!-- MODAL TRỢ LÝ GỢI Ý SIZE THÔNG MINH -->
     <SmartSizePredictorModal
       :is-open="isSizePredictorOpen"
       :available-sizes="availableSizes"
@@ -820,25 +811,25 @@
 
   </div>
 
-  <!-- 404 / NOT FOUND STATE (Phase UX Polish) -->
+  <!-- 404 / NOT FOUND STATE -->
   <div v-else class="max-w-xl mx-auto py-24 px-4 text-center space-y-4">
-    <div class="w-20 h-20 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center text-4xl mx-auto shadow-inner">
+    <div class="w-20 h-20 rounded-2xl bg-white border border-neutral-200/80 shadow-sm text-[#7A1032] flex items-center justify-center text-3xl mx-auto">
       🛍️
     </div>
-    <h2 class="text-2xl font-black text-gray-900 tracking-tight">Không Tìm Thấy Sản Phẩm</h2>
-    <p class="text-xs text-gray-500 max-w-md mx-auto">
+    <h2 class="text-2xl font-bold text-[#18181B] tracking-tight">Không Tìm Thấy Sản Phẩm</h2>
+    <p class="text-xs text-[#6B7280] max-w-md mx-auto">
       Sản phẩm bạn đang tìm kiếm có thể đã ngừng kinh doanh, hết hàng hoặc đường dẫn không còn chính xác.
     </p>
     <div class="pt-4 flex justify-center gap-3">
       <router-link
         to="/catalog"
-        class="px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-md transition-all inline-flex items-center gap-2"
+        class="btn-sheen h-11 px-6 bg-[#7A1032] hover:bg-[#5C0B27] text-white rounded-lg font-bold text-xs transition-all inline-flex items-center gap-2"
       >
         <span>← Khám Phá Cửa Hàng</span>
       </router-link>
       <router-link
         to="/"
-        class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-xs transition-all inline-flex items-center gap-2"
+        class="h-11 px-6 bg-white border border-neutral-200 hover:border-[#C9963B] text-[#18181B] rounded-lg font-bold text-xs transition-all inline-flex items-center gap-2"
       >
         <span>Về Trang Chủ</span>
       </router-link>
@@ -858,6 +849,9 @@ import { useToastStore } from '@/stores/toastStore';
 import { formatVND, formatDateTime, onImageError } from '@/services/formatters';
 import SmartSizePredictorModal from '@/components/SmartSizePredictorModal.vue';
 import RecentlyViewed from '@/components/RecentlyViewed.vue';
+import StarfieldOverlay from '@/components/StarfieldOverlay.vue';
+import SparkleBorderOverlay from '@/components/SparkleBorderOverlay.vue';
+import SparkleDivider from '@/components/SparkleDivider.vue';
 
 const route = useRoute();
 const router = useRouter();

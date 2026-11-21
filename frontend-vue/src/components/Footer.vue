@@ -1,75 +1,80 @@
 <template>
-  <footer class="bg-gray-900 text-gray-400 text-xs border-t border-gray-800 mt-20 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <!-- Col 1 -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 text-white">
-            <span class="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center font-black text-sm">F</span>
-            <span class="text-base font-black tracking-tight">FASHION<span class="text-rose-500">.VN</span></span>
+  <footer class="relative overflow-hidden luxury-gradient text-[#FFFDF9]/90 text-xs border-t border-white/15 mt-20 no-print">
+    <StarfieldOverlay :min-stars="140" />
+    <!-- Inset Sparkling Star Line (8px below top edge, mirroring Header) -->
+    <SparkleDivider class="absolute left-0 right-0 top-[8px] z-20 pointer-events-none" />
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-14 lg:pt-20 lg:pb-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <!-- Col 1: Brand -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-2.5 text-[#FFFDF9]">
+            <span class="w-8 h-8 rounded-lg bg-white/15 backdrop-blur-md border border-[#F3D078]/50 text-[#F3D078] flex items-center justify-center font-black text-sm tracking-tight shadow-sm">F</span>
+            <span class="text-base font-extrabold tracking-tight">FASHION<span class="text-[#F3D078]">.VN</span></span>
           </div>
-          <p class="text-xs text-gray-400 leading-relaxed">
-            Hệ thống thương mại điện tử thời trang nam nữ cao cấp, cung cấp sản phẩm may mặc chuẩn phom dáng người Việt, chất lượng bền bỉ và dịch vụ tận tâm.
+          <p class="text-xs text-[#FFFDF9]/80 leading-relaxed">
+            Thương hiệu thời trang đương đại tối giản, chú trọng chất liệu tự nhiên bền bỉ và phom dáng chuẩn người Việt.
           </p>
-          <div class="pt-2 text-[11px] text-gray-500 space-y-1">
-            <p>📍 Trụ sở: 88 Phố Huế, Quận Hai Bà Trưng, Hà Nội</p>
-            <p>📞 Hotline CSKH: 1900 8899 (8:00 - 22:00)</p>
-            <p>✉️ Email: support@fashion.vn</p>
+          <div class="pt-1 text-[11px] text-[#FFFDF9]/75 space-y-1.5">
+            <p>88 Phố Huế, Quận Hai Bà Trưng, Hà Nội</p>
+            <p>Hotline: <span class="text-[#F3D078] font-semibold">1900 8899</span> (08:00 – 22:00)</p>
+            <p>Email: <span class="text-[#FFFDF9] font-semibold">support@fashion.vn</span></p>
           </div>
         </div>
 
-        <!-- Col 2 -->
+        <!-- Col 2: Storefront -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Khám Phá Cửa Hàng</h4>
-          <ul class="space-y-2">
-            <li><router-link to="/" class="hover:text-rose-400 transition-colors">Trang chủ FashionStore</router-link></li>
-            <li><router-link to="/catalog" class="hover:text-rose-400 transition-colors">Bộ sưu tập mới nhất</router-link></li>
-            <li><router-link to="/catalog?isFlashSale=true" class="hover:text-rose-400 transition-colors">Săn Flash Sale giá sốc</router-link></li>
-            <li><router-link to="/cart" class="hover:text-rose-400 transition-colors">Giỏ hàng của bạn</router-link></li>
+          <h4 class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#F3D078] mb-4">Khám Phá Cửa Hàng</h4>
+          <ul class="space-y-2.5">
+            <li><router-link to="/" class="hover:text-[#F3D078] transition-colors">Trang chủ FashionStore</router-link></li>
+            <li><router-link to="/catalog" class="hover:text-[#F3D078] transition-colors">Bộ sưu tập mới nhất</router-link></li>
+            <li><router-link to="/catalog?isFlashSale=true" class="text-[#F3D078] hover:text-white font-semibold transition-colors">⚡ Flash Sale ưu đãi</router-link></li>
+            <li><router-link to="/cart" class="hover:text-[#F3D078] transition-colors">Giỏ hàng của bạn</router-link></li>
           </ul>
         </div>
 
-        <!-- Col 3 -->
+        <!-- Col 3: Customer Support -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Hỗ Trợ Khách Hàng</h4>
-          <ul class="space-y-2">
+          <h4 class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#F3D078] mb-4">Hỗ Trợ Khách Hàng</h4>
+          <ul class="space-y-2.5">
             <li v-if="authStore.isAuthenticated">
-              <router-link to="/order-tracking" class="hover:text-rose-400 transition-colors">Tra cứu tiến độ đơn hàng</router-link>
+              <router-link to="/order-tracking" class="hover:text-[#F3D078] transition-colors">Tra cứu tiến độ đơn hàng</router-link>
             </li>
             <li v-if="authStore.isAuthenticated">
-              <router-link to="/wishlist" class="hover:text-rose-400 transition-colors">Danh sách yêu thích</router-link>
+              <router-link to="/wishlist" class="hover:text-[#F3D078] transition-colors">Danh sách yêu thích</router-link>
             </li>
             <li v-if="!authStore.isAuthenticated">
-              <router-link to="/login" class="hover:text-rose-400 transition-colors">Đăng nhập tài khoản</router-link>
+              <router-link to="/login" class="hover:text-[#F3D078] transition-colors">Đăng nhập tài khoản</router-link>
             </li>
             <li v-if="!authStore.isAuthenticated">
-              <router-link to="/register" class="hover:text-rose-400 transition-colors">Đăng ký thành viên mới</router-link>
+              <router-link to="/register" class="hover:text-[#F3D078] transition-colors">Đăng ký thành viên mới</router-link>
             </li>
-            <li><router-link to="/cart" class="hover:text-rose-400 transition-colors">Giỏ hàng & Freeship từ 500k</router-link></li>
+            <li><router-link to="/cart" class="hover:text-[#F3D078] transition-colors">Chính sách Freeship từ 500k</router-link></li>
           </ul>
         </div>
 
-        <!-- Col 4 -->
+        <!-- Col 4: Payments -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-white mb-4">Phương Thức Thanh Toán</h4>
-          <p class="text-xs text-gray-400 mb-3">Thanh toán an toàn, bảo mật tuyệt đối với công nghệ chuẩn VietQR:</p>
-          <div class="flex flex-wrap gap-2 items-center">
-            <span class="bg-gray-800 text-gray-300 px-3 py-1.5 rounded-lg border border-gray-700 font-bold text-[11px] flex items-center gap-1.5">
-              <span>⚡</span> VietQR QuickLink (MB Bank)
+          <h4 class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#F3D078] mb-4">Thanh Toán An Toàn</h4>
+          <p class="text-xs text-[#FFFDF9]/80 leading-relaxed mb-4">
+            Hỗ trợ chuyển khoản nhanh chuẩn VietQR 24/7 và thanh toán khi nhận hàng (COD).
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white/15 backdrop-blur-md text-[#FFFDF9] px-3 py-1.5 rounded-lg border border-white/20 font-semibold text-[11px]">
+              VietQR QuickLink
             </span>
-            <span class="bg-gray-800 text-gray-300 px-3 py-1.5 rounded-lg border border-gray-700 font-bold text-[11px] flex items-center gap-1.5">
-              <span>📦</span> COD (Thanh toán khi nhận)
+            <span class="bg-white/15 backdrop-blur-md text-[#FFFDF9] px-3 py-1.5 rounded-lg border border-white/20 font-semibold text-[11px]">
+              COD Toàn Quốc
             </span>
           </div>
-          <div class="mt-4 p-3 bg-gray-800/60 rounded-xl border border-gray-800">
-            <span class="text-[11px] text-emerald-400 font-medium">✓ Đã xác thực bảo mật SSL 256-bit</span>
+          <div class="mt-4 pt-3 border-t border-white/15 text-[11px] text-[#FFFDF9]/75">
+            ✓ Đổi trả 60 ngày • Đồng kiểm khi nhận
           </div>
         </div>
       </div>
 
-      <div class="mt-12 pt-6 border-t border-gray-800/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-gray-500 gap-2">
-        <p>© 2026 FashionStore.vn. Thiết kế và vận hành bởi Principal Software Architect.</p>
-        <p>Bảo lưu mọi quyền. Giá đã bao gồm thuế VAT (VNĐ).</p>
+      <div class="mt-12 pt-6 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#FFFDF9]/70 gap-2">
+        <p>© 2026 FashionStore.vn — Clean White Luxury Fashion.</p>
+        <p>Giá đã bao gồm thuế VAT (VNĐ).</p>
       </div>
     </div>
   </footer>
@@ -77,6 +82,8 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/authStore';
+import StarfieldOverlay from '@/components/StarfieldOverlay.vue';
+import SparkleDivider from '@/components/SparkleDivider.vue';
 
 const authStore = useAuthStore();
 </script>

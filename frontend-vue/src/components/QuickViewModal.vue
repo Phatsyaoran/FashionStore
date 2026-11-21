@@ -2,15 +2,15 @@
   <Teleport to="body">
     <div v-if="productStore.isQuickViewOpen && product" class="fixed inset-0 z-[9990] overflow-y-auto no-print" role="dialog" aria-modal="true">
       <!-- Backdrop -->
-      <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm transition-opacity" @click="productStore.closeQuickView"></div>
+      <div class="fixed inset-0 z-[9990] bg-black/45 backdrop-blur-[2px] transition-opacity" @click="productStore.closeQuickView"></div>
 
       <div class="relative z-[9995] flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-gray-100 max-h-[90vh] overflow-y-auto w-full">
+        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left text-[#18181B] shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-neutral-200/80 max-h-[90vh] overflow-y-auto w-full">
         
         <!-- Close button -->
         <button
           @click="productStore.closeQuickView"
-          class="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-700 bg-white/80 backdrop-blur-md rounded-full p-2 hover:bg-gray-100 transition-all shadow-sm"
+          class="absolute top-4 right-4 z-10 text-neutral-500 hover:text-[#18181B] bg-white/90 backdrop-blur-md rounded-full p-2 hover:bg-neutral-100 transition-all shadow-sm"
         >
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -19,17 +19,17 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2">
           <!-- Left: Thumbnail Image -->
-          <div class="relative bg-gray-100 flex items-center justify-center p-6">
+          <div class="relative bg-neutral-100 flex items-center justify-center p-6">
             <img
               :src="product.thumbnailUrl"
               :alt="product.name"
               @error="onImageError"
-              class="w-full max-h-[380px] object-cover rounded-2xl shadow-sm"
+              class="w-full max-h-[380px] object-cover rounded-xl shadow-sm"
               loading="lazy"
             />
             <span
               v-if="product.isFlashSale"
-              class="absolute top-8 left-8 bg-rose-600 text-white text-xs font-extrabold uppercase px-3 py-1 rounded-full shadow-md animate-pulse"
+              class="absolute top-8 left-8 bg-[#7A1032] text-white text-xs font-extrabold uppercase px-3 py-1 rounded-full shadow-md"
             >
               ⚡ Flash Sale
             </span>
@@ -38,24 +38,24 @@
           <!-- Right: Details & Selectors -->
           <div class="p-6 md:p-8 flex flex-col justify-between">
             <div>
-              <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">
+              <span class="text-xs font-semibold text-[#7A1032] uppercase tracking-wider">
                 {{ product.categoryName || 'Thời Trang' }}
               </span>
-              <h2 class="text-lg md:text-xl font-bold text-gray-900 mt-1 leading-snug">
+              <h2 class="text-lg md:text-xl font-bold text-[#18181B] mt-1 leading-snug">
                 {{ product.name }}
               </h2>
 
               <!-- Price Box -->
               <div class="mt-3 flex items-baseline gap-2.5">
-                <span class="text-2xl font-extrabold text-rose-600">
+                <span class="text-2xl font-extrabold text-[#7A1032]">
                   {{ formatVND(currentPrice) }}
                 </span>
-                <span v-if="product.salePrice && product.basePrice > product.salePrice" class="text-sm text-gray-400 line-through">
+                <span v-if="product.salePrice && product.basePrice > product.salePrice" class="text-sm text-[#6B7280]/70 line-through">
                   {{ formatVND(product.basePrice) }}
                 </span>
                 <span
                   v-if="product.discountPercent"
-                  class="text-xs font-bold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full"
+                  class="text-xs font-bold bg-rose-50 text-[#7A1032] border border-rose-200 px-2 py-0.5 rounded-full"
                 >
                   -{{ product.discountPercent }}%
                 </span>
@@ -64,7 +64,7 @@
               <!-- Color Selector -->
               <div class="mt-5 space-y-2">
                 <div class="flex justify-between items-center text-xs font-medium">
-                  <span class="text-gray-700">Màu sắc: <strong class="text-gray-900">{{ selectedColor }}</strong></span>
+                  <span class="text-[#6B7280]">Màu sắc: <strong class="text-[#18181B]">{{ selectedColor }}</strong></span>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button
@@ -72,10 +72,10 @@
                     :key="color.name"
                     type="button"
                     @click="selectedColor = color.name"
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all"
-                    :class="selectedColor === color.name ? 'border-rose-600 bg-rose-50 text-rose-700 shadow-sm' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all"
+                    :class="selectedColor === color.name ? 'border-[#7A1032] bg-[#7A1032] text-white' : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
                   >
-                    <span class="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-inner" :style="{ backgroundColor: color.hex }"></span>
+                    <span class="w-3.5 h-3.5 rounded-full border border-neutral-300" :style="{ backgroundColor: color.hex }"></span>
                     <span>{{ color.name }}</span>
                   </button>
                 </div>
@@ -84,7 +84,7 @@
               <!-- Size Selector -->
               <div class="mt-4 space-y-2">
                 <div class="flex justify-between items-center text-xs font-medium">
-                  <span class="text-gray-700">Kích thước: <strong class="text-gray-900">{{ selectedSize }}</strong></span>
+                  <span class="text-[#6B7280]">Kích thước: <strong class="text-[#18181B]">{{ selectedSize }}</strong></span>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <button
@@ -92,8 +92,8 @@
                     :key="size"
                     type="button"
                     @click="selectedSize = size"
-                    class="w-10 h-10 rounded-xl border flex items-center justify-center text-xs font-bold transition-all"
-                    :class="selectedSize === size ? 'border-rose-600 bg-rose-600 text-white shadow-sm' : 'border-gray-200 text-gray-700 hover:bg-gray-50'"
+                    class="w-10 h-10 rounded-lg border flex items-center justify-center text-xs font-bold transition-all"
+                    :class="selectedSize === size ? 'border-[#7A1032] bg-[#7A1032] text-white' : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
                   >
                     {{ size }}
                   </button>
@@ -105,27 +105,27 @@
                 <span v-if="currentVariant && currentVariant.stockQuantity > 0" class="text-emerald-700 font-medium flex items-center gap-1">
                   <span>✓</span> Còn <strong>{{ currentVariant.stockQuantity }}</strong> sản phẩm trong kho
                 </span>
-                <span v-else class="text-rose-600 font-semibold flex items-center gap-1">
+                <span v-else class="text-[#7A1032] font-semibold flex items-center gap-1">
                   <span>✕</span> Biến thể này hiện đã hết hàng
                 </span>
               </div>
             </div>
 
             <!-- Actions -->
-            <div class="mt-6 pt-5 border-t border-gray-100 space-y-3">
+            <div class="mt-6 pt-5 border-t border-neutral-100 space-y-3">
               <div class="flex items-center gap-3">
                 <!-- Quantity Counter -->
-                <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
+                <div class="flex items-center border border-neutral-200 rounded-xl overflow-hidden bg-white">
                   <button
                     type="button"
                     @click="quantity = Math.max(1, quantity - 1)"
-                    class="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors font-bold text-sm"
+                    class="w-9 h-9 flex items-center justify-center text-[#18181B] hover:bg-neutral-100 transition-colors font-bold text-sm"
                   >-</button>
-                  <span class="w-10 text-center font-bold text-sm text-gray-900">{{ quantity }}</span>
+                  <span class="w-10 text-center font-bold text-sm text-[#18181B]">{{ quantity }}</span>
                   <button
                     type="button"
                     @click="quantity = currentVariant ? Math.min(currentVariant.stockQuantity, quantity + 1) : quantity + 1"
-                    class="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors font-bold text-sm"
+                    class="w-9 h-9 flex items-center justify-center text-[#18181B] hover:bg-neutral-100 transition-colors font-bold text-sm"
                   >+</button>
                 </div>
 
@@ -134,8 +134,8 @@
                   type="button"
                   @click="handleAddToCart"
                   :disabled="!currentVariant || currentVariant.stockQuantity <= 0"
-                  class="flex-1 py-3 px-5 rounded-xl text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
-                  :class="(!currentVariant || currentVariant.stockQuantity <= 0) ? 'bg-gray-300 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700 active:scale-95 shadow-rose-200'"
+                  class="btn-sheen flex-1 py-3 px-5 rounded-xl text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                  :class="(!currentVariant || currentVariant.stockQuantity <= 0) ? 'bg-neutral-300 cursor-not-allowed' : 'bg-[#7A1032] hover:bg-[#5C0B27] active:scale-[0.98]'"
                 >
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -148,7 +148,7 @@
               <router-link
                 :to="`/product/${product.slug}`"
                 @click="productStore.closeQuickView"
-                class="block text-center text-xs text-rose-600 hover:text-rose-800 font-semibold hover:underline"
+                class="block text-center text-xs text-[#7A1032] hover:underline font-semibold"
               >
                 Xem đầy đủ chi tiết sản phẩm & hướng dẫn chọn size →
               </router-link>
@@ -163,7 +163,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useToastStore } from '@/stores/toastStore';
@@ -238,4 +238,12 @@ function handleAddToCart() {
     toastStore.error(res.message);
   }
 }
+
+watch(() => productStore.isQuickViewOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
+});
 </script>

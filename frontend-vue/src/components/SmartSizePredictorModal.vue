@@ -2,21 +2,21 @@
   <Teleport to="body">
     <div v-if="isOpen" class="fixed inset-0 z-[9990] overflow-y-auto no-print" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <!-- Backdrop -->
-      <div class="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm transition-opacity" @click="close"></div>
+      <div class="fixed inset-0 z-[9990] bg-black/45 backdrop-blur-[2px] transition-opacity" @click="close"></div>
 
       <div class="relative z-[9995] flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100 max-h-[90vh] overflow-y-auto w-full">
+        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left text-[#18181B] shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-neutral-200/80 max-h-[90vh] overflow-y-auto w-full">
         
         <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4 text-white flex items-center justify-between">
+        <div class="luxury-gradient px-6 py-4 text-[#FFFDF9] flex items-center justify-between">
           <div class="flex items-center gap-2.5">
             <span class="text-2xl">📏</span>
             <div>
-              <h3 class="text-base font-bold tracking-tight">Trợ Lý Gợi Ý Size Thông Minh</h3>
-              <p class="text-xs text-gray-300">Tính toán size vừa vặn chuẩn theo số đo nhân trắc học Việt Nam</p>
+              <h3 class="text-base font-bold tracking-tight text-[#FFFDF9]">Trợ Lý Gợi Ý Size AI</h3>
+              <p class="text-xs text-[#FFFDF9]/80">Tính toán size vừa vặn chuẩn theo số đo nhân trắc học Việt Nam</p>
             </div>
           </div>
-          <button @click="close" class="text-gray-400 hover:text-white rounded-lg p-1 hover:bg-white/10 transition-colors">
+          <button @click="close" class="text-white/80 hover:text-white rounded-lg p-1 hover:bg-white/15 transition-colors">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -27,10 +27,10 @@
           <!-- Slider 1: Chiều cao -->
           <div class="space-y-2">
             <div class="flex justify-between items-center text-sm font-medium">
-              <span class="text-gray-700 flex items-center gap-1.5">
+              <span class="text-[#18181B] flex items-center gap-1.5">
                 <span>🧍‍♂️</span> Chiều cao của bạn:
               </span>
-              <span class="text-base font-bold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">
+              <span class="text-base font-bold text-[#7A1032] bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
                 {{ height }} cm
               </span>
             </div>
@@ -40,9 +40,9 @@
               max="190"
               step="1"
               v-model.number="height"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
+              class="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-[#7A1032]"
             />
-            <div class="flex justify-between text-[11px] text-gray-400">
+            <div class="flex justify-between text-[11px] text-[#6B7280]">
               <span>145 cm</span>
               <span>165 cm</span>
               <span>190 cm</span>
@@ -52,10 +52,10 @@
           <!-- Slider 2: Cân nặng -->
           <div class="space-y-2">
             <div class="flex justify-between items-center text-sm font-medium">
-              <span class="text-gray-700 flex items-center gap-1.5">
+              <span class="text-[#18181B] flex items-center gap-1.5">
                 <span>⚖️</span> Cân nặng của bạn:
               </span>
-              <span class="text-base font-bold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">
+              <span class="text-base font-bold text-[#7A1032] bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
                 {{ weight }} kg
               </span>
             </div>
@@ -65,9 +65,9 @@
               max="95"
               step="1"
               v-model.number="weight"
-              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
+              class="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-[#7A1032]"
             />
-            <div class="flex justify-between text-[11px] text-gray-400">
+            <div class="flex justify-between text-[11px] text-[#6B7280]">
               <span>40 kg</span>
               <span>65 kg</span>
               <span>95 kg</span>
@@ -76,7 +76,7 @@
 
           <!-- Option 3: Sở thích mặc -->
           <div class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700">
+            <label class="block text-sm font-medium text-[#18181B]">
               Sở thích phom dáng:
             </label>
             <div class="grid grid-cols-3 gap-2">
@@ -85,8 +85,8 @@
                 @click="fitPreference = 'TIGHT'"
                 class="px-3 py-2 text-xs font-semibold rounded-xl border transition-all text-center"
                 :class="fitPreference === 'TIGHT'
-                  ? 'border-rose-600 bg-rose-50 text-rose-700 shadow-sm'
-                  : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                  ? 'border-[#7A1032] bg-[#7A1032] text-white'
+                  : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
               >
                 Mặc ôm Body
               </button>
@@ -95,8 +95,8 @@
                 @click="fitPreference = 'REGULAR'"
                 class="px-3 py-2 text-xs font-semibold rounded-xl border transition-all text-center"
                 :class="fitPreference === 'REGULAR'
-                  ? 'border-rose-600 bg-rose-50 text-rose-700 shadow-sm'
-                  : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                  ? 'border-[#7A1032] bg-[#7A1032] text-white'
+                  : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
               >
                 Mặc vừa vặn
               </button>
@@ -105,8 +105,8 @@
                 @click="fitPreference = 'OVERSIZE'"
                 class="px-3 py-2 text-xs font-semibold rounded-xl border transition-all text-center"
                 :class="fitPreference === 'OVERSIZE'
-                  ? 'border-rose-600 bg-rose-50 text-rose-700 shadow-sm'
-                  : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                  ? 'border-[#7A1032] bg-[#7A1032] text-white'
+                  : 'border-neutral-200 bg-white text-[#18181B] hover:border-[#C9963B]'"
               >
                 Mặc rộng Oversize
               </button>
@@ -114,36 +114,36 @@
           </div>
 
           <!-- Prediction Result Box -->
-          <div class="rounded-2xl p-4 bg-gradient-to-br from-rose-50 via-rose-100/60 to-amber-50 border border-rose-200 shadow-sm">
+          <div class="rounded-2xl p-4 bg-gradient-to-br from-rose-50/80 via-white to-amber-50/80 border border-[#C9963B]/35 shadow-sm">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-rose-800">Kết quả dự đoán AI</span>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <span class="text-xs font-bold uppercase tracking-wider text-[#7A1032]">Kết quả dự đoán AI</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                 Độ vừa vặn ~{{ matchRate }}%
               </span>
             </div>
 
-            <p class="text-sm text-gray-800 leading-snug">
-              Hệ thống gợi ý bạn chọn <strong class="text-xl text-rose-600 font-extrabold mx-1">Size {{ predictedSize }}</strong>
+            <p class="text-sm text-[#18181B] leading-snug">
+              Hệ thống gợi ý bạn chọn <strong class="text-xl text-[#7A1032] font-extrabold mx-1">Size {{ predictedSize }}</strong>
             </p>
-            <p class="text-xs text-gray-600 mt-1">
+            <p class="text-xs text-[#6B7280] mt-1">
               {{ explanation }}
             </p>
           </div>
         </div>
 
         <!-- Modal Footer -->
-        <div class="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row gap-2.5 sm:justify-end border-t border-gray-100">
+        <div class="bg-gray-50/80 px-6 py-4 flex flex-col sm:flex-row gap-2.5 sm:justify-end border-t border-neutral-200">
           <button
             type="button"
             @click="close"
-            class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-semibold transition-colors"
+            class="px-4 py-2.5 rounded-xl border border-neutral-300 bg-white text-[#18181B] hover:bg-neutral-100 text-xs font-semibold transition-colors"
           >
             Đóng
           </button>
           <button
             type="button"
             @click="applySuggestedSize"
-            class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5"
+            class="btn-sheen active:scale-[0.98] px-5 py-2.5 rounded-xl bg-[#7A1032] hover:bg-[#5C0B27] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5"
           >
             <span>✨</span> Chọn ngay Size {{ predictedSize }}
           </button>
@@ -156,7 +156,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 
 const props = defineProps({
   isOpen: {
@@ -167,6 +167,14 @@ const props = defineProps({
     type: Array,
     default: () => ['S', 'M', 'L', 'XL']
   }
+});
+
+watch(() => props.isOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
 });
 
 const emit = defineEmits(['close', 'select-size']);

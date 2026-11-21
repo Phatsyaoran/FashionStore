@@ -1,13 +1,13 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
     <!-- Breadcrumb -->
     <div>
-      <div class="text-xs text-gray-500 flex items-center gap-2 mb-1">
-        <router-link to="/cart" class="hover:text-rose-600">Giỏ hàng</router-link>
-        <span>/</span>
-        <span class="text-gray-900 font-semibold">Thanh toán</span>
+      <div class="text-xs text-[#6B7280] flex items-center gap-2 mb-1.5">
+        <router-link to="/cart" class="hover:text-[#7A1032] transition-colors">Giỏ hàng</router-link>
+        <span class="text-neutral-300">/</span>
+        <span class="text-[#18181B] font-medium">Thanh toán</span>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+      <h1 class="text-2xl sm:text-3xl font-bold text-[#18181B] tracking-tight">
         Xác Nhận & Đặt Hàng
       </h1>
     </div>
@@ -18,71 +18,71 @@
       <div class="lg:col-span-2 space-y-6">
         
         <!-- Section 1: Customer details -->
-        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-4">
-          <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+        <div class="bg-white rounded-xl p-6 sm:p-7 border border-neutral-200/80 shadow-sm space-y-4">
+          <h2 class="text-base font-bold text-[#18181B] flex items-center gap-2">
             <span>📍</span> Thông Tin Giao Hàng
           </h2>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-1">
-              <label class="block text-xs font-semibold text-gray-700">Họ và tên người nhận *</label>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-medium text-[#6B7280]">Họ và tên người nhận *</label>
               <input
                 type="text"
                 v-model="form.customerName"
                 required
                 placeholder="Nguyễn Văn A"
-                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
               />
             </div>
 
-            <div class="space-y-1">
-              <label class="block text-xs font-semibold text-gray-700">Số điện thoại *</label>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-medium text-[#6B7280]">Số điện thoại *</label>
               <input
                 type="tel"
                 v-model="form.customerPhone"
                 required
                 placeholder="0912345678"
-                class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
               />
             </div>
           </div>
 
-          <div class="space-y-1">
-            <label class="block text-xs font-semibold text-gray-700">Địa chỉ giao hàng chi tiết *</label>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-[#6B7280]">Địa chỉ giao hàng chi tiết *</label>
             <input
               type="text"
               v-model="form.shippingAddress"
               required
               placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
-              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+              class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
             />
           </div>
 
-          <div class="space-y-1">
-            <label class="block text-xs font-semibold text-gray-700">Ghi chú giao hàng (Tùy chọn)</label>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-[#6B7280]">Ghi chú giao hàng (Tùy chọn)</label>
             <textarea
               v-model="form.note"
               rows="2"
               placeholder="Giao giờ hành chính, gọi trước khi đến..."
-              class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+              class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
             ></textarea>
           </div>
         </div>
 
         <!-- Section 2: Payment Methods -->
-        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-4">
-          <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+        <div class="bg-white rounded-xl p-6 sm:p-7 border border-neutral-200/80 shadow-sm space-y-4">
+          <h2 class="text-base font-bold text-[#18181B] flex items-center gap-2">
             <span>💳</span> Phương Thức Thanh Toán
           </h2>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Option 1: COD -->
             <label
-              class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
-              :class="form.paymentMethod === 'COD' ? 'border-rose-600 bg-rose-50/50 text-rose-900 shadow-sm' : 'border-gray-200 hover:border-gray-300 text-gray-700'"
+              class="relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all"
+              :class="form.paymentMethod === 'COD' ? 'border-[#7A1032] bg-[#7A1032]/[0.04] text-[#18181B]' : 'border-neutral-200 bg-white hover:border-[#C9963B]/70 text-[#6B7280]'"
             >
               <div class="flex items-center justify-between">
-                <span class="text-xs font-bold flex items-center gap-2">
+                <span class="text-xs font-bold flex items-center gap-2 text-[#18181B]">
                   <span>📦</span> COD (Thanh toán khi nhận)
                 </span>
                 <input
@@ -90,21 +90,21 @@
                   name="paymentMethod"
                   value="COD"
                   v-model="form.paymentMethod"
-                  class="text-rose-600 focus:ring-rose-500"
+                  class="accent-[#7A1032]"
                 />
               </div>
-              <p class="text-[11px] text-gray-500 mt-2">
+              <p class="text-[11px] text-[#6B7280] mt-2 leading-relaxed">
                 Thanh toán tiền mặt cho nhân viên giao hàng khi nhận và kiểm tra kiện hàng.
               </p>
             </label>
 
             <!-- Option 2: VietQR -->
             <label
-              class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition-all"
-              :class="form.paymentMethod === 'VIETQR' ? 'border-rose-600 bg-rose-50/50 text-rose-900 shadow-sm' : 'border-gray-200 hover:border-gray-300 text-gray-700'"
+              class="relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all"
+              :class="form.paymentMethod === 'VIETQR' ? 'border-[#7A1032] bg-[#7A1032]/[0.04] text-[#18181B]' : 'border-neutral-200 bg-white hover:border-[#C9963B]/70 text-[#6B7280]'"
             >
               <div class="flex items-center justify-between">
-                <span class="text-xs font-bold flex items-center gap-2">
+                <span class="text-xs font-bold flex items-center gap-2 text-[#18181B]">
                   <span>⚡</span> Chuyển khoản VietQR QuickLink
                 </span>
                 <input
@@ -112,10 +112,10 @@
                   name="paymentMethod"
                   value="VIETQR"
                   v-model="form.paymentMethod"
-                  class="text-rose-600 focus:ring-rose-500"
+                  class="accent-[#7A1032]"
                 />
               </div>
-              <p class="text-[11px] text-gray-500 mt-2">
+              <p class="text-[11px] text-[#6B7280] mt-2 leading-relaxed">
                 Quét mã QR tự động qua app ngân hàng MB Bank, tự điền đúng số tiền và nội dung.
               </p>
             </label>
@@ -124,51 +124,51 @@
 
       </div>
 
-      <!-- Right: Order Summary Review -->
-      <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-6">
-        <h3 class="text-base font-bold text-gray-900">Chi Tiết Đơn Hàng</h3>
+      <!-- Right: Order Summary Review (Sticky on Desktop) -->
+      <div class="lg:sticky lg:top-24 bg-white rounded-xl p-6 border border-neutral-200/80 shadow-sm space-y-6">
+        <h3 class="text-base font-bold text-[#18181B]">Chi Tiết Đơn Hàng</h3>
 
         <div class="max-h-60 overflow-y-auto space-y-3 pr-1 text-xs">
           <div
             v-for="item in cartStore.items"
             :key="item.variantId"
-            class="flex items-center gap-3 pb-3 border-b border-gray-100"
+            class="flex items-center gap-3 pb-3 border-b border-neutral-200/80 last:border-b-0"
           >
-            <img :src="item.thumbnailUrl" @error="onImageError" class="w-12 h-14 object-cover rounded-xl bg-gray-50 flex-shrink-0" />
-            <div class="flex-1">
-              <h4 class="font-bold text-gray-800 line-clamp-1">{{ item.productName }}</h4>
-              <p class="text-[11px] text-gray-400">Size {{ item.size }} | {{ item.colorName }} x {{ item.quantity }}</p>
+            <img :src="item.thumbnailUrl" @error="onImageError" class="w-12 h-14 object-cover rounded-lg bg-neutral-100 border border-neutral-200/80 flex-shrink-0" />
+            <div class="flex-1 min-w-0">
+              <h4 class="font-semibold text-[#18181B] line-clamp-1">{{ item.productName }}</h4>
+              <p class="text-[11px] text-[#6B7280]">Size {{ item.size }} | {{ item.colorName }} × {{ item.quantity }}</p>
             </div>
-            <div class="font-bold text-gray-900">
+            <div class="font-bold text-[#7A1032] shrink-0">
               {{ formatVND(item.price * item.quantity) }}
             </div>
           </div>
         </div>
 
-        <div class="space-y-2.5 text-xs pt-2">
-          <div class="flex justify-between text-gray-600">
+        <div class="space-y-2.5 text-xs pt-2 border-t border-neutral-200/80">
+          <div class="flex justify-between text-[#6B7280]">
             <span>Tạm tính tiền hàng:</span>
-            <span class="font-bold text-gray-900">{{ formatVND(cartStore.subTotal) }}</span>
+            <span class="font-semibold text-[#18181B]">{{ formatVND(cartStore.subTotal) }}</span>
           </div>
-          <div class="flex justify-between text-gray-600">
+          <div class="flex justify-between text-[#6B7280]">
             <span>Phí vận chuyển:</span>
-            <span v-if="cartStore.isFreeShip" class="font-bold text-emerald-600 uppercase">Miễn phí (0đ)</span>
-            <span v-else class="font-medium text-gray-900">{{ formatVND(cartStore.shippingFee) }}</span>
+            <span v-if="cartStore.isFreeShip" class="font-bold text-emerald-700 uppercase">Miễn phí (0đ)</span>
+            <span v-else class="font-medium text-[#18181B]">{{ formatVND(cartStore.shippingFee) }}</span>
           </div>
-          <div v-if="cartStore.discountAmount > 0" class="flex justify-between text-emerald-600 font-medium">
+          <div v-if="cartStore.discountAmount > 0" class="flex justify-between text-emerald-700 font-medium">
             <span>Giảm giá:</span>
             <span>-{{ formatVND(cartStore.discountAmount) }}</span>
           </div>
-          <div class="pt-3 border-t border-gray-200 flex justify-between items-baseline">
-            <span class="text-sm font-bold text-gray-900">Tổng thanh toán:</span>
-            <span class="text-2xl font-black text-rose-600">{{ formatVND(cartStore.totalAmount) }}</span>
+          <div class="pt-3 border-t border-neutral-200/80 flex justify-between items-baseline">
+            <span class="text-sm font-bold text-[#18181B]">Tổng thanh toán:</span>
+            <span class="text-2xl font-extrabold text-[#7A1032]">{{ formatVND(cartStore.totalAmount) }}</span>
           </div>
         </div>
 
         <button
           type="submit"
           :disabled="submitting || cartStore.items.length === 0"
-          class="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider text-center shadow-lg shadow-rose-200 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+          class="btn-sheen silky-hover active:scale-[0.98] w-full h-12 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs uppercase tracking-wider text-center disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
         >
           <span v-if="submitting">Đang xử lý đơn hàng...</span>
           <span v-else>Xác Nhận Đặt Hàng Ngay</span>
@@ -177,78 +177,78 @@
 
     </form>
 
-    <!-- VIETQR POPUP MODAL (Chuẩn VietQR QuickLink MB Bank) -->
+    <!-- VIETQR POPUP MODAL (Clean White Luxury) -->
     <Teleport to="body">
       <div v-if="showVietQrModal" class="fixed inset-0 z-[9990] overflow-y-auto no-print" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-sm transition-opacity"></div>
+        <div class="fixed inset-0 z-[9990] bg-black/45 backdrop-blur-[2px] transition-opacity"></div>
 
         <div class="relative z-[9995] flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-          <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-gray-100 p-6 space-y-6 max-h-[90vh] overflow-y-auto w-full">
+          <div class="relative transform overflow-hidden rounded-2xl bg-white text-left text-[#18181B] shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md border border-neutral-200/80 p-6 space-y-5 max-h-[90vh] overflow-y-auto w-full">
           
           <!-- Modal Header -->
           <div class="text-center space-y-1">
-            <div class="inline-flex p-3 rounded-2xl bg-rose-50 text-rose-600 mb-1">
-              <span class="text-2xl">⚡</span>
+            <div class="inline-flex w-11 h-11 items-center justify-center rounded-xl luxury-gradient text-[#F3D078] mb-1 shadow-sm">
+              <span class="text-lg">⚡</span>
             </div>
-            <h3 class="text-lg font-bold text-gray-900">Quét Mã VietQR Chuyển Khoản</h3>
-            <p class="text-xs text-gray-500">Mã đơn hàng: <strong class="text-rose-600">{{ createdOrder?.orderCode }}</strong></p>
+            <h3 class="text-lg font-bold text-[#18181B]">Quét Mã VietQR Chuyển Khoản</h3>
+            <p class="text-xs text-[#6B7280]">Mã đơn hàng: <strong class="font-mono text-[#7A1032]">{{ createdOrder?.orderCode }}</strong></p>
           </div>
 
-          <!-- Dynamic VietQR Image with Fintech Laser Scanline -->
-          <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200 flex flex-col items-center">
-            <div class="relative overflow-hidden rounded-xl bg-white p-2 border border-gray-200 shadow-md">
+          <!-- Dynamic VietQR Image with Laser Scanline -->
+          <div class="bg-[#FAFAFA] p-4 rounded-xl border border-neutral-200/80 flex flex-col items-center">
+            <div class="relative overflow-hidden rounded-xl bg-white p-2 border border-neutral-200 shadow-sm">
               <img
                 :src="vietQrUrl"
                 alt="Mã QR Chuyển Khoản MB Bank"
                 class="w-56 h-auto object-contain rounded-lg"
               />
               <!-- Animated Fintech Scanline -->
-              <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_12px_#f43f5e] animate-scanline pointer-events-none"></div>
+              <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#C9963B] to-transparent animate-scanline pointer-events-none"></div>
             </div>
             
             <!-- Countdown 10 mins -->
-            <div class="mt-3 text-[11px] font-semibold text-rose-600 flex items-center gap-1.5 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
+            <div class="mt-3 text-[11px] font-semibold text-[#7A1032] flex items-center gap-1.5 bg-[#7A1032]/[0.06] px-3 py-1 rounded-md border border-[#7A1032]/20">
               <span>⏱️</span> Mã QR hết hạn sau: <span class="font-mono font-bold">{{ formattedTimer }}</span>
             </div>
           </div>
 
           <!-- Transfer Info Details -->
-          <div class="space-y-2 text-xs bg-gray-50 p-4 rounded-2xl border border-gray-100">
-            <div class="flex justify-between items-center py-1 border-b border-gray-200">
-              <span class="text-gray-500">Ngân hàng:</span>
-              <span class="font-bold text-gray-900">MB Bank (Quân Đội)</span>
+          <div class="space-y-2 text-xs bg-[#FAFAFA] p-4 rounded-xl border border-neutral-200/80">
+            <div class="flex justify-between items-center py-1 border-b border-neutral-200/80">
+              <span class="text-[#6B7280]">Ngân hàng:</span>
+              <span class="font-bold text-[#18181B]">MB Bank (Quân Đội)</span>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-gray-200">
-              <span class="text-gray-500">Chủ tài khoản:</span>
-              <span class="font-bold text-gray-900">NGUYEN VAN PHAT</span>
+            <div class="flex justify-between items-center py-1 border-b border-neutral-200/80">
+              <span class="text-[#6B7280]">Chủ tài khoản:</span>
+              <span class="font-bold text-[#18181B]">NGUYEN VAN PHAT</span>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-gray-200">
-              <span class="text-gray-500">Số tài khoản:</span>
+            <div class="flex justify-between items-center py-1 border-b border-neutral-200/80">
+              <span class="text-[#6B7280]">Số tài khoản:</span>
               <div class="flex items-center gap-1.5">
-                <span class="font-mono font-bold text-rose-600 text-sm">0123456789</span>
+                <span class="font-mono font-bold text-[#7A1032] text-sm">0123456789</span>
                 <button
                   type="button"
                   @click="copyText('0123456789', 'account')"
                   class="text-[10px] font-semibold px-2 py-0.5 rounded transition-all duration-200 border"
-                  :class="copiedField === 'account' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'"
+                  :class="copiedField === 'account' ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-white border-neutral-200 text-[#18181B] hover:border-[#7A1032]'"
                 >
                   {{ copiedField === 'account' ? '✓ Đã chép' : 'Sao chép' }}
                 </button>
               </div>
             </div>
-            <div class="flex justify-between items-center py-1 border-b border-gray-200">
-              <span class="text-gray-500">Số tiền:</span>
-              <span class="font-black text-rose-600 text-sm">{{ formatVND(createdOrder?.totalAmount) }}</span>
+            <div class="flex justify-between items-center py-1 border-b border-neutral-200/80">
+              <span class="text-[#6B7280]">Số tiền:</span>
+              <span class="font-extrabold text-[#7A1032] text-sm">{{ formatVND(createdOrder?.totalAmount) }}</span>
             </div>
             <div class="flex justify-between items-center py-1">
-              <span class="text-gray-500">Nội dung CK:</span>
+              <span class="text-[#6B7280]">Nội dung CK:</span>
               <div class="flex items-center gap-1.5">
-                <span class="font-mono font-bold text-gray-900">{{ createdOrder?.orderCode }}</span>
+                <span class="font-mono font-bold text-[#18181B]">{{ createdOrder?.orderCode }}</span>
                 <button
                   type="button"
                   @click="copyText(createdOrder?.orderCode, 'code')"
                   class="text-[10px] font-semibold px-2 py-0.5 rounded transition-all duration-200 border"
-                  :class="copiedField === 'code' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'"
+                  :class="copiedField === 'code' ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-white border-neutral-200 text-[#18181B] hover:border-[#7A1032]'"
                 >
                   {{ copiedField === 'code' ? '✓ Đã chép' : 'Sao chép' }}
                 </button>
@@ -262,7 +262,7 @@
               type="button"
               @click="handleConfirmPayment"
               :disabled="confirming"
-              class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              class="btn-sheen w-full h-11 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <span v-if="confirming">Đang xác nhận...</span>
               <span v-else>✓ Tôi Đã Chuyển Khoản</span>
@@ -270,7 +270,7 @@
             <button
               type="button"
               @click="finishOrderWithoutWait"
-              class="w-full py-2 text-xs text-gray-500 hover:text-gray-700 text-center"
+              class="w-full py-2 text-xs text-[#6B7280] hover:text-[#18181B] text-center transition-colors"
             >
               Tôi sẽ thanh toán sau (Về trang tra cứu đơn)
             </button>

@@ -1,223 +1,250 @@
 <template>
-  <div class="space-y-16">
-    <!-- HERO BANNER (Editorial Lookbook Split-Layout - Coolmate / Zara Style) -->
-    <section class="relative bg-gradient-to-br from-gray-950 via-gray-900 to-rose-950 text-white rounded-[2.5rem] overflow-hidden shadow-2xl mx-4 sm:mx-6 lg:mx-8 mt-6 border border-white/10">
-      <!-- Ambient decorative glow -->
-      <div class="absolute -top-32 -left-32 w-96 h-96 bg-rose-600/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#f43f5e_1px,transparent_1px)] [background-size:20px_20px]"></div>
+  <div class="space-y-14 sm:space-y-16">
+    <!-- HERO BANNER (Clean White Editorial Luxury) -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div class="relative bg-white text-[#18181B] rounded-2xl overflow-hidden shadow-[0_12px_40px_-16px_rgba(24,24,27,0.10)] border border-neutral-200/80">
+        <!-- Subtle top luxury gradient accent line -->
+        <div class="h-1 w-full luxury-gradient"></div>
 
-      <div class="relative max-w-7xl mx-auto px-6 py-16 sm:py-24 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <!-- Left Content (Col 1-7) -->
-        <div class="lg:col-span-7 space-y-6 text-left">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-extrabold tracking-wider uppercase backdrop-blur-md">
-            <span class="animate-pulse">✨</span> NEW COLLECTION 2026
-          </div>
-
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.15]">
-            Nâng Tầm Phong Cách <br />
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-amber-300 to-rose-200">
-              Chuẩn Phom Dáng Việt
-            </span>
-          </h1>
-
-          <p class="text-gray-300 text-sm sm:text-base max-w-xl leading-relaxed font-normal">
-            Trải nghiệm các dòng thời trang tối giản, cao cấp: sợi tre Bamboo chống nhăn, Cotton Compact 100% 230gsm đến Lụa Satin mềm mát. Tôn dáng hoàn hảo cho mọi hoàn cảnh từ công sở tới dạo phố.
-          </p>
-
-          <div class="flex flex-wrap items-center gap-4 pt-2">
-            <router-link
-              to="/catalog"
-              class="group px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-orange-500 hover:from-rose-500 hover:to-orange-400 text-white font-black text-sm shadow-xl shadow-rose-600/30 hover:shadow-rose-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2.5"
-            >
-              <span>Khám Phá BST Ngay</span>
-              <span class="group-hover:translate-x-1.5 transition-transform duration-300">→</span>
-            </router-link>
-
-            <router-link
-              to="/catalog?isFlashSale=true"
-              class="px-7 py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-md border border-white/20 hover:border-white/40 transition-all flex items-center gap-2 shadow-sm"
-            >
-              <span>⚡ Flash Sale Hôm Nay</span>
-            </router-link>
-          </div>
-
-          <!-- Social Proof Micro-metrics -->
-          <div class="pt-4 flex items-center gap-6 text-xs text-gray-400 border-t border-white/10">
-            <div class="flex items-center gap-2">
-              <span class="text-amber-400 font-extrabold text-sm">★ 4.9/5</span>
-              <span>Đánh giá hài lòng</span>
+        <div class="relative px-5 py-10 sm:px-9 sm:py-14 lg:px-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+          <!-- Left Content -->
+          <div class="lg:col-span-6 space-y-5 text-left">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#7A1032]/[0.06] border border-[#C9963B]/40 text-[#7A1032] text-[11px] font-bold tracking-[0.16em] uppercase">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#C9963B]"></span>
+              New Collection 2026
             </div>
-            <span>•</span>
-            <div>
-              <span class="text-white font-extrabold text-sm">50.000+</span>
-              <span> Khách hàng tin dùng</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Right Lookbook Editorial Layout (Col 8-12) -->
-        <div class="lg:col-span-5 relative hidden lg:block">
-          <div class="relative z-10 grid grid-cols-2 gap-4">
-            <!-- Model Card 1 -->
-            <div class="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/15 transform -rotate-2 hover:rotate-0 transition-transform duration-500 group">
-              <img
-                src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80"
-                alt="Fashion Editorial Look 1"
-                @error="onImageError"
-                class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <div class="absolute bottom-3 left-3 right-3 text-white">
-                <span class="text-[10px] font-bold text-rose-300 uppercase tracking-widest block">Lookbook</span>
-                <span class="text-xs font-extrabold">Bộ Sưu Tập Nữ 2026</span>
+            <h1 class="text-3xl sm:text-5xl lg:text-[52px] font-extrabold tracking-tight leading-[1.28] text-[#18181B]">
+              <span class="block">Nâng Tầm Phong Cách</span>
+              <span class="text-[#7A1032] font-light mt-2 pt-1.5 pb-1 inline-block">Chuẩn Form Dáng Việt</span>
+            </h1>
+
+            <p class="text-[#6B7280] text-sm sm:text-base max-w-xl leading-relaxed">
+              Thiết kế tối giản đương đại từ sợi tre Bamboo chống nhăn, Cotton Compact 230gsm đến Lụa Satin mềm mát — tôn dáng tự nhiên từ công sở đến dạo phố.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <router-link
+                to="/catalog"
+                class="btn-sheen silky-hover active:scale-[0.98] min-h-[46px] px-7 py-3 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs sm:text-sm tracking-wide shadow-sm hover:shadow-md inline-flex items-center gap-2"
+              >
+                <span>Khám Phá Bộ Sưu Tập</span>
+                <span class="text-[#F3D078]">→</span>
+              </router-link>
+
+              <router-link
+                to="/catalog?isFlashSale=true"
+                class="silky-hover active:scale-[0.98] min-h-[46px] px-6 py-3 rounded-lg bg-white hover:bg-[#FAFAFA] text-[#7A1032] font-semibold text-xs sm:text-sm border border-neutral-200 hover:border-[#C9963B]/70 inline-flex items-center gap-2"
+              >
+                <span>⚡</span>
+                <span>Flash Sale Hôm Nay</span>
+              </router-link>
+            </div>
+
+            <!-- Subtle Metrics -->
+            <div class="pt-5 flex flex-wrap items-center gap-6 text-xs text-[#6B7280] border-t border-neutral-200/80">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[#C9963B] font-bold text-sm">★ 4.9/5</span>
+                <span>Đánh giá hài lòng</span>
               </div>
-            </div>
-
-            <!-- Model Card 2 -->
-            <div class="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/15 transform rotate-2 hover:rotate-0 transition-transform duration-500 mt-8 group">
-              <img
-                src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80"
-                alt="Fashion Editorial Look 2"
-                @error="onImageError"
-                class="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <div class="absolute bottom-3 left-3 right-3 text-white">
-                <span class="text-[10px] font-bold text-amber-300 uppercase tracking-widest block">Urban Casual</span>
-                <span class="text-xs font-extrabold">Phong Cách Nam Trẻ</span>
+              <span class="text-neutral-300">•</span>
+              <div>
+                <span class="text-[#18181B] font-bold text-sm">50.000+</span>
+                <span> Khách hàng tin dùng</span>
               </div>
             </div>
           </div>
 
-          <!-- Floating Badge -->
-          <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 z-20 bg-white/95 backdrop-blur-md text-gray-900 px-4 py-2 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-2 text-xs font-bold whitespace-nowrap">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Chất vải tự nhiên 100% an toàn</span>
+          <!-- Right Editorial Lookbook V-Shape Crossed Cards (6 cols, Editorial Stagger) -->
+          <div class="lg:col-span-6 relative flex items-center justify-center py-3 lg:py-2">
+            <div
+              class="hero-v-group relative flex items-center justify-center gap-4 sm:gap-5 w-full mx-auto px-1"
+              @mouseleave="activeHeroCard = null"
+            >
+              <!-- Left V-Card: BST Nữ 2026 -->
+              <div
+                @click="activeHeroCard = activeHeroCard === 'left' ? null : 'left'"
+                class="hero-v-card hero-v-card-left relative w-[46%] sm:w-[220px] lg:w-[245px] aspect-[3/4] rounded-2xl overflow-hidden border border-white/75 ring-1 ring-neutral-200/80 shadow-xl cursor-pointer select-none shrink-0"
+                :class="{ 'is-active': activeHeroCard === 'left' }"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80"
+                  alt="Fashion Editorial Look 1"
+                  @error="onImageError"
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent"></div>
+                <div class="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                  <span class="text-[10px] font-semibold text-[#F3D078] uppercase tracking-widest block">Editorial</span>
+                  <span class="text-xs sm:text-sm font-bold">BST Nữ 2026</span>
+                </div>
+              </div>
+
+              <!-- Right V-Card: Phong Cách Nam -->
+              <div
+                @click="activeHeroCard = activeHeroCard === 'right' ? null : 'right'"
+                class="hero-v-card hero-v-card-right relative w-[46%] sm:w-[220px] lg:w-[245px] aspect-[3/4] rounded-2xl overflow-hidden border border-white/75 ring-1 ring-neutral-200/80 shadow-xl cursor-pointer select-none shrink-0"
+                :class="{ 'is-active': activeHeroCard === 'right' }"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80"
+                  alt="Fashion Editorial Look 2"
+                  @error="onImageError"
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent"></div>
+                <div class="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                  <span class="text-[10px] font-semibold text-[#F3D078] uppercase tracking-widest block">Urban Minimal</span>
+                  <span class="text-xs sm:text-sm font-bold">Phong Cách Nam</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 4 SERVICE COMMITMENTS BANNER (Uniqlo / Coolmate Standard) -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-all flex items-center gap-3.5 group">
-          <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-            🚚
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 group-hover:text-rose-600 transition-colors">Miễn phí vận chuyển</h4>
-            <p class="text-[11px] text-gray-500 mt-0.5">Đơn hàng từ 500k toàn quốc</p>
+    <!-- KINETIC EDITORIAL MARQUEE STRIP (Seamless Right-to-Left + Interactive Starfield) -->
+    <div class="fs-marquee-wrapper overflow-hidden relative luxury-gradient text-[#FFFDF9] py-3.5 border-y border-white/15 select-none shadow-sm">
+      <StarfieldOverlay />
+      <div class="fs-marquee-track relative z-10 text-[11px] sm:text-xs font-bold tracking-[0.22em] uppercase text-[#FFFDF9]">
+        <div class="fs-marquee-group">
+          <span
+            v-for="n in 4"
+            :key="`m1-${n}`"
+            class="px-5 whitespace-nowrap"
+          >
+            FASHIONSTORE 2026 <span class="text-[#F3D078] mx-2">✦</span> AI SMART SIZE <span class="text-[#F3D078] mx-2">✦</span> MIX &amp; MATCH STUDIO <span class="text-[#F3D078] mx-2">✦</span> FREESHIP 500K <span class="text-[#F3D078] mx-2">✦</span>
+          </span>
+        </div>
+        <div class="fs-marquee-group" aria-hidden="true">
+          <span
+            v-for="n in 4"
+            :key="`m2-${n}`"
+            class="px-5 whitespace-nowrap"
+          >
+            FASHIONSTORE 2026 <span class="text-[#F3D078] mx-2">✦</span> AI SMART SIZE <span class="text-[#F3D078] mx-2">✦</span> MIX &amp; MATCH STUDIO <span class="text-[#F3D078] mx-2">✦</span> FREESHIP 500K <span class="text-[#F3D078] mx-2">✦</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 SERVICE COMMITMENTS -->
+    <section v-reveal class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-[#7A1032]/[0.06] border border-[#7A1032]/15 group-hover:border-[#C9963B]/50 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#7A1032] flex items-center justify-center text-lg shrink-0">🚚</div>
+          <div class="min-w-0">
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">Freeship toàn quốc</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Đơn hàng từ 500k</p>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-all flex items-center gap-3.5 group">
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-            🔄
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 group-hover:text-amber-600 transition-colors">Đổi trả tận nơi</h4>
-            <p class="text-[11px] text-gray-500 mt-0.5">Trong vòng 60 ngày miễn phí</p>
+        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-[#C9963B]/10 border border-[#C9963B]/25 group-hover:border-[#C9963B]/60 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#9A6F20] flex items-center justify-center text-lg shrink-0">🔄</div>
+          <div class="min-w-0">
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">Đổi trả 60 ngày</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Hỗ trợ đổi tận nơi</p>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-all flex items-center gap-3.5 group">
-          <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-            📏
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">Trợ lý AI chọn size</h4>
-            <p class="text-[11px] text-gray-500 mt-0.5">Chuẩn số đo vóc dáng ~95%</p>
+        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-[#5E1B55]/[0.08] border border-[#5E1B55]/20 group-hover:border-[#C9963B]/50 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#5E1B55] flex items-center justify-center text-lg shrink-0">📏</div>
+          <div class="min-w-0">
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">AI tư vấn chọn size</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Chuẩn form dáng ~95%</p>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-all flex items-center gap-3.5 group">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-            💳
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">Thanh toán VietQR</h4>
-            <p class="text-[11px] text-gray-500 mt-0.5">Chuyển khoản 1 chạm tức thì</p>
+        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-lg bg-[#7A1032]/[0.06] border border-[#7A1032]/15 group-hover:border-[#C9963B]/50 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#7A1032] flex items-center justify-center text-lg shrink-0">💳</div>
+          <div class="min-w-0">
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">VietQR & COD</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Thanh toán linh hoạt</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FLASH SALE SECTION (Yêu cầu Phase 8) -->
-    <section v-if="flashSales.length > 0" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-gradient-to-r from-rose-900 via-rose-800 to-amber-900 rounded-3xl p-6 sm:p-8 text-white shadow-2xl border border-rose-700/50 relative overflow-hidden">
-        <!-- Glow effect -->
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- FLASH SALE SECTION (Unified Starfield + Inset Sparkling Star Border + Matched Center Divider) -->
+    <section v-if="flashSales.length > 0" v-reveal class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="relative rounded-2xl overflow-hidden luxury-gradient shadow-[0_20px_50px_-15px_rgba(74,8,32,0.35)]">
+        <!-- Unified Interactive Starfield covering Header + Product Grid -->
+        <StarfieldOverlay :min-stars="95" />
 
-        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 to-rose-500 flex items-center justify-center text-2xl shadow-lg shadow-rose-600/50 animate-bounce">
-              ⚡
+        <!-- Inset Sparkling Starlight Border (8px inset ~2mm, 12px corner radius) -->
+        <SparkleBorderOverlay :inset="8" :radius="12" />
+
+        <!-- Header Band -->
+        <div class="relative z-20 px-5 pt-6 pb-4 sm:px-8 sm:pt-7 sm:pb-5 text-[#FFFDF9] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-white/15 text-[#F3D078] border border-[#F3D078]/40 rounded uppercase tracking-wider">LIVE</span>
+              <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight uppercase text-[#FFFDF9]">
+                Flash Sale Giờ Vàng
+              </h2>
             </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
-                  FLASH SALE GIỜ VÀNG
-                </h2>
-                <span class="px-2 py-0.5 text-[10px] font-black bg-amber-400 text-gray-950 rounded-md tracking-wider">
-                  LIVE
-                </span>
-              </div>
-              <p class="text-xs text-rose-200 mt-0.5">Số lượng có hạn, ưu đãi cực sâu - Đang bán chạy nhất hôm nay</p>
-            </div>
+            <p class="text-xs text-white/80 mt-1">Ưu đãi giới hạn trong ngày — số lượng có hạn</p>
           </div>
 
-          <!-- Real-time Live Countdown Clock -->
-          <div class="flex items-center gap-3 bg-black/40 backdrop-blur-md px-5 py-3 rounded-2xl border border-rose-500/30 shadow-inner">
-            <span class="text-xs font-bold text-rose-200">Kết thúc sau:</span>
-            <div class="flex items-center gap-1.5 font-mono text-base font-black">
-              <span class="bg-rose-600 text-white px-2.5 py-1 rounded-xl shadow-md min-w-[2.2rem] text-center">{{ hoursStr }}</span>
-              <span class="text-rose-400 font-bold">:</span>
-              <span class="bg-rose-600 text-white px-2.5 py-1 rounded-xl shadow-md min-w-[2.2rem] text-center">{{ minutesStr }}</span>
-              <span class="text-rose-400 font-bold">:</span>
-              <span class="bg-amber-400 text-gray-950 px-2.5 py-1 rounded-xl shadow-md min-w-[2.2rem] text-center animate-pulse">{{ secondsStr }}</span>
+          <!-- Crisp Countdown Clock -->
+          <div class="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-white/20 self-start sm:self-auto">
+            <span class="text-[11px] font-medium text-white/85">Kết thúc sau</span>
+            <div class="flex items-center gap-1 font-mono text-sm font-extrabold">
+              <span class="bg-black/35 text-[#F3D078] border border-white/15 px-2 py-1 rounded-md min-w-[2rem] text-center">{{ hoursStr }}</span>
+              <span class="text-[#F3D078]">:</span>
+              <span class="bg-black/35 text-[#F3D078] border border-white/15 px-2 py-1 rounded-md min-w-[2rem] text-center">{{ minutesStr }}</span>
+              <span class="text-[#F3D078]">:</span>
+              <span class="bg-[#7A1032] text-[#F3D078] border border-[#F3D078]/40 px-2 py-1 rounded-md min-w-[2rem] text-center">{{ secondsStr }}</span>
             </div>
           </div>
         </div>
 
-        <div class="relative z-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          <ProductCard
-            v-for="product in flashSales"
-            :key="product.id"
-            :product="product"
-            :show-flash-sale-bar="true"
-          />
+        <!-- Single Standalone Sparkling Star Divider (aligned 8px inset with SparkleBorderOverlay) -->
+        <SparkleDivider class="relative z-20 mx-[8px] my-3" />
+
+        <!-- Product Grid (Crisp White ProductCards floating cleanly inside the inset star border) -->
+        <div class="relative z-20 p-5 sm:p-6 pt-3 sm:pt-4">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+            <ProductCard
+              v-for="(product, idx) in flashSales"
+              :key="product.id"
+              v-reveal="idx * 65"
+              :product="product"
+              :show-flash-sale-bar="true"
+            />
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Categories Grid -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section v-reveal class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-end mb-6">
         <div>
-          <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Danh Mục Nổi Bật</h2>
-          <p class="text-xs text-gray-500 mt-1">Lựa chọn trang phục phù hợp cho từng hoàn cảnh</p>
+          <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#7A1032]">Danh mục</span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#18181B] tracking-tight mt-0.5">Danh Mục Nổi Bật</h2>
         </div>
-        <router-link to="/catalog" class="text-xs font-bold text-rose-600 hover:underline">
+        <router-link to="/catalog" class="text-xs font-bold text-[#7A1032] hover:text-[#5C0B27] hover:underline transition-colors">
           Xem tất cả →
         </router-link>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         <router-link
-          v-for="cat in categories"
+          v-for="(cat, idx) in categories"
           :key="cat.id"
+          v-reveal="idx * 50"
           :to="`/catalog?categorySlug=${cat.slug}`"
-          class="group bg-white p-4 rounded-2xl border border-gray-100 hover:border-rose-200 shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center space-y-2"
+          class="group bg-white p-4 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/60 hover:-translate-y-1 hover:shadow-[0_14px_32px_-12px_rgba(92,11,39,0.12)] silky-hover text-center flex flex-col items-center justify-center space-y-2"
         >
-          <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+          <div class="w-11 h-11 rounded-lg bg-[#FAFAFA] border border-neutral-200/80 group-hover:bg-[#7A1032] group-hover:border-[#7A1032] text-[#7A1032] group-hover:text-white flex items-center justify-center text-lg transition-colors duration-300">
             👔
           </div>
-          <h3 class="text-xs font-bold text-gray-800 group-hover:text-rose-600 transition-colors">
+          <h3 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors">
             {{ cat.name }}
           </h3>
-          <span class="text-[10px] text-gray-400 font-medium">
+          <span class="text-[11px] text-[#6B7280] font-medium">
             {{ cat.productCount || 0 }} sản phẩm
           </span>
         </router-link>
@@ -225,21 +252,38 @@
     </section>
 
     <!-- New Arrivals Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section v-reveal class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-end mb-6">
         <div>
-          <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Sản Phẩm Mới Nhất</h2>
-          <p class="text-xs text-gray-500 mt-1">Cập nhật xu hướng thời trang hiện đại mỗi ngày</p>
+          <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#7A1032]">New Arrivals</span>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#18181B] tracking-tight mt-0.5">Sản Phẩm Mới Nhất</h2>
         </div>
-        <router-link to="/catalog" class="text-xs font-bold text-rose-600 hover:underline">
+        <router-link to="/catalog" class="text-xs font-bold text-[#7A1032] hover:text-[#5C0B27] hover:underline transition-colors">
           Khám phá trọn bộ →
         </router-link>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      <!-- Skeleton Loading Shimmer -->
+      <div v-if="loadingHome" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div
+          v-for="n in 8"
+          :key="n"
+          class="bg-white rounded-xl border border-neutral-200/80 overflow-hidden"
+        >
+          <div class="aspect-[3/4] skeleton-shimmer"></div>
+          <div class="p-4 space-y-2.5">
+            <div class="h-3 w-1/3 rounded skeleton-shimmer"></div>
+            <div class="h-4 w-5/6 rounded skeleton-shimmer"></div>
+            <div class="h-4 w-1/2 rounded skeleton-shimmer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
         <ProductCard
-          v-for="product in latestProducts"
+          v-for="(product, idx) in latestProducts"
           :key="product.id"
+          v-reveal="(idx % 4) * 65"
           :product="product"
         />
       </div>
@@ -251,11 +295,16 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import api from '@/services/api';
 import ProductCard from '@/components/ProductCard.vue';
+import StarfieldOverlay from '@/components/StarfieldOverlay.vue';
+import SparkleBorderOverlay from '@/components/SparkleBorderOverlay.vue';
+import SparkleDivider from '@/components/SparkleDivider.vue';
 import { onImageError } from '@/services/formatters';
 
+const activeHeroCard = ref(null);
 const categories = ref([]);
 const flashSales = ref([]);
 const latestProducts = ref([]);
+const loadingHome = ref(true);
 
 // Real-time Countdown Timer (Phase 8)
 const hoursStr = ref('02');
@@ -310,6 +359,8 @@ onMounted(async () => {
     if (latestRes.success) latestProducts.value = latestRes.data || [];
   } catch (err) {
     console.error('Lỗi nạp dữ liệu trang chủ:', err);
+  } finally {
+    loadingHome.value = false;
   }
 
   updateCountdown();
@@ -322,3 +373,55 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<style scoped>
+.hero-v-card {
+  transition:
+    transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1),
+    box-shadow 0.55s cubic-bezier(0.25, 0.8, 0.25, 1),
+    filter 0.55s ease !important;
+  will-change: transform;
+}
+
+/* Thẻ trái cao hơn nhẹ, thẻ phải thấp hơn nhẹ tạo nhịp tạp chí + dáng chữ V rõ nét */
+.hero-v-card-left {
+  transform-origin: center bottom;
+  transform: rotate(-5.5deg) translate3d(0, -10px, 0) scale(1);
+}
+.hero-v-card-right {
+  transform-origin: center bottom;
+  transform: rotate(5.5deg) translate3d(0, 12px, 0) scale(1);
+}
+
+/* Hover/chạm thẻ TRÁI: thẻ trái thẳng lên, thẻ phải né nhẹ sang phải */
+.hero-v-group:has(.hero-v-card-left:hover) .hero-v-card-left,
+.hero-v-group:has(.hero-v-card-left.is-active) .hero-v-card-left {
+  transform: rotate(0deg) translate3d(-8px, -16px, 0) scale(1.04);
+  box-shadow: 0 26px 50px -14px rgba(74, 8, 32, 0.28);
+}
+.hero-v-group:has(.hero-v-card-left:hover) .hero-v-card-right,
+.hero-v-group:has(.hero-v-card-left.is-active) .hero-v-card-right {
+  transform: rotate(7deg) translate3d(12px, 16px, 0) scale(0.96);
+  filter: brightness(0.9);
+}
+
+/* Hover/chạm thẻ PHẢI: thẻ phải thẳng lên, thẻ trái né nhẹ sang trái */
+.hero-v-group:has(.hero-v-card-right:hover) .hero-v-card-right,
+.hero-v-group:has(.hero-v-card-right.is-active) .hero-v-card-right {
+  transform: rotate(0deg) translate3d(8px, 4px, 0) scale(1.04);
+  box-shadow: 0 26px 50px -14px rgba(74, 8, 32, 0.28);
+}
+.hero-v-group:has(.hero-v-card-right:hover) .hero-v-card-left,
+.hero-v-group:has(.hero-v-card-right.is-active) .hero-v-card-left {
+  transform: rotate(-7deg) translate3d(-12px, -6px, 0) scale(0.96);
+  filter: brightness(0.9);
+}
+
+.hero-v-card img {
+  transition: transform 0.65s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+.hero-v-card:hover img,
+.hero-v-card.is-active img {
+  transform: scale(1.05);
+}
+</style>

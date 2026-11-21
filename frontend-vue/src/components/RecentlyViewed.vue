@@ -1,18 +1,18 @@
 <template>
-  <div v-if="productStore.recentlyViewed && productStore.recentlyViewed.length > 0" class="mt-16 pt-12 border-t border-gray-200">
+  <div v-if="productStore.recentlyViewed && productStore.recentlyViewed.length > 0" class="mt-16 pt-12 border-t border-neutral-200/80">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h3 class="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+        <h3 class="text-xl font-bold text-[#18181B] tracking-tight flex items-center gap-2">
           <span>👀</span> Sản Phẩm Bạn Vừa Xem
         </h3>
-        <p class="text-xs text-gray-500 mt-0.5">Tiếp tục khám phá các mẫu thời trang bạn vừa quan tâm</p>
+        <p class="text-xs text-[#6B7280] mt-0.5">Tiếp tục khám phá các mẫu thời trang bạn vừa quan tâm</p>
       </div>
 
       <button
         v-if="productStore.recentlyViewed.length > 2"
         @click="productStore.clearRecentlyViewed"
-        class="text-xs text-gray-400 hover:text-rose-600 transition-colors"
+        class="text-xs text-[#6B7280] hover:text-[#7A1032] transition-colors"
       >
         Xóa lịch sử xem
       </button>
@@ -23,16 +23,16 @@
       <div
         v-for="item in productStore.recentlyViewed"
         :key="item.id"
-        class="group relative bg-white rounded-2xl border border-gray-100 p-2.5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+        class="silky-hover group relative bg-white rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/50 hover:-translate-y-1 p-2.5 shadow-sm hover:shadow-[0_14px_32px_-10px_rgba(92,11,39,0.12)] flex flex-col justify-between"
       >
         <!-- Thumbnail -->
-        <div class="relative overflow-hidden rounded-xl bg-gray-100 aspect-[3/4]">
+        <div class="relative overflow-hidden rounded-lg bg-neutral-100 aspect-[3/4]">
           <router-link :to="`/product/${item.slug}`" class="block w-full h-full">
             <img
               :src="item.thumbnailUrl"
               :alt="item.name"
               @error="onImageError"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
               loading="lazy"
             />
           </router-link>
@@ -41,7 +41,7 @@
           <button
             type="button"
             @click.stop="productStore.openQuickView(item)"
-            class="absolute bottom-2 inset-x-2 py-1.5 px-3 bg-white/90 backdrop-blur-md rounded-xl text-gray-800 text-xs font-bold shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-rose-600 hover:text-white flex items-center justify-center gap-1.5"
+            class="silky-hover absolute bottom-2 inset-x-2 py-1.5 px-3 bg-white/90 hover:bg-[#7A1032] backdrop-blur-md rounded-lg text-[#18181B] hover:text-white text-xs font-bold shadow-sm border border-neutral-200/80 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-1.5"
           >
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -53,20 +53,20 @@
 
         <!-- Info -->
         <div class="mt-2.5 px-1">
-          <span class="text-[10px] uppercase font-bold text-gray-400">
+          <span class="text-[10px] uppercase font-bold text-[#6B7280]">
             {{ item.categoryName || 'Thời Trang' }}
           </span>
           <router-link :to="`/product/${item.slug}`" class="block">
-            <h4 class="text-xs font-semibold text-gray-800 line-clamp-1 hover:text-rose-600 transition-colors">
+            <h4 class="text-xs font-semibold text-[#18181B] line-clamp-1 hover:text-[#7A1032] transition-colors">
               {{ item.name }}
             </h4>
           </router-link>
           
           <div class="mt-1 flex items-baseline gap-1.5">
-            <span class="text-xs font-bold text-rose-600">
+            <span class="text-xs font-bold text-[#7A1032]">
               {{ formatVND(item.salePrice || item.basePrice) }}
             </span>
-            <span v-if="item.salePrice && item.basePrice > item.salePrice" class="text-[10px] text-gray-400 line-through">
+            <span v-if="item.salePrice && item.basePrice > item.salePrice" class="text-[10px] text-[#6B7280]/70 line-through">
               {{ formatVND(item.basePrice) }}
             </span>
           </div>

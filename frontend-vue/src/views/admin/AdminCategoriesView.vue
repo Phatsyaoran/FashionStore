@@ -1,21 +1,21 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
           Quản Lý Danh Mục Sản Phẩm
         </h1>
-        <p class="text-xs text-gray-500 mt-1">
+        <p class="text-xs text-slate-500 mt-0.5">
           Thêm mới, cập nhật mô tả/slug và xóa an toàn các danh mục chưa có sản phẩm
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2.5">
+      <div class="flex flex-wrap items-center gap-2">
         <button
           type="button"
           @click="openCreateModal"
-          class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-md shadow-rose-600/20 transition-all flex items-center gap-1.5"
+          class="h-9 px-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold text-xs transition-colors inline-flex items-center gap-1.5"
         >
           <span>＋</span>
           <span>Thêm Danh Mục</span>
@@ -23,130 +23,134 @@
 
         <router-link
           to="/admin"
-          class="text-xs font-bold text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors"
+          class="h-9 px-3 inline-flex items-center text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
         >
-          ← Về Dashboard
+          ← Tổng quan
         </router-link>
       </div>
     </div>
 
     <!-- Categories Table -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full min-w-[650px] text-left text-xs">
-          <thead class="bg-gray-50 border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
-            <tr>
-              <th class="p-4">ID</th>
-              <th class="p-4">Tên danh mục</th>
-              <th class="p-4">Slug</th>
-              <th class="p-4">Mô tả</th>
-              <th class="p-4 text-center">Số sản phẩm</th>
-              <th class="p-4 text-right">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <tr v-if="loading">
-              <td colspan="6" class="p-8 text-center text-gray-400">Đang tải danh sách danh mục...</td>
-            </tr>
-            <tr v-else-if="categories.length === 0">
-              <td colspan="6" class="p-8 text-center text-gray-400">Chưa có danh mục nào.</td>
-            </tr>
-            <tr v-else v-for="cat in categories" :key="cat.id" class="hover:bg-gray-50 transition-colors">
-              <td class="p-4 font-mono text-gray-400">#{{ cat.id }}</td>
-              <td class="p-4 font-bold text-gray-900">{{ cat.name }}</td>
-              <td class="p-4 font-mono text-rose-600">{{ cat.slug }}</td>
-              <td class="p-4 text-gray-500 max-w-xs truncate">{{ cat.description || '—' }}</td>
-              <td class="p-4 text-center">
-                <span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-800 font-bold">
-                  {{ cat.productCount || 0 }} SP
-                </span>
-              </td>
-              <td class="p-4 text-right">
-                <div class="inline-flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    @click="openEditModal(cat)"
-                    class="px-3 py-1.5 bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-700 rounded-xl font-bold transition-colors"
-                  >
-                    ✏️ Sửa
-                  </button>
-                  <button
-                    type="button"
-                    @click="deleteCategory(cat)"
-                    :disabled="deletingId === cat.id"
-                    class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-600 rounded-xl font-bold transition-colors disabled:opacity-50"
-                    title="Xóa danh mục"
-                  >
-                    {{ deletingId === cat.id ? '...' : '🗑️' }}
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full min-w-[650px] text-left text-xs">
+        <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+          <tr>
+            <th class="px-4 py-3 font-semibold">ID</th>
+            <th class="px-4 py-3 font-semibold">Tên danh mục</th>
+            <th class="px-4 py-3 font-semibold">Slug</th>
+            <th class="px-4 py-3 font-semibold">Mô tả</th>
+            <th class="px-4 py-3 font-semibold text-center">Số sản phẩm</th>
+            <th class="px-4 py-3 font-semibold text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200/80">
+          <tr v-if="loading">
+            <td colspan="6" class="p-8 text-center text-slate-400">Đang tải danh sách danh mục...</td>
+          </tr>
+          <tr v-else-if="categories.length === 0">
+            <td colspan="6" class="p-8 text-center text-slate-400">Chưa có danh mục nào.</td>
+          </tr>
+          <tr v-else v-for="cat in categories" :key="cat.id" class="hover:bg-slate-50/80 transition-colors">
+            <td class="px-4 py-3.5 font-mono text-slate-400">#{{ cat.id }}</td>
+            <td class="px-4 py-3.5 font-semibold text-slate-900">{{ cat.name }}</td>
+            <td class="px-4 py-3.5 font-mono text-slate-600 text-[11px]">{{ cat.slug }}</td>
+            <td class="px-4 py-3.5 text-slate-500 max-w-xs truncate">{{ cat.description || '—' }}</td>
+            <td class="px-4 py-3.5 text-center">
+              <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-[11px]">
+                {{ cat.productCount || 0 }} SP
+              </span>
+            </td>
+            <td class="px-4 py-3.5 text-right">
+              <div class="inline-flex items-center gap-1.5">
+                <button
+                  type="button"
+                  @click="openEditModal(cat)"
+                  class="h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
+                >
+                  Sửa
+                </button>
+                <button
+                  type="button"
+                  @click="deleteCategory(cat)"
+                  :disabled="deletingId === cat.id"
+                  class="h-8 px-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 rounded-lg font-semibold text-[11px] transition-colors disabled:opacity-50"
+                  title="Xóa danh mục"
+                >
+                  {{ deletingId === cat.id ? '...' : 'Xóa' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Modal Create / Edit Category -->
     <Teleport to="body">
       <div
         v-if="showModal"
-        class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+        class="fixed inset-0 z-[9990] bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-4 no-print"
       >
-        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-md max-h-[90vh] overflow-y-auto w-full space-y-5 shadow-2xl">
-        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-          <h3 class="text-base font-black text-gray-900">
-            {{ editingId ? '✏️ Chỉnh Sửa Danh Mục' : '➕ Thêm Danh Mục Mới' }}
-          </h3>
-          <button type="button" @click="closeModal" class="text-gray-400 hover:text-gray-700 font-bold text-lg p-1">✕</button>
-        </div>
-
-        <form @submit.prevent="submitForm" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Tên danh mục *</label>
-            <input
-              v-model="form.name"
-              type="text"
-              required
-              placeholder="VD: Phụ Kiện Thời Trang"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-            />
+        <form
+          @submit.prevent="submitForm"
+          class="relative z-[9995] bg-white rounded-2xl border border-slate-200 max-w-md max-h-[90vh] flex flex-col overflow-hidden w-full shadow-2xl"
+        >
+          <!-- Sticky Header -->
+          <div class="px-6 py-4 flex items-center justify-between border-b border-slate-200 shrink-0">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900">
+              {{ editingId ? 'Chỉnh Sửa Danh Mục' : 'Thêm Danh Mục Mới' }}
+            </h3>
+            <button type="button" @click="closeModal" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 font-bold">✕</button>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Slug URL (tùy chọn - tự sinh nếu để trống)</label>
-            <input
-              v-model="form.slug"
-              type="text"
-              placeholder="phu-kien-thoi-trang"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs font-mono focus:ring-2 focus:ring-rose-500 focus:outline-none"
-            />
+          <!-- Scrollable Body -->
+          <div class="flex-1 overflow-y-auto p-6 space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tên danh mục *</label>
+              <input
+                v-model="form.name"
+                type="text"
+                required
+                placeholder="VD: Phụ Kiện Thời Trang"
+                class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Slug URL (tùy chọn - tự sinh nếu để trống)</label>
+              <input
+                v-model="form.slug"
+                type="text"
+                placeholder="phu-kien-thoi-trang"
+                class="w-full h-10 px-3.5 rounded-lg border border-slate-200 text-xs font-mono focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mô tả</label>
+              <textarea
+                v-model="form.description"
+                rows="3"
+                placeholder="Mô tả ngắn gọn về danh mục..."
+                class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
+              ></textarea>
+            </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Mô tả</label>
-            <textarea
-              v-model="form.description"
-              rows="3"
-              placeholder="Mô tả ngắn gọn về danh mục..."
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
-            ></textarea>
-          </div>
-
-          <div class="pt-3 border-t border-gray-100 flex justify-end gap-2">
-            <button type="button" @click="closeModal" class="px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold text-gray-700">
+          <!-- Sticky Footer -->
+          <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 shrink-0">
+            <button type="button" @click="closeModal" class="h-9 px-4 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50">
               Hủy
             </button>
             <button
               type="submit"
               :disabled="saving"
-              class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-xs font-bold shadow-sm"
+              class="h-9 px-5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-semibold transition-colors"
             >
               {{ saving ? 'Đang lưu...' : (editingId ? 'Lưu Thay Đổi' : 'Tạo Danh Mục') }}
             </button>
           </div>
         </form>
-        </div>
       </div>
     </Teleport>
   </div>

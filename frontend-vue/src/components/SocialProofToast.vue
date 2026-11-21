@@ -9,10 +9,10 @@
   >
     <div
       v-if="visible && currentNotification"
-      class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40 max-w-[calc(100vw-2rem)] sm:max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-float border border-gray-100/80 flex items-center gap-3 pointer-events-auto no-print"
+      class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40 max-w-[calc(100vw-2rem)] sm:max-w-sm bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-lg border border-neutral-200/80 flex items-center gap-3 pointer-events-auto no-print"
     >
       <!-- Product thumbnail -->
-      <div class="relative w-12 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200/50">
+      <div class="relative w-12 h-14 rounded-xl overflow-hidden bg-neutral-100 flex-shrink-0 border border-neutral-200/60">
         <img
           :src="currentNotification.image"
           :alt="currentNotification.product"
@@ -24,22 +24,22 @@
 
       <!-- Info -->
       <div class="flex-1 min-w-0 pr-1">
-        <div class="flex items-center justify-between gap-1 text-[11px] text-gray-400">
-          <span class="font-bold text-gray-800 truncate">
-            {{ currentNotification.customer }} <span class="text-gray-400 font-normal">({{ currentNotification.location }})</span>
+        <div class="flex items-center justify-between gap-1 text-[11px] text-[#6B7280]">
+          <span class="font-bold text-[#18181B] truncate">
+            {{ currentNotification.customer }} <span class="text-[#6B7280] font-normal">({{ currentNotification.location }})</span>
           </span>
           <span class="text-[10px] text-emerald-600 font-semibold whitespace-nowrap">
             {{ currentNotification.time }}
           </span>
         </div>
-        <p class="text-xs font-semibold text-gray-700 line-clamp-1 mt-0.5">
-          <span class="text-rose-600 font-bold">Vừa mua:</span> {{ currentNotification.product }}
+        <p class="text-xs font-semibold text-[#18181B] line-clamp-1 mt-0.5">
+          <span class="text-[#7A1032] font-bold">Vừa mua:</span> {{ currentNotification.product }}
         </p>
         <div class="flex items-center gap-2 mt-1">
-          <span class="text-[10px] font-bold text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded">
+          <span class="text-[10px] font-bold text-[#18181B] bg-neutral-100 px-1.5 py-0.5 rounded">
             Size {{ currentNotification.size }}
           </span>
-          <span class="text-[10px] text-gray-400 font-medium">✓ Đã xác nhận đơn</span>
+          <span class="text-[10px] text-[#6B7280] font-medium">✓ Đã xác nhận đơn</span>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
       <button
         type="button"
         @click="dismiss"
-        class="text-gray-400 hover:text-gray-700 p-1 rounded-full transition-colors self-start"
+        class="text-neutral-400 hover:text-[#18181B] p-1 rounded-full transition-colors self-start"
         title="Đóng thông báo"
       >
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -15,7 +15,7 @@
         <div
           v-for="toast in toastStore.toasts"
           :key="toast.id"
-          class="pointer-events-auto flex items-start gap-3 p-3.5 rounded-2xl shadow-xl border backdrop-blur-md text-xs font-semibold"
+          class="pointer-events-auto flex items-start gap-3 px-4 py-3.5 rounded-xl shadow-md border backdrop-blur-md text-xs font-semibold"
           :class="toastClasses(toast.type)"
         >
           <span class="text-base leading-none shrink-0 mt-0.5">{{ toastIcon(toast.type) }}</span>

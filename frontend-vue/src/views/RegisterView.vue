@@ -1,83 +1,83 @@
 <template>
-  <div class="max-w-md mx-auto px-4 py-16 space-y-6">
+  <div class="max-w-md mx-auto px-4 py-12 sm:py-16 space-y-6">
     <div class="text-center space-y-2">
-      <div class="inline-flex w-12 h-12 rounded-2xl bg-rose-600 text-white items-center justify-center font-black text-xl shadow-md shadow-rose-200">
+      <div class="inline-flex w-11 h-11 rounded-xl luxury-gradient text-[#FFFDF9] items-center justify-center font-extrabold text-lg shadow-sm">
         F
       </div>
-      <h1 class="text-2xl font-black text-gray-900 tracking-tight">Tạo Tài Khoản Mới</h1>
-      <p class="text-xs text-gray-500">Đăng ký để nhận voucher giảm 10% ngay hôm nay</p>
+      <h1 class="text-2xl font-bold text-[#18181B] tracking-tight">Tạo Tài Khoản Mới</h1>
+      <p class="text-xs text-[#6B7280]">Đăng ký để nhận voucher giảm 10% ngay hôm nay</p>
     </div>
 
-    <form @submit.prevent="handleRegister" class="bg-white rounded-3xl border border-gray-100 p-8 shadow-xl space-y-4">
-      <div v-if="errorMsg" class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold">
+    <form @submit.prevent="handleRegister" class="bg-white rounded-2xl border border-neutral-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+      <div v-if="errorMsg" class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs font-medium">
         {{ errorMsg }}
       </div>
 
-      <div class="space-y-1">
-        <label class="block text-xs font-semibold text-gray-700">Họ và tên *</label>
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-[#6B7280]">Họ và tên *</label>
         <input
           type="text"
           v-model="form.fullName"
           required
           placeholder="Nguyễn Văn A"
-          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+          class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
         />
       </div>
 
-      <div class="space-y-1">
-        <label class="block text-xs font-semibold text-gray-700">Email *</label>
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-[#6B7280]">Email *</label>
         <input
           type="email"
           v-model="form.email"
           required
           placeholder="email@example.com"
-          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+          class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
         />
       </div>
 
-      <div class="space-y-1">
-        <label class="block text-xs font-semibold text-gray-700">Mật khẩu *</label>
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-[#6B7280]">Mật khẩu *</label>
         <input
           type="password"
           v-model="form.password"
           required
           placeholder="Tối thiểu 6 ký tự"
-          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+          class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
         />
       </div>
 
-      <div class="space-y-1">
-        <label class="block text-xs font-semibold text-gray-700">Số điện thoại</label>
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-[#6B7280]">Số điện thoại</label>
         <input
           type="tel"
           v-model="form.phone"
           placeholder="0912345678"
-          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+          class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
         />
       </div>
 
-      <div class="space-y-1">
-        <label class="block text-xs font-semibold text-gray-700">Địa chỉ</label>
+      <div class="space-y-1.5">
+        <label class="block text-xs font-medium text-[#6B7280]">Địa chỉ</label>
         <input
           type="text"
           v-model="form.address"
           placeholder="Quận/Huyện, Tỉnh/TP"
-          class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none"
+          class="w-full h-11 px-3.5 rounded-lg border border-neutral-200 bg-white text-[#18181B] placeholder:text-neutral-400 text-xs focus:ring-1 focus:ring-[#7A1032] focus:border-[#7A1032] focus:outline-none"
         />
       </div>
 
       <button
         type="submit"
         :disabled="loading"
-        class="w-full py-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        class="btn-sheen silky-hover active:scale-[0.98] w-full h-11 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
       >
         <span v-if="loading">Đang đăng ký...</span>
         <span v-else>Đăng Ký Tài Khoản</span>
       </button>
 
-      <div class="pt-4 border-t border-gray-100 text-center text-xs text-gray-500">
+      <div class="pt-4 border-t border-neutral-200/80 text-center text-xs text-[#6B7280]">
         Đã có tài khoản?
-        <router-link to="/login" class="text-rose-600 font-bold hover:underline">
+        <router-link to="/login" class="text-[#7A1032] font-bold hover:underline">
           Đăng nhập
         </router-link>
       </div>

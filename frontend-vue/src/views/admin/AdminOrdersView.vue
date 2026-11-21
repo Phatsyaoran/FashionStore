@@ -1,65 +1,69 @@
 <template>
   <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-200 no-print">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
           Quản Lý Đơn Hàng & Vận Đơn
         </h1>
-        <p class="text-xs text-gray-500 mt-1">
-          Duyệt đơn, thay đổi trạng thái giao vận và in phiếu giao hàng A6 chuẩn thương mại điện tử
+        <p class="text-xs text-slate-500 mt-0.5">
+          Duyệt đơn, thay đổi trạng thái giao vận và in phiếu giao hàng A6 chuẩn TMĐT
         </p>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2">
         <!-- Nút Xuất Excel / CSV (Yêu cầu Phase 11) -->
         <button
           type="button"
           @click="exportOrdersCsv"
           :disabled="isExporting"
-          class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2"
+          class="h-9 px-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition-colors inline-flex items-center gap-1.5"
         >
           <span v-if="isExporting" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
           <span>📥</span>
-          <span>Xuất Excel (.CSV)</span>
+          <span>Xuất CSV</span>
         </button>
 
-        <router-link to="/admin" class="text-xs font-bold text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors">
-          ← Về Dashboard
+        <router-link
+          to="/admin"
+          class="h-9 px-3 inline-flex items-center text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+        >
+          ← Tổng quan
         </router-link>
       </div>
     </div>
 
     <!-- Search & Status Filter Toolbar -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-4 space-y-3 no-print">
-      <div class="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
-        <form @submit.prevent="handleSearch" class="relative flex-1 max-w-md flex gap-2">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3 no-print">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <form @submit.prevent="handleSearch" class="relative flex-1 min-w-[240px] max-w-md flex gap-2">
           <div class="relative flex-1">
             <input
               v-model="searchKeyword"
               type="text"
               placeholder="Tìm mã đơn (DH...), tên khách hoặc SĐT..."
-              class="w-full pl-9 pr-8 py-2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white text-xs focus:outline-none focus:ring-2 focus:ring-rose-500"
+              class="w-full h-9 pl-9 pr-8 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 focus:border-slate-900"
             />
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
             <button
               v-if="searchKeyword"
               type="button"
               @click="clearSearch"
-              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold"
             >
               ✕
             </button>
           </div>
           <button
             type="submit"
-            class="px-4 py-2 rounded-xl bg-gray-900 hover:bg-rose-600 text-white text-xs font-bold transition-colors shrink-0"
+            class="h-9 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors shrink-0"
           >
             Tìm
           </button>
         </form>
 
-        <div class="text-xs text-gray-500 font-semibold">
-          Tổng: <span class="font-black text-gray-900">{{ totalElements }}</span> đơn hàng
+        <div class="text-xs text-slate-500 font-medium">
+          Tổng: <span class="font-bold text-slate-900">{{ totalElements }}</span> đơn hàng
         </div>
       </div>
 
@@ -70,10 +74,10 @@
           :key="tab.value"
           type="button"
           @click="selectStatus(tab.value)"
-          class="px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all"
+          class="px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all"
           :class="selectedStatus === tab.value
-            ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
-            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'"
+            ? 'bg-slate-900 text-white border-slate-900'
+            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900'"
         >
           {{ tab.label }}
         </button>
@@ -81,225 +85,248 @@
     </div>
 
     <!-- Orders Table -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden no-print">
-      <div class="overflow-x-auto">
-        <table class="w-full min-w-[750px] text-left text-xs">
-          <thead class="bg-gray-50 border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider">
+    <div class="no-print space-y-0">
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <table class="w-full min-w-[820px] text-left text-xs">
+          <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
             <tr>
-              <th class="p-4">Mã đơn hàng</th>
-              <th class="p-4">Khách hàng</th>
-              <th class="p-4">Số điện thoại</th>
-              <th class="p-4">Tổng tiền (VNĐ)</th>
-              <th class="p-4">Thanh toán</th>
-              <th class="p-4">Trạng thái giao vận</th>
-              <th class="p-4 text-right">In phiếu A6</th>
+              <th class="px-4 py-3 font-semibold">Mã đơn</th>
+              <th class="px-4 py-3 font-semibold">Khách hàng</th>
+              <th class="px-4 py-3 font-semibold">Số điện thoại</th>
+              <th class="px-4 py-3 font-semibold">Tổng tiền</th>
+              <th class="px-4 py-3 font-semibold">Thanh toán</th>
+              <th class="px-4 py-3 font-semibold">Trạng thái</th>
+              <th class="px-4 py-3 font-semibold text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-slate-200/80">
             <tr v-if="loadingOrders">
-              <td colspan="7" class="p-8 text-center text-gray-400">Đang tải danh sách đơn hàng...</td>
+              <td colspan="7" class="p-8 text-center text-slate-400">Đang tải danh sách đơn hàng...</td>
             </tr>
             <tr v-else-if="orders.length === 0">
-              <td colspan="7" class="p-8 text-center text-gray-400">Không có đơn hàng nào khớp với bộ lọc hiện tại.</td>
+              <td colspan="7" class="p-8 text-center text-slate-400">Không có đơn hàng nào khớp với bộ lọc hiện tại.</td>
             </tr>
-            <tr v-else v-for="order in orders" :key="order.id" class="hover:bg-gray-50 transition-colors">
-              <td class="p-4 font-mono font-bold text-rose-600">
+            <tr v-else v-for="order in orders" :key="order.id" class="hover:bg-slate-50/80 transition-colors">
+              <td class="px-4 py-3.5 font-mono font-bold text-slate-900">
                 #{{ order.orderCode }}
               </td>
-              <td class="p-4 font-bold text-gray-900">
+              <td class="px-4 py-3.5 font-semibold text-slate-900">
                 {{ order.customerName }}
               </td>
-              <td class="p-4 text-gray-600">
+              <td class="px-4 py-3.5 text-slate-600 font-mono text-[11px]">
                 {{ order.customerPhone }}
               </td>
-              <td class="p-4 font-black text-gray-900">
+              <td class="px-4 py-3.5 font-bold text-slate-900">
                 {{ formatVND(order.totalAmount) }}
               </td>
-              <td class="p-4">
+              <td class="px-4 py-3.5">
                 <span
-                  class="px-2.5 py-1 rounded-full font-bold text-[10px]"
-                  :class="order.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+                  class="px-2.5 py-0.5 rounded-full font-semibold text-[11px] inline-flex items-center gap-1 border"
+                  :class="order.paymentStatus === 'PAID'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-amber-50 text-amber-700 border-amber-200'"
                 >
-                  {{ order.paymentStatus === 'PAID' ? '✓ ĐÃ THANH TOÁN' : '⏳ CHƯA TT' }} ({{ order.paymentMethod }})
+                  {{ order.paymentStatus === 'PAID' ? '✓ Đã TT' : 'Chưa TT' }} ({{ order.paymentMethod }})
                 </span>
               </td>
-              <td class="p-4">
-                <select
-                  v-model="order.orderStatus"
-                  @change="updateStatus(order)"
-                  class="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-gray-800 focus:outline-none focus:ring-1 focus:ring-rose-500"
-                >
-                  <option value="PENDING">1. Đã đặt đơn (PENDING)</option>
-                  <option value="CONFIRMED">2. Đã xác nhận (CONFIRMED)</option>
-                  <option value="PACKING">3. Đang đóng gói (PACKING)</option>
-                  <option value="SHIPPING">4. Đang giao hàng (SHIPPING)</option>
-                  <option value="COMPLETED">5. Hoàn thành (COMPLETED)</option>
-                  <option value="CANCELLED">Hủy đơn (CANCELLED)</option>
-                </select>
+              <td class="px-4 py-3.5">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-2 h-2 rounded-full shrink-0"
+                    :class="order.orderStatus === 'COMPLETED' ? 'bg-emerald-500'
+                      : order.orderStatus === 'CANCELLED' ? 'bg-red-500'
+                      : order.orderStatus === 'SHIPPING' ? 'bg-blue-500'
+                      : order.orderStatus === 'PACKING' ? 'bg-violet-500'
+                      : order.orderStatus === 'CONFIRMED' ? 'bg-sky-500'
+                      : 'bg-amber-400'"
+                  ></span>
+                  <select
+                    v-model="order.orderStatus"
+                    @change="updateStatus(order)"
+                    class="h-8 rounded-full px-3 text-[11px] font-semibold border focus:outline-none focus:ring-1 focus:ring-slate-900 cursor-pointer"
+                    :class="order.orderStatus === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : order.orderStatus === 'CANCELLED' ? 'bg-red-50 text-red-700 border-red-200'
+                      : order.orderStatus === 'SHIPPING' ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : order.orderStatus === 'PACKING' ? 'bg-violet-50 text-violet-700 border-violet-200'
+                      : order.orderStatus === 'CONFIRMED' ? 'bg-sky-50 text-sky-700 border-sky-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'"
+                  >
+                    <option value="PENDING">1. Chờ xử lý (PENDING)</option>
+                    <option value="CONFIRMED">2. Đã xác nhận (CONFIRMED)</option>
+                    <option value="PACKING">3. Đang đóng gói (PACKING)</option>
+                    <option value="SHIPPING">4. Đang giao hàng (SHIPPING)</option>
+                    <option value="COMPLETED">5. Hoàn thành (COMPLETED)</option>
+                    <option value="CANCELLED">Hủy đơn (CANCELLED)</option>
+                  </select>
+                </div>
               </td>
-              <td class="p-4 text-right">
+              <td class="px-4 py-3.5 text-right">
                 <!-- Nút In phiếu giao hàng A6 (Yêu cầu Phase 7) -->
                 <button
                   type="button"
                   @click="printLabel(order)"
-                  class="px-3.5 py-1.5 bg-gray-900 hover:bg-rose-600 text-white rounded-xl font-bold transition-all inline-flex items-center gap-1.5 shadow-sm"
+                  class="h-8 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold text-[11px] transition-colors inline-flex items-center gap-1.5"
                 >
-                  <span>🖨️</span> In phiếu giao hàng
+                  <span>🖨️</span> In phiếu A6
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
 
-      <!-- Pagination Bar -->
-      <div
-        v-if="totalPages > 1"
-        class="p-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between text-xs"
-      >
-        <span class="text-gray-500 font-medium">
-          Trang <strong>{{ currentPage + 1 }}</strong> / {{ totalPages }}
-        </span>
-        <div class="flex items-center gap-2">
-          <button
-            type="button"
-            @click="goToPage(currentPage - 1)"
-            :disabled="currentPage <= 0"
-            class="px-3.5 py-1.5 rounded-xl border border-gray-200 bg-white font-bold text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            ← Trước
-          </button>
-          <button
-            type="button"
-            @click="goToPage(currentPage + 1)"
-            :disabled="currentPage >= totalPages - 1"
-            class="px-3.5 py-1.5 rounded-xl border border-gray-200 bg-white font-bold text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Sau →
-          </button>
+        <!-- Pagination Bar -->
+        <div
+          v-if="totalPages > 1"
+          class="px-4 py-3 border-t border-slate-200 bg-slate-50/70 flex items-center justify-between text-xs"
+        >
+          <span class="text-slate-500">
+            Trang <strong class="text-slate-900">{{ currentPage + 1 }}</strong> / {{ totalPages }}
+          </span>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="goToPage(currentPage - 1)"
+              :disabled="currentPage <= 0"
+              class="h-8 px-3 rounded-lg border border-slate-200 bg-white font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              ← Trước
+            </button>
+            <button
+              type="button"
+              @click="goToPage(currentPage + 1)"
+              :disabled="currentPage >= totalPages - 1"
+              class="h-8 px-3 rounded-lg border border-slate-200 bg-white font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Sau →
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- IN PHIẾU GIAO HÀNG CHUẨN KHỔ A6 (Yêu cầu Phase 7 + JsBarcode Code128) -->
     <Teleport to="body">
-      <div v-if="selectedPrintOrder" class="fixed inset-0 z-[9990] overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 print:static print:bg-white print:p-0">
-        <div class="relative z-[9995] bg-white rounded-3xl p-6 sm:p-8 max-w-lg max-h-[90vh] overflow-y-auto w-full space-y-4 shadow-2xl print:max-h-none print:shadow-none print:p-0 print:rounded-none">
-        <div class="flex justify-between items-center no-print pb-2 border-b border-gray-100">
-          <div>
-            <h3 class="font-bold text-base text-gray-900">Xem trước nhãn giao vận A6</h3>
-            <p class="text-xs text-gray-500">Chuẩn in nhiệt TMĐT (Thermal Shipping Label)</p>
-          </div>
-          <button @click="selectedPrintOrder = null" class="text-gray-400 hover:text-gray-700 font-bold text-lg p-1">✕</button>
-        </div>
-
-        <!-- PRINTABLE THERMAL LABEL A6 -->
-        <div id="thermal-label-a6" class="border-2 border-black p-5 rounded-2xl bg-white text-black space-y-3 font-sans">
-          
-          <!-- Header with Logo and Barcode -->
-          <div class="flex justify-between items-center border-b-2 border-black pb-3">
+      <div v-if="selectedPrintOrder" class="fixed inset-0 z-[9990] bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-4 print:static print:bg-white print:p-0">
+        <div class="relative z-[9995] bg-white rounded-2xl border border-slate-200 max-w-lg max-h-[90vh] flex flex-col overflow-hidden w-full shadow-2xl print:max-h-none print:shadow-none print:border-0 print:rounded-none print:block">
+          <!-- Sticky Header -->
+          <div class="px-6 py-4 flex justify-between items-center border-b border-slate-200 shrink-0 no-print">
             <div>
-              <div class="flex items-center gap-1.5">
-                <span class="w-6 h-6 rounded-lg bg-black text-white flex items-center justify-center font-black text-xs">F</span>
-                <span class="font-black text-base tracking-tight">FASHION STORE</span>
+              <h3 class="font-bold text-sm text-slate-900">Xem trước nhãn giao vận A6</h3>
+              <p class="text-[11px] text-slate-500">Chuẩn in nhiệt TMĐT (Thermal Shipping Label)</p>
+            </div>
+            <button @click="selectedPrintOrder = null" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 font-bold">✕</button>
+          </div>
+
+          <!-- Scrollable Body -->
+          <div class="flex-1 overflow-y-auto p-6 print:overflow-visible print:p-0">
+            <!-- PRINTABLE THERMAL LABEL A6 -->
+            <div id="thermal-label-a6" class="border-2 border-black p-5 rounded-xl bg-white text-black space-y-3 font-sans">
+              
+              <!-- Header with Logo and Barcode -->
+              <div class="flex justify-between items-center border-b-2 border-black pb-3">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-6 h-6 rounded-lg bg-black text-white flex items-center justify-center font-black text-xs">F</span>
+                    <span class="font-black text-base tracking-tight">FASHION STORE</span>
+                  </div>
+                  <p class="text-[10px] text-gray-600 mt-0.5">88 Phố Huế, Hai Bà Trưng, Hà Nội | CSKH: 1900 8899</p>
+                </div>
+
+                <!-- Real Code128 Barcode (JsBarcode) -->
+                <div class="text-right flex flex-col items-end">
+                  <svg ref="barcodeSvg" class="max-w-[170px] h-11"></svg>
+                  <div class="font-mono text-xs font-bold mt-0.5">#{{ selectedPrintOrder.orderCode }}</div>
+                </div>
               </div>
-              <p class="text-[10px] text-gray-600 mt-0.5">88 Phố Huế, Hai Bà Trưng, Hà Nội | CSKH: 1900 8899</p>
-            </div>
 
-            <!-- Real Code128 Barcode (JsBarcode) -->
-            <div class="text-right flex flex-col items-end">
-              <svg ref="barcodeSvg" class="max-w-[170px] h-11"></svg>
-              <div class="font-mono text-xs font-bold mt-0.5">#{{ selectedPrintOrder.orderCode }}</div>
+              <!-- Sender & Receiver Grid -->
+              <div class="grid grid-cols-2 gap-3 text-xs border-b-2 border-black pb-3">
+                <div class="border-r border-gray-300 pr-2 space-y-0.5">
+                  <p class="font-bold text-[10px] text-gray-500 uppercase">Người gửi:</p>
+                  <p class="font-bold text-xs">Kho Vận FashionStore VN</p>
+                  <p class="text-[11px]">Hotline: 0901234567</p>
+                  <p class="text-[10px] text-gray-600">88 Phố Huế, Q. Hai Bà Trưng, Hà Nội</p>
+                </div>
+                <div class="space-y-0.5">
+                  <p class="font-bold text-[10px] text-gray-500 uppercase">Người nhận:</p>
+                  <p class="font-black text-sm text-black">{{ selectedPrintOrder.customerName }}</p>
+                  <p class="font-bold text-xs">{{ selectedPrintOrder.customerPhone }}</p>
+                  <p class="text-[11px] leading-tight text-gray-800">{{ selectedPrintOrder.shippingAddress }}</p>
+                </div>
+              </div>
+
+              <!-- Products List (Tên + Size + Màu + SL) -->
+              <div class="border-b-2 border-black pb-3 space-y-1.5 text-xs">
+                <p class="font-bold text-[10px] text-gray-500 uppercase flex justify-between">
+                  <span>Nội dung sản phẩm:</span>
+                  <span>Số lượng</span>
+                </p>
+                <div
+                  v-for="it in (selectedPrintOrder.orderItems || [])"
+                  :key="it.id"
+                  class="flex justify-between items-baseline"
+                >
+                  <span class="font-medium text-[11px]">
+                    • {{ it.productName }} <strong class="text-black">(Size {{ it.size }}, {{ it.colorName }})</strong>
+                  </span>
+                  <span class="font-black text-xs font-mono ml-2">x{{ it.quantity }}</span>
+                </div>
+              </div>
+
+              <!-- Big COD / PAID Box (Yêu cầu Phase 7) -->
+              <div
+                class="p-3.5 rounded-xl border-2 text-center"
+                :class="selectedPrintOrder.paymentStatus === 'PAID' ? 'border-emerald-600 bg-emerald-50' : 'border-black bg-gray-50'"
+              >
+                <div v-if="selectedPrintOrder.paymentStatus === 'PAID'">
+                  <span class="font-black text-emerald-800 text-sm block tracking-wider">
+                    ĐÃ THANH TOÁN (VIETQR)
+                  </span>
+                  <span class="font-black text-base text-emerald-900 block mt-0.5">
+                    THU HỘ: 0 VNĐ
+                  </span>
+                </div>
+
+                <div v-else>
+                  <span class="font-bold text-xs text-gray-700 block uppercase tracking-wider">
+                    TIỀN THU HỘ (COD):
+                  </span>
+                  <span class="font-black text-2xl text-black block mt-0.5 tracking-tight">
+                    {{ formatVND(selectedPrintOrder.totalAmount) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Footer sign box -->
+              <div class="grid grid-cols-2 text-[9px] text-gray-500 pt-1">
+                <div>
+                  <p>Chỉ dẫn giao hàng: Cho khách kiểm tra hàng trước khi nhận.</p>
+                </div>
+                <div class="text-right">
+                  <p>Chữ ký người nhận:</p>
+                  <p class="mt-4 font-mono">...........................................</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Sender & Receiver Grid -->
-          <div class="grid grid-cols-2 gap-3 text-xs border-b-2 border-black pb-3">
-            <div class="border-r border-gray-300 pr-2 space-y-0.5">
-              <p class="font-bold text-[10px] text-gray-500 uppercase">Người gửi:</p>
-              <p class="font-bold text-xs">Kho Vận FashionStore VN</p>
-              <p class="text-[11px]">Hotline: 0901234567</p>
-              <p class="text-[10px] text-gray-600">88 Phố Huế, Q. Hai Bà Trưng, Hà Nội</p>
-            </div>
-            <div class="space-y-0.5">
-              <p class="font-bold text-[10px] text-gray-500 uppercase">Người nhận:</p>
-              <p class="font-black text-sm text-black">{{ selectedPrintOrder.customerName }}</p>
-              <p class="font-bold text-xs">{{ selectedPrintOrder.customerPhone }}</p>
-              <p class="text-[11px] leading-tight text-gray-800">{{ selectedPrintOrder.shippingAddress }}</p>
-            </div>
-          </div>
-
-          <!-- Products List (Tên + Size + Màu + SL) -->
-          <div class="border-b-2 border-black pb-3 space-y-1.5 text-xs">
-            <p class="font-bold text-[10px] text-gray-500 uppercase flex justify-between">
-              <span>Nội dung sản phẩm:</span>
-              <span>Số lượng</span>
-            </p>
-            <div
-              v-for="it in (selectedPrintOrder.orderItems || [])"
-              :key="it.id"
-              class="flex justify-between items-baseline"
+          <!-- Sticky Footer -->
+          <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex gap-2 justify-end shrink-0 no-print">
+            <button
+              type="button"
+              @click="selectedPrintOrder = null"
+              class="h-9 px-4 border border-slate-200 bg-white rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50"
             >
-              <span class="font-medium text-[11px]">
-                • {{ it.productName }} <strong class="text-black">(Size {{ it.size }}, {{ it.colorName }})</strong>
-              </span>
-              <span class="font-black text-xs font-mono ml-2">x{{ it.quantity }}</span>
-            </div>
+              Đóng
+            </button>
+            <button
+              type="button"
+              @click="triggerPrint"
+              class="h-9 px-5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1.5"
+            >
+              <span>🖨️</span> In Ngay (Khổ A6)
+            </button>
           </div>
-
-          <!-- Big COD / PAID Box (Yêu cầu Phase 7) -->
-          <div
-            class="p-3.5 rounded-xl border-2 text-center"
-            :class="selectedPrintOrder.paymentStatus === 'PAID' ? 'border-emerald-600 bg-emerald-50' : 'border-black bg-gray-50'"
-          >
-            <div v-if="selectedPrintOrder.paymentStatus === 'PAID'">
-              <span class="font-black text-emerald-800 text-sm block tracking-wider">
-                ĐÃ THANH TOÁN (VIETQR)
-              </span>
-              <span class="font-black text-base text-emerald-900 block mt-0.5">
-                THU HỘ: 0 VNĐ
-              </span>
-            </div>
-
-            <div v-else>
-              <span class="font-bold text-xs text-gray-700 block uppercase tracking-wider">
-                TIỀN THU HỘ (COD):
-              </span>
-              <span class="font-black text-2xl text-black block mt-0.5 tracking-tight">
-                {{ formatVND(selectedPrintOrder.totalAmount) }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Footer sign box -->
-          <div class="grid grid-cols-2 text-[9px] text-gray-500 pt-1">
-            <div>
-              <p>Chỉ dẫn giao hàng: Cho khách kiểm tra hàng trước khi nhận.</p>
-            </div>
-            <div class="text-right">
-              <p>Chữ ký người nhận:</p>
-              <p class="mt-4 font-mono">...........................................</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="flex gap-2 justify-end no-print pt-2">
-          <button
-            type="button"
-            @click="selectedPrintOrder = null"
-            class="px-4 py-2 border border-gray-300 rounded-xl text-xs font-bold text-gray-700 hover:bg-gray-50"
-          >
-            Đóng
-          </button>
-          <button
-            type="button"
-            @click="triggerPrint"
-            class="px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-200 transition-all flex items-center gap-1.5"
-          >
-            <span>🖨️</span> In Ngay (Khổ A6)
-          </button>
-        </div>
         </div>
       </div>
     </Teleport>

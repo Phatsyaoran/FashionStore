@@ -1,26 +1,26 @@
 <template>
-  <div class="space-y-8">
+  <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-          Bảng Điều Khiển Quản Trị (Admin Dashboard)
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          Tổng Quan Quản Trị
         </h1>
-        <p class="text-xs text-gray-500 mt-1">
-          Theo dõi doanh thu thực tế, biểu đồ vận hành đơn hàng và cảnh báo tồn kho thời gian thực
+        <p class="text-xs text-slate-500 mt-0.5">
+          Theo dõi doanh thu thực tế, tiến độ xử lý đơn hàng và cảnh báo tồn kho thời gian thực
         </p>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <router-link
           to="/admin/orders"
-          class="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+          class="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1.5"
         >
-          <span>📦</span> Quản lý Đơn hàng
+          <span>📦</span> Đơn hàng
         </router-link>
         <router-link
           to="/admin/products"
-          class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+          class="h-9 px-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1.5"
         >
           <span>👔</span> Quản lý Sản phẩm
         </router-link>
@@ -28,96 +28,104 @@
     </div>
 
     <!-- Stat Cards 4 Metrics -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       <!-- Card 1: Revenue -->
-      <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
-        <div class="flex justify-between items-center text-xs text-gray-500 font-bold uppercase">
-          <span>Doanh thu thực nhận</span>
-          <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl">💰</span>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-medium text-slate-500">Doanh thu thực nhận</span>
+          <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">💰</span>
         </div>
-        <div class="text-2xl font-black text-emerald-600">
-          {{ formatVND(stats.revenue) }}
+        <div>
+          <div class="text-2xl font-bold text-slate-900 tracking-tight">
+            {{ formatVND(stats.revenue) }}
+          </div>
+          <p class="text-[11px] text-emerald-600 font-medium mt-1">
+            ✓ Từ các đơn đã thanh toán (PAID)
+          </p>
         </div>
-        <p class="text-[11px] text-gray-500 font-medium flex items-center gap-1">
-          <span class="text-emerald-500">✓</span> Từ các đơn hàng đã thanh toán (PAID)
-        </p>
       </div>
 
       <!-- Card 2: Total Orders -->
-      <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
-        <div class="flex justify-between items-center text-xs text-gray-500 font-bold uppercase">
-          <span>Tổng số đơn hàng</span>
-          <span class="p-2 bg-rose-50 text-rose-600 rounded-xl">📦</span>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-medium text-slate-500">Tổng số đơn hàng</span>
+          <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">📦</span>
         </div>
-        <div class="text-2xl font-black text-gray-900">
-          {{ stats.totalOrders }} đơn
+        <div>
+          <div class="text-2xl font-bold text-slate-900 tracking-tight">
+            {{ stats.totalOrders }} <span class="text-sm font-medium text-slate-400">đơn</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Toàn bộ lịch sử giao dịch</p>
         </div>
-        <p class="text-[11px] text-gray-400 font-medium">Toàn bộ lịch sử giao dịch</p>
       </div>
 
       <!-- Card 3: Pending Orders -->
-      <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
-        <div class="flex justify-between items-center text-xs text-gray-500 font-bold uppercase">
-          <span>Đơn cần xử lý</span>
-          <span class="p-2 bg-amber-50 text-amber-600 rounded-xl">⏳</span>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-medium text-slate-500">Đơn cần xử lý</span>
+          <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm">⏳</span>
         </div>
-        <div class="text-2xl font-black text-amber-600">
-          {{ stats.pendingOrders }} đơn
+        <div>
+          <div class="text-2xl font-bold text-amber-600 tracking-tight">
+            {{ stats.pendingOrders }} <span class="text-sm font-medium text-amber-500/80">đơn</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">Chờ xác nhận & đóng gói</p>
         </div>
-        <p class="text-[11px] text-amber-700 font-medium">Chờ xác nhận & đóng gói</p>
       </div>
 
       <!-- Card 4: Low-stock count -->
-      <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-2">
-        <div class="flex justify-between items-center text-xs text-gray-500 font-bold uppercase">
-          <span>Biến thể sắp hết</span>
-          <span class="p-2 bg-rose-50 text-rose-600 rounded-xl">⚠️</span>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-medium text-slate-500">Cảnh báo tồn kho</span>
+          <span class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-sm">⚠️</span>
         </div>
-        <div class="text-2xl font-black" :class="lowStockList.length > 0 ? 'text-rose-600' : 'text-gray-900'">
-          {{ lowStockList.length }} biến thể
+        <div>
+          <div class="text-2xl font-bold tracking-tight" :class="lowStockList.length > 0 ? 'text-red-600' : 'text-slate-900'">
+            {{ lowStockList.length }} <span class="text-sm font-medium text-slate-400">biến thể</span>
+          </div>
+          <p class="text-[11px] text-red-600 font-medium mt-1">Tồn kho ≤ 5 chiếc</p>
         </div>
-        <p class="text-[11px] text-rose-600 font-medium">Tồn kho ≤ 5 chiếc</p>
       </div>
     </div>
 
     <!-- BIỂU ĐỒ DOANH THU THEO NGÀY (Chart.js — 7 ngày / 30 ngày) -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-5">
+    <div class="bg-white rounded-xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-            <span>📈</span> Biểu Đồ Doanh Thu & Đơn Hàng Theo Ngày
+          <h3 class="text-sm font-bold text-slate-900">
+            Biểu Đồ Doanh Thu & Đơn Hàng Theo Ngày
           </h3>
-          <p class="text-xs text-gray-500 mt-0.5">
-            Tổng doanh thu thực tế (đã loại trừ các đơn hủy CANCELLED) trong {{ selectedDays }} ngày gần nhất
+          <p class="text-xs text-slate-500 mt-0.5">
+            Tổng doanh thu thực tế (loại trừ đơn hủy) trong {{ selectedDays }} ngày gần nhất
           </p>
         </div>
 
-        <div class="inline-flex items-center bg-gray-100 p-1 rounded-xl self-start sm:self-auto">
+        <div class="inline-flex items-center bg-slate-100 p-1 rounded-lg self-start sm:self-auto">
           <button
             type="button"
             @click="switchRevenueDays(7)"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
-            :class="selectedDays === 7 ? 'bg-white text-rose-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+            class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all"
+            :class="selectedDays === 7 ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
           >
             7 ngày qua
           </button>
           <button
             type="button"
             @click="switchRevenueDays(30)"
-            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all"
-            :class="selectedDays === 30 ? 'bg-white text-rose-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'"
+            class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all"
+            :class="selectedDays === 30 ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'"
           >
             30 ngày qua
           </button>
         </div>
       </div>
 
-      <div class="relative h-72 w-full">
+      <div class="relative h-64 sm:h-72 w-full overflow-hidden">
         <div
           v-if="loadingRevenue"
-          class="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-10 flex items-center justify-center text-xs text-gray-500 font-semibold"
+          class="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-10 flex items-center justify-center text-xs text-slate-500 font-medium"
         >
-          <span class="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mr-2"></span>
+          <span class="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mr-2"></span>
           Đang tải biểu đồ doanh thu...
         </div>
         <canvas ref="revenueChartCanvas"></canvas>
@@ -125,82 +133,77 @@
     </div>
 
     <!-- BIỂU ĐỒ TRỰC QUAN DOANH THU & SỐ LƯỢNG ĐƠN THEO TRẠNG THÁI (Yêu cầu Phase 7) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       <!-- Status Distribution Bar Chart -->
-      <div class="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+      <div class="lg:col-span-2 bg-white rounded-xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-5">
         <div class="flex justify-between items-center">
           <div>
-            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-              <span>📊</span> Phân Bổ Đơn Hàng Theo Trạng Thái
+            <h3 class="text-sm font-bold text-slate-900">
+              Phân Bổ Đơn Hàng Theo Trạng Thái
             </h3>
-            <p class="text-xs text-gray-500">Tỷ lệ xử lý đơn hàng trên chu trình giao vận</p>
+            <p class="text-xs text-slate-500 mt-0.5">Tỷ lệ xử lý đơn hàng trên chu trình giao vận</p>
           </div>
-          <span class="text-xs font-bold text-gray-400">Tổng: {{ stats.totalOrders }} đơn</span>
+          <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">Tổng: {{ stats.totalOrders }} đơn</span>
         </div>
 
         <!-- Visual Horizontal Progress Bars -->
         <div class="space-y-4">
-          <!-- Pending -->
           <div class="space-y-1.5">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="flex items-center gap-1.5 text-amber-700">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Chờ xử lý (PENDING)
+            <div class="flex justify-between text-xs font-medium">
+              <span class="flex items-center gap-2 text-slate-700">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> Chờ xử lý (PENDING)
               </span>
-              <span class="text-gray-700 font-bold">{{ orderStatusCounts.PENDING || 0 }} đơn ({{ calcPercent(orderStatusCounts.PENDING) }}%)</span>
+              <span class="text-slate-900 font-semibold">{{ orderStatusCounts.PENDING || 0 }} đơn ({{ calcPercent(orderStatusCounts.PENDING) }}%)</span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
               <div class="bg-amber-400 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.PENDING)}%` }"></div>
             </div>
           </div>
 
-          <!-- Confirmed -->
           <div class="space-y-1.5">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="flex items-center gap-1.5 text-blue-700">
-                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Đã xác nhận (CONFIRMED)
+            <div class="flex justify-between text-xs font-medium">
+              <span class="flex items-center gap-2 text-slate-700">
+                <span class="w-2 h-2 rounded-full bg-sky-500"></span> Đã xác nhận (CONFIRMED)
               </span>
-              <span class="text-gray-700 font-bold">{{ orderStatusCounts.CONFIRMED || 0 }} đơn ({{ calcPercent(orderStatusCounts.CONFIRMED) }}%)</span>
+              <span class="text-slate-900 font-semibold">{{ orderStatusCounts.CONFIRMED || 0 }} đơn ({{ calcPercent(orderStatusCounts.CONFIRMED) }}%)</span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div class="bg-blue-500 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.CONFIRMED)}%` }"></div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div class="bg-sky-500 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.CONFIRMED)}%` }"></div>
             </div>
           </div>
 
-          <!-- Packing -->
           <div class="space-y-1.5">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="flex items-center gap-1.5 text-purple-700">
-                <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Đang đóng gói (PACKING)
+            <div class="flex justify-between text-xs font-medium">
+              <span class="flex items-center gap-2 text-slate-700">
+                <span class="w-2 h-2 rounded-full bg-violet-500"></span> Đang đóng gói (PACKING)
               </span>
-              <span class="text-gray-700 font-bold">{{ orderStatusCounts.PACKING || 0 }} đơn ({{ calcPercent(orderStatusCounts.PACKING) }}%)</span>
+              <span class="text-slate-900 font-semibold">{{ orderStatusCounts.PACKING || 0 }} đơn ({{ calcPercent(orderStatusCounts.PACKING) }}%)</span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div class="bg-purple-500 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.PACKING)}%` }"></div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div class="bg-violet-500 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.PACKING)}%` }"></div>
             </div>
           </div>
 
-          <!-- Shipping -->
           <div class="space-y-1.5">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="flex items-center gap-1.5 text-indigo-700">
-                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Đang giao hàng (SHIPPING)
+            <div class="flex justify-between text-xs font-medium">
+              <span class="flex items-center gap-2 text-slate-700">
+                <span class="w-2 h-2 rounded-full bg-blue-600"></span> Đang giao hàng (SHIPPING)
               </span>
-              <span class="text-gray-700 font-bold">{{ orderStatusCounts.SHIPPING || 0 }} đơn ({{ calcPercent(orderStatusCounts.SHIPPING) }}%)</span>
+              <span class="text-slate-900 font-semibold">{{ orderStatusCounts.SHIPPING || 0 }} đơn ({{ calcPercent(orderStatusCounts.SHIPPING) }}%)</span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div class="bg-indigo-500 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.SHIPPING)}%` }"></div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div class="bg-blue-600 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.SHIPPING)}%` }"></div>
             </div>
           </div>
 
-          <!-- Completed -->
           <div class="space-y-1.5">
-            <div class="flex justify-between text-xs font-semibold">
-              <span class="flex items-center gap-1.5 text-emerald-700">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Đã hoàn thành (COMPLETED)
+            <div class="flex justify-between text-xs font-medium">
+              <span class="flex items-center gap-2 text-slate-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Đã hoàn thành (COMPLETED)
               </span>
-              <span class="text-gray-700 font-bold">{{ orderStatusCounts.COMPLETED || 0 }} đơn ({{ calcPercent(orderStatusCounts.COMPLETED) }}%)</span>
+              <span class="text-slate-900 font-semibold">{{ orderStatusCounts.COMPLETED || 0 }} đơn ({{ calcPercent(orderStatusCounts.COMPLETED) }}%)</span>
             </div>
-            <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
               <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" :style="{ width: `${calcPercent(orderStatusCounts.COMPLETED)}%` }"></div>
             </div>
           </div>
@@ -208,186 +211,185 @@
       </div>
 
       <!-- Quick Operations Summary -->
-      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm flex flex-col justify-between space-y-6">
+      <div class="bg-white rounded-xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
         <div>
-          <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-            <span>⚙️</span> Thao Tác Vận Hành
+          <h3 class="text-sm font-bold text-slate-900">
+            Truy Cập Nhanh
           </h3>
-          <p class="text-xs text-gray-500 mt-1">Truy cập nhanh các chức năng cốt lõi</p>
+          <p class="text-xs text-slate-500 mt-0.5">Các tác vụ quản trị thường dùng</p>
 
-          <div class="mt-6 space-y-3">
+          <div class="mt-4 space-y-2.5">
             <router-link
               to="/admin/orders"
-              class="w-full p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 flex items-center justify-between transition-all"
+              class="w-full p-3.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 flex items-center justify-between transition-colors"
             >
               <div class="flex items-center gap-3">
-                <span class="text-xl">🖨️</span>
+                <span class="text-base">🖨️</span>
                 <div class="text-left">
-                  <div class="text-xs font-bold text-gray-900">In Phiếu Giao A6</div>
-                  <div class="text-[11px] text-gray-500">In phiếu theo chuẩn TMĐT</div>
+                  <div class="text-xs font-semibold text-slate-900">In Phiếu Giao A6</div>
+                  <div class="text-[11px] text-slate-500">Chuẩn nhãn nhiệt TMĐT</div>
                 </div>
               </div>
-              <span class="text-gray-400 font-bold">→</span>
+              <span class="text-slate-400 text-xs">→</span>
             </router-link>
 
             <router-link
               to="/admin/products"
-              class="w-full p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 flex items-center justify-between transition-all"
+              class="w-full p-3.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 flex items-center justify-between transition-colors"
             >
               <div class="flex items-center gap-3">
-                <span class="text-xl">👕</span>
+                <span class="text-base">👕</span>
                 <div class="text-left">
-                  <div class="text-xs font-bold text-gray-900">26 Mẫu Sản Phẩm</div>
-                  <div class="text-[11px] text-gray-500">68 biến thể size & màu</div>
+                  <div class="text-xs font-semibold text-slate-900">Kho Sản Phẩm & Biến Thể</div>
+                  <div class="text-[11px] text-slate-500">Cập nhật giá, ảnh & tồn kho</div>
                 </div>
               </div>
-              <span class="text-gray-400 font-bold">→</span>
+              <span class="text-slate-400 text-xs">→</span>
             </router-link>
+
             <router-link
               to="/admin/coupons"
-              class="w-full p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 flex items-center justify-between transition-all"
+              class="w-full p-3.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 flex items-center justify-between transition-colors"
             >
               <div class="flex items-center gap-3">
-                <span class="text-xl">🎟️</span>
+                <span class="text-base">🎟️</span>
                 <div>
-                  <p class="font-bold text-xs text-gray-900">Quản Lý Mã Giảm Giá</p>
-                  <p class="text-[11px] text-gray-500">Tạo, sửa & bật/tắt Coupon</p>
+                  <p class="font-semibold text-xs text-slate-900">Quản Lý Mã Giảm Giá</p>
+                  <p class="text-[11px] text-slate-500">Tạo, sửa & bật/tắt Coupon</p>
                 </div>
               </div>
-              <span class="text-gray-400 font-bold">→</span>
+              <span class="text-slate-400 text-xs">→</span>
             </router-link>
 
             <router-link
               to="/admin/categories"
-              class="w-full p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 flex items-center justify-between transition-all"
+              class="w-full p-3.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 flex items-center justify-between transition-colors"
             >
               <div class="flex items-center gap-3">
-                <span class="text-xl">🗂️</span>
+                <span class="text-base">🗂️</span>
                 <div>
-                  <p class="font-bold text-xs text-gray-900">Quản Lý Danh Mục</p>
-                  <p class="text-[11px] text-gray-500">Thêm, sửa & phân loại nhóm hàng</p>
+                  <p class="font-semibold text-xs text-slate-900">Quản Lý Danh Mục</p>
+                  <p class="text-[11px] text-slate-500">Thêm, sửa & phân loại nhóm hàng</p>
                 </div>
               </div>
-              <span class="text-gray-400 font-bold">→</span>
+              <span class="text-slate-400 text-xs">→</span>
             </router-link>
           </div>
         </div>
 
-        <div class="p-4 bg-rose-50/70 border border-rose-100 rounded-2xl text-[11px] text-rose-800">
-          <p class="font-bold">Hệ thống MS SQL Server:</p>
-          <p class="text-rose-600 mt-0.5">FashionStoreDB đang hoạt động chuẩn Collation Vietnamese_CI_AS.</p>
+        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600">
+          <p class="font-semibold text-slate-900">Cơ sở dữ liệu MS SQL Server</p>
+          <p class="mt-0.5">FashionStoreDB hoạt động ổn định (Vietnamese_CI_AS).</p>
         </div>
       </div>
     </div>
 
     <!-- BẢNG CẢNH BÁO BIẾN THỂ SẮP HẾT HÀNG (Yêu cầu Phase 7) -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-      <!-- Table Header -->
-      <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-            <span class="text-rose-600">⚠️</span>
-            <span>Cảnh Báo Biến Thể Sắp Hết Hàng (Dưới hoặc bằng 5 chiếc)</span>
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <span>⚠️</span>
+            <span>Cảnh Báo Biến Thể Sắp Hết Hàng (≤ 5 chiếc)</span>
           </h3>
-          <p class="text-xs text-gray-500 mt-0.5">
-            Cập nhật nhanh số lượng tồn kho trực tiếp để không bị gián đoạn đơn hàng của khách
+          <p class="text-xs text-slate-500 mt-0.5">
+            Cập nhật nhanh số lượng tồn kho trực tiếp để không gián đoạn đơn hàng
           </p>
         </div>
 
         <button
           type="button"
           @click="loadLowStock"
-          class="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-colors self-start sm:self-auto flex items-center gap-1.5"
+          class="h-8 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors self-start sm:self-auto inline-flex items-center gap-1.5"
         >
-          <span>🔄</span> Làm mới danh sách
+          <span>🔄</span> Làm mới
         </button>
       </div>
 
-      <!-- Table Body -->
-      <div class="overflow-x-auto">
-        <div v-if="loadingLowStock" class="p-8 text-center text-xs text-gray-500">
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div v-if="loadingLowStock" class="p-8 text-center text-xs text-slate-500">
           Đang nạp danh sách cảnh báo tồn kho...
         </div>
 
-        <div v-else-if="lowStockError" class="p-8 text-center text-xs text-rose-600 font-semibold bg-rose-50/40">
+        <div v-else-if="lowStockError" class="p-8 text-center text-xs text-red-600 font-medium bg-red-50/40">
           ⚠️ {{ lowStockError }}
         </div>
 
-        <div v-else-if="lowStockList.length === 0" class="p-12 text-center text-xs text-emerald-700 font-semibold bg-emerald-50/40">
+        <div v-else-if="lowStockList.length === 0" class="p-10 text-center text-xs text-emerald-700 font-medium bg-emerald-50/30">
           🎉 Hiện tại tất cả các biến thể đều có tồn kho dồi dào trên 5 chiếc!
         </div>
 
-        <table v-else class="w-full min-w-[650px] text-left text-xs">
-          <thead class="bg-gray-50 text-gray-400 font-bold uppercase tracking-wider border-b border-gray-100">
+        <table v-else class="w-full min-w-[680px] text-left text-xs">
+          <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200">
             <tr>
-              <th class="p-4">Biến thể</th>
-              <th class="p-4">Tên sản phẩm</th>
-              <th class="p-4">SKU</th>
-              <th class="p-4">Phân loại</th>
-              <th class="p-4">Giá bán</th>
-              <th class="p-4">Tồn kho hiện tại</th>
-              <th class="p-4 text-right">Sửa nhanh tồn kho</th>
+              <th class="px-4 py-3 font-semibold">Biến thể</th>
+              <th class="px-4 py-3 font-semibold">Tên sản phẩm</th>
+              <th class="px-4 py-3 font-semibold">SKU</th>
+              <th class="px-4 py-3 font-semibold">Phân loại</th>
+              <th class="px-4 py-3 font-semibold">Giá bán</th>
+              <th class="px-4 py-3 font-semibold">Tồn kho</th>
+              <th class="px-4 py-3 font-semibold text-right">Cập nhật nhanh</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-slate-200/80">
             <tr
               v-for="item in lowStockList"
               :key="item.variantId"
-              class="hover:bg-rose-50/30 transition-colors"
+              class="hover:bg-slate-50/80 transition-colors"
             >
-              <td class="p-4">
+              <td class="px-4 py-3">
                 <img
                   :src="item.thumbnailUrl || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=400&q=80'"
                   :alt="item.productName"
                   @error="onImageError"
-                  class="w-12 h-14 object-cover rounded-xl bg-gray-100 border border-gray-100"
+                  class="w-10 h-12 object-cover rounded-lg bg-slate-100 border border-slate-200"
                 />
               </td>
-              <td class="p-4 font-bold text-gray-900 max-w-xs truncate">
+              <td class="px-4 py-3 font-semibold text-slate-900 max-w-xs truncate">
                 {{ item.productName }}
               </td>
-              <td class="p-4 font-mono text-gray-600 font-semibold">
+              <td class="px-4 py-3 font-mono text-slate-600 text-[11px]">
                 {{ item.sku }}
               </td>
-              <td class="p-4">
+              <td class="px-4 py-3">
                 <div class="flex items-center gap-2">
-                  <span class="bg-gray-100 font-bold px-2 py-0.5 rounded text-[11px]">Size {{ item.size }}</span>
-                  <span class="flex items-center gap-1 font-medium">
-                    <span class="w-3 h-3 rounded-full border border-gray-300" :style="{ backgroundColor: item.colorHex }"></span>
+                  <span class="bg-slate-100 font-semibold px-2 py-0.5 rounded text-[11px] text-slate-700">Size {{ item.size }}</span>
+                  <span class="flex items-center gap-1 text-slate-600">
+                    <span class="w-3 h-3 rounded-full border border-slate-300" :style="{ backgroundColor: item.colorHex }"></span>
                     <span>{{ item.colorName }}</span>
                   </span>
                 </div>
               </td>
-              <td class="p-4 font-bold text-gray-900">
+              <td class="px-4 py-3 font-semibold text-slate-900">
                 {{ formatVND(item.price) }}
               </td>
-              <td class="p-4">
+              <td class="px-4 py-3">
                 <span
-                  class="px-2.5 py-1 rounded-full font-black text-xs inline-flex items-center gap-1"
-                  :class="item.stockQuantity === 0 ? 'bg-rose-600 text-white animate-pulse' : 'bg-amber-100 text-amber-900'"
+                  class="px-2.5 py-0.5 rounded-full font-semibold text-[11px] inline-flex items-center gap-1"
+                  :class="item.stockQuantity === 0 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'"
                 >
-                  <span v-if="item.stockQuantity === 0">HẾT HÀNG (0)</span>
-                  <span v-else>⚠️ Còn {{ item.stockQuantity }} cái</span>
+                  <span v-if="item.stockQuantity === 0">Hết hàng (0)</span>
+                  <span v-else>Còn {{ item.stockQuantity }}</span>
                 </span>
               </td>
               
               <!-- NÚT SỬA NHANH SỐ LƯỢNG TỒN KHO TẠI CHỖ (Yêu cầu Phase 7) -->
-              <td class="p-4 text-right">
-                <div class="inline-flex items-center gap-2">
+              <td class="px-4 py-3 text-right">
+                <div class="inline-flex items-center gap-1.5">
                   <input
                     type="number"
                     min="0"
                     max="999"
                     v-model.number="editStockInputs[item.variantId]"
-                    class="w-16 px-2.5 py-1 border border-gray-200 rounded-lg text-xs font-bold text-center focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                    class="w-16 h-8 px-2 border border-slate-200 rounded-lg text-xs font-semibold text-center focus:ring-1 focus:ring-slate-900 focus:border-slate-900 focus:outline-none"
                   />
                   <button
                     type="button"
                     @click="saveStock(item.variantId)"
                     :disabled="savingVariantId === item.variantId"
-                    class="px-3 py-1 bg-gray-900 hover:bg-rose-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm disabled:opacity-50"
+                    class="h-8 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition-colors disabled:opacity-50"
                   >
-                    <span v-if="savingVariantId === item.variantId">Lưu...</span>
+                    <span v-if="savingVariantId === item.variantId">...</span>
                     <span v-else>Lưu</span>
                   </button>
                 </div>

@@ -2,27 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    transition-timing-function: var(--ease-editorial);
+  }
 }
 
-/* Custom scrollbars */
+/* Custom minimal scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: #d4d4d8;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a1a1aa;
 }
+
+/* ==========================================
+   FASHION-TECH MOTION SYSTEM (GPU 60FPS)
+   ========================================== */
 
 @keyframes scanline {
   0% {
@@ -40,6 +55,302 @@
 
 .animate-scanline {
   animation: scanline 2.5s ease-in-out infinite alternate;
+}
+
+/* 1. Luxury Blended Gradient (Deep Wine Red -> Muted Bronze -> Deep Violet) */
+.luxury-gradient {
+  background: linear-gradient(
+    110deg,
+    #4A0820 0%,
+    #6E1030 28%,
+    #8F5A32 48%,
+    #47144D 70%,
+    #160626 100%
+  );
+}
+
+.luxury-gradient-subtle {
+  background: linear-gradient(
+    115deg,
+    #4A0820 0%,
+    #6E1030 30%,
+    #8F5A32 52%,
+    #47144D 76%,
+    #160626 100%
+  );
+}
+
+/* 2. Kinetic Editorial Marquee (Right -> Left, seamless 50% loop) */
+@keyframes fs-marquee-rtl {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.fs-marquee-track {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: max-content !important;
+  gap: 0 !important;
+  will-change: transform;
+  animation: fs-marquee-rtl 36s linear infinite !important;
+}
+
+.fs-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-width: 100vw;
+}
+
+.fs-marquee-wrapper:hover .fs-marquee-track {
+  animation-play-state: paused !important;
+}
+
+/* Silky Soft Hover helper */
+.silky-hover {
+  transition:
+    transform 450ms var(--ease-editorial),
+    box-shadow 450ms var(--ease-editorial),
+    border-color 450ms var(--ease-editorial),
+    background-color 350ms var(--ease-editorial),
+    color 350ms var(--ease-editorial);
+}
+
+/* 2. Diagonal Sheen for Primary CTA Buttons */
+@keyframes sheen {
+  0% {
+    transform: translateX(-140%) skewX(-24deg);
+  }
+  100% {
+    transform: translateX(260%) skewX(-24deg);
+  }
+}
+
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  transition: transform 220ms var(--ease-editorial), background-color 220ms var(--ease-editorial), box-shadow 220ms var(--ease-editorial);
+}
+
+.btn-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(243, 208, 120, 0.38) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%) skewX(-24deg);
+  pointer-events: none;
+}
+
+.btn-sheen:hover::after {
+  animation: sheen 0.75s var(--ease-editorial);
+}
+
+/* 3. Subtle AI Gradient Glow Halo (Amethyst Violet + Champagne Gold) */
+@keyframes ai-glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+
+.ai-glow {
+  position: relative;
+}
+
+.ai-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(120deg, #7C3AED, #A855F7, #D4AF37, #881337);
+  background-size: 200% 200%;
+  opacity: 0.65;
+  filter: blur(7px);
+  z-index: -1;
+  pointer-events: none;
+  animation: ai-glow 3.2s var(--ease-editorial) infinite;
+}
+
+/* 4. Wishlist Heart Spring Pop */
+@keyframes heart-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.38);
+  }
+  65% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heart-pop {
+  animation: heart-pop 0.42s var(--ease-editorial);
+}
+
+/* 5. Skeleton Shimmer */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #ececef;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.4s infinite;
+  will-change: transform;
+}
+
+/* 6. Chat Message Slide-Up */
+@keyframes msg-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-msg-in {
+  animation: msg-slide-up 0.32s var(--ease-editorial) both;
+}
+
+/* 7. Scroll Reveal Directive (v-reveal) */
+.v-reveal-init {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  filter: blur(4px);
+  transition:
+    opacity 0.65s var(--ease-editorial),
+    transform 0.65s var(--ease-editorial),
+    filter 0.65s var(--ease-editorial);
+  will-change: transform, opacity;
+}
+
+.v-reveal-init.v-reveal-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+/* 8. Vue Route Page Transition */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.24s var(--ease-editorial), transform 0.24s var(--ease-editorial);
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translate3d(0, -4px, 0);
+}
+
+/* 9. Synchronized Drawer Transitions (Backdrop Fade + Spring Slide) */
+.drawer-right-enter-active,
+.drawer-right-leave-active,
+.drawer-left-enter-active,
+.drawer-left-leave-active {
+  transition: opacity 0.32s var(--ease-editorial);
+}
+
+.drawer-right-enter-active .drawer-backdrop,
+.drawer-right-leave-active .drawer-backdrop,
+.drawer-left-enter-active .drawer-backdrop,
+.drawer-left-leave-active .drawer-backdrop {
+  transition: opacity 0.32s var(--ease-editorial);
+}
+
+.drawer-right-enter-active .drawer-panel,
+.drawer-right-leave-active .drawer-panel,
+.drawer-left-enter-active .drawer-panel,
+.drawer-left-leave-active .drawer-panel {
+  transition: transform 0.38s var(--ease-editorial);
+  will-change: transform;
+}
+
+.drawer-right-enter-from .drawer-backdrop,
+.drawer-right-leave-to .drawer-backdrop,
+.drawer-left-enter-from .drawer-backdrop,
+.drawer-left-leave-to .drawer-backdrop {
+  opacity: 0;
+}
+
+.drawer-right-enter-from .drawer-panel,
+.drawer-right-leave-to .drawer-panel {
+  transform: translate3d(100%, 0, 0);
+}
+
+.drawer-left-enter-from .drawer-panel,
+.drawer-left-leave-to .drawer-panel {
+  transform: translate3d(-100%, 0, 0);
+}
+
+/* 10. Chat Popup Scale + Fade from bottom-right */
+.chat-pop-enter-active,
+.chat-pop-leave-active {
+  transition: opacity 0.3s var(--ease-editorial), transform 0.32s var(--ease-editorial);
+  transform-origin: bottom right;
+}
+
+.chat-pop-enter-from,
+.chat-pop-leave-to {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0) scale(0.92);
+}
+
+/* Respect Reduced Motion Accessibility Preference (preserve smooth hover transitions on cards & continuous marquee) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .v-reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .fs-marquee-track {
+    animation: fs-marquee-rtl 36s linear infinite !important;
+  }
 }
 
 /* Print styles for A6 thermal shipping label */
