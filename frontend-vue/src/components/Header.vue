@@ -250,8 +250,10 @@
             </router-link>
           </div>
 
-          <!-- Wishlist Drawer Button -->
+          <!-- Wishlist Popover Button -->
           <button
+            v-if="route.path !== '/wishlist'"
+            ref="wishlistTriggerRef"
             type="button"
             @click="handleOpenWishlist"
             class="relative min-w-[44px] min-h-[44px] rounded-lg hover:bg-white/15 text-[#FFFDF9] hover:text-[#F3D078] transition-colors flex items-center justify-center"
@@ -269,10 +271,12 @@
             </span>
           </button>
 
-          <!-- Cart Drawer Button -->
+          <!-- Cart Popover Button -->
           <button
+            v-if="route.path !== '/cart'"
+            ref="cartTriggerRef"
             type="button"
-            @click="cartStore.toggleDrawer(true)"
+            @click="handleToggleCart"
             class="relative min-w-[44px] min-h-[44px] rounded-lg hover:bg-white/15 text-[#FFFDF9] hover:text-[#F3D078] transition-colors flex items-center justify-center"
             aria-label="Giỏ hàng"
             title="Giỏ hàng"
@@ -394,7 +398,7 @@
                   Tra Cứu Đơn Hàng
                 </router-link>
                 <router-link
-                  v-if="authStore.isAuthenticated"
+                  v-if="authStore.isAuthenticated && route.path !== '/wishlist'"
                   to="/wishlist"
                   @click="isMobileMenuOpen = false"
                   class="min-h-[44px] flex items-center justify-between px-3 rounded-lg hover:bg-neutral-100"
@@ -402,7 +406,12 @@
                   <span>Danh Sách Yêu Thích</span>
                   <span class="text-xs font-bold text-[#7A1032]">{{ wishlistStore.totalWishlist }}</span>
                 </router-link>
-                <router-link to="/cart" @click="isMobileMenuOpen = false" class="min-h-[44px] flex items-center justify-between px-3 rounded-lg hover:bg-neutral-100">
+                <router-link
+                  v-if="route.path !== '/cart'"
+                  to="/cart"
+                  @click="isMobileMenuOpen = false"
+                  class="min-h-[44px] flex items-center justify-between px-3 rounded-lg hover:bg-neutral-100"
+                >
                   <span>Giỏ Hàng</span>
                   <span class="text-xs font-bold text-[#18181B]">{{ cartStore.totalItems }}</span>
                 </router-link>
@@ -485,282 +494,278 @@
       </Transition>
     </Teleport>
 
-    <!-- CART DRAWER (SLIDE-OVER) — Clean White Luxury -->
+    <!-- CART POPOVER — Clean White Luxury (No backdrop, free page scroll) -->
     <Teleport to="body">
-      <Transition name="drawer-right" :duration="380">
-        <div v-if="cartStore.isDrawerOpen" class="fixed inset-0 z-[9990] overflow-hidden no-print" role="dialog" aria-modal="true">
-          <div class="drawer-backdrop fixed inset-0 z-[9990] bg-black/45 backdrop-blur-[2px]" @click="cartStore.toggleDrawer(false)"></div>
-
-          <div class="drawer-panel fixed inset-y-0 right-0 z-[9995] max-w-full flex pl-6 sm:pl-10">
-            <div class="w-screen max-w-md h-screen bg-white shadow-2xl flex flex-col text-[#18181B]">
-          
-            <!-- Drawer Header -->
-            <div class="px-5 py-4 border-b border-neutral-200/80 flex items-center justify-between bg-white shrink-0">
-              <div>
-                <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#18181B]">
-                  Giỏ Hàng ({{ cartStore.totalItems }})
-                </h2>
-                <p class="text-[11px] text-[#6B7280] mt-0.5">Kiểm tra sản phẩm trước khi thanh toán</p>
-              </div>
-              <button
-                type="button"
-                @click="cartStore.toggleDrawer(false)"
-                class="min-w-[40px] min-h-[40px] -mr-2 text-[#6B7280] hover:text-[#18181B] rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors"
-                aria-label="Đóng giỏ hàng"
-              >
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+      <Transition name="fs-popover">
+        <div
+          v-if="cartStore.isDrawerOpen"
+          ref="cartPopoverRef"
+          role="dialog"
+          aria-modal="false"
+          class="fixed top-[74px] right-4 sm:right-6 z-[9995] w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100vh-100px)] flex flex-col rounded-2xl bg-white border border-stone-200/90 shadow-[0_20px_50px_-12px_rgba(24,24,27,0.22),0_0_0_1px_rgba(24,24,27,0.04)] overflow-hidden text-[#18181B] no-print"
+        >
+          <!-- Popover Header (Clean White Minimal) -->
+          <div class="bg-white border-b border-stone-100 px-5 py-4 flex items-center justify-between gap-3 shrink-0">
+            <div>
+              <h2 class="text-sm font-extrabold uppercase tracking-wider text-stone-900">
+                Giỏ Hàng ({{ cartStore.totalItems }})
+              </h2>
+              <p class="text-xs text-stone-500 mt-0.5">Kiểm tra sản phẩm trước khi thanh toán</p>
             </div>
-
-            <!-- Free Shipping Bar -->
-            <div class="px-5 py-3.5 bg-gray-50/80 border-b border-neutral-200/80 shrink-0">
-              <FreeShippingBar />
-            </div>
-
-            <!-- Drawer Items List -->
-            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3.5">
-              <div v-if="cartStore.items.length === 0" class="py-20 text-center space-y-3">
-                <p class="text-[#18181B] font-semibold text-sm">Giỏ hàng của bạn đang trống</p>
-                <p class="text-xs text-[#6B7280]">Khám phá các thiết kế mới nhất của FashionStore</p>
-                <router-link
-                  to="/catalog"
-                  @click="cartStore.toggleDrawer(false)"
-                  class="btn-sheen inline-flex items-center justify-center min-h-[44px] mt-2 px-6 bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs rounded-xl transition-colors"
-                >
-                  Khám phá cửa hàng
-                </router-link>
-              </div>
-
-              <div
-                v-for="item in cartStore.items"
-                :key="item.variantId"
-                class="silky-hover flex gap-3.5 p-3.5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/50 bg-white shadow-sm"
-              >
-                <img
-                  :src="item.thumbnailUrl"
-                  :alt="item.productName"
-                  @error="onImageError"
-                  class="w-20 h-24 object-cover rounded-xl bg-neutral-100 flex-shrink-0 border border-neutral-100"
-                />
-                <div class="flex-1 min-w-0 flex flex-col justify-between">
-                  <div>
-                    <div class="flex justify-between items-start gap-2">
-                      <router-link
-                        :to="`/product/${item.productSlug}`"
-                        @click="cartStore.toggleDrawer(false)"
-                        class="text-xs sm:text-[13px] font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-2 leading-snug transition-colors"
-                      >
-                        {{ item.productName }}
-                      </router-link>
-                      <button
-                        type="button"
-                        @click="cartStore.removeFromCart(item.variantId)"
-                        class="p-1.5 -mt-1 -mr-1 rounded-full text-neutral-400 hover:text-[#7A1032] hover:bg-rose-50 transition-colors shrink-0"
-                        title="Xóa sản phẩm"
-                        aria-label="Xóa sản phẩm"
-                      >
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1.5 text-[11px] text-[#6B7280]">
-                      <span class="bg-neutral-100 text-[#18181B] px-2 py-0.5 rounded font-semibold">Size {{ item.size }}</span>
-                      <span class="flex items-center gap-1 truncate">
-                        <span class="w-2.5 h-2.5 rounded-full border border-neutral-300 shrink-0" :style="{ backgroundColor: item.colorHex }"></span>
-                        <span class="truncate">{{ item.colorName }}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="flex justify-between items-center mt-2.5 gap-2">
-                    <div class="text-sm font-bold text-[#7A1032]">
-                      {{ formatVND(item.price) }}
-                    </div>
-                    <!-- Quantity Stepper -->
-                    <div class="flex items-center h-8 border border-neutral-200 rounded-lg overflow-hidden bg-white">
-                      <button
-                        type="button"
-                        @click="cartStore.updateQuantity(item.variantId, item.quantity - 1)"
-                        class="w-8 h-8 flex items-center justify-center text-[#18181B] hover:bg-neutral-100 text-sm font-bold transition-colors"
-                      >-</button>
-                      <span class="w-8 text-center text-xs font-bold text-[#18181B]">{{ item.quantity }}</span>
-                      <button
-                        type="button"
-                        @click="cartStore.updateQuantity(item.variantId, item.quantity + 1)"
-                        :disabled="item.quantity >= item.stockQuantity"
-                        class="w-8 h-8 flex items-center justify-center text-[#18181B] hover:bg-neutral-100 text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >+</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Drawer Footer -->
-            <div v-if="cartStore.items.length > 0" class="p-5 border-t border-neutral-200 bg-gray-50/80 space-y-2.5 shrink-0">
-              <div class="flex justify-between text-xs text-[#6B7280]">
-                <span>Tạm tính:</span>
-                <span class="font-semibold text-[#18181B]">{{ formatVND(cartStore.subTotal) }}</span>
-              </div>
-              <div class="flex justify-between text-xs text-[#6B7280]">
-                <span>Phí vận chuyển:</span>
-                <span v-if="cartStore.isFreeShip" class="font-bold text-emerald-700">Miễn phí</span>
-                <span v-else class="font-semibold text-[#18181B]">{{ formatVND(cartStore.shippingFee) }}</span>
-              </div>
-
-              <div class="pt-2.5 border-t border-neutral-200 flex justify-between items-baseline">
-                <span class="text-xs font-bold uppercase tracking-wider text-[#18181B]">Tổng cộng</span>
-                <span class="text-lg font-extrabold text-[#7A1032]">{{ formatVND(cartStore.totalAmount) }}</span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-3 pt-1.5">
-                <router-link
-                  to="/cart"
-                  @click="cartStore.toggleDrawer(false)"
-                  class="py-2.5 px-4 flex items-center justify-center rounded-xl border border-gray-300 bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold transition-colors"
-                >
-                  Xem Giỏ Hàng
-                </router-link>
-                <button
-                  type="button"
-                  @click="handleProceedToCheckout"
-                  class="btn-sheen active:scale-[0.98] py-2.5 px-4 flex items-center justify-center rounded-xl bg-[#7A1032] hover:bg-[#5C0B27] text-white text-xs font-bold transition-all"
-                >
-                  Thanh Toán →
-                </button>
-              </div>
-            </div>
-
+            <button
+              type="button"
+              @click="cartStore.toggleDrawer(false)"
+              class="w-8 h-8 rounded-full text-stone-400 hover:text-stone-800 hover:bg-stone-100 flex items-center justify-center transition-colors shrink-0"
+              aria-label="Đóng giỏ hàng"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-        </div>
-      </div>
-      </Transition>
-    </Teleport>
 
-    <!-- WISHLIST DRAWER (SLIDE-OVER) — Clean White Luxury -->
-    <Teleport to="body">
-      <Transition name="drawer-right" :duration="380">
-        <div v-if="isWishlistOpen" class="fixed inset-0 z-[9990] overflow-hidden no-print" role="dialog" aria-modal="true">
-          <div class="drawer-backdrop fixed inset-0 z-[9990] bg-black/45 backdrop-blur-[2px]" @click="isWishlistOpen = false"></div>
+          <!-- Free Shipping Bar -->
+          <div class="px-5 py-3 bg-[#FAF9F8] border-b border-stone-100 shrink-0">
+            <FreeShippingBar />
+          </div>
 
-          <div class="drawer-panel fixed inset-y-0 right-0 z-[9995] max-w-full flex pl-6 sm:pl-10">
-            <div class="w-screen max-w-md h-screen bg-white shadow-2xl flex flex-col text-[#18181B]">
-          
-            <!-- Drawer Header -->
-            <div class="px-5 py-4 border-b border-neutral-200/80 flex items-center justify-between bg-white shrink-0">
-              <div>
-                <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#18181B]">
-                  Yêu Thích ({{ wishlistStore.totalWishlist }})
-                </h2>
-                <p class="text-[11px] text-[#6B7280] mt-0.5">Các sản phẩm bạn đã lưu lại</p>
-              </div>
-              <button
-                type="button"
-                @click="isWishlistOpen = false"
-                class="min-w-[40px] min-h-[40px] -mr-2 text-[#6B7280] hover:text-[#18181B] rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors"
-                aria-label="Đóng yêu thích"
-              >
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Drawer Body -->
-            <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3.5">
-              <div v-if="wishlistStore.items.length === 0" class="py-20 text-center space-y-3">
-                <p class="text-[#18181B] font-semibold text-sm">Chưa có sản phẩm yêu thích nào</p>
-                <p class="text-xs text-[#6B7280]">Nhấn biểu tượng trái tim để lưu mẫu bạn ưng ý</p>
-                <router-link
-                  to="/catalog"
-                  @click="isWishlistOpen = false"
-                  class="btn-sheen inline-flex items-center justify-center min-h-[44px] mt-2 px-6 bg-[#7A1032] hover:bg-[#5C0B27] text-white font-bold text-xs rounded-xl transition-colors"
-                >
-                  Khám phá ngay
-                </router-link>
-              </div>
-
-              <div
-                v-for="item in wishlistStore.items"
-                :key="item.id"
-                class="silky-hover flex gap-3.5 p-3.5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/50 bg-white shadow-sm group"
-              >
-                <router-link :to="`/product/${item.slug}`" @click="isWishlistOpen = false" class="flex-shrink-0">
-                  <img
-                    :src="item.thumbnailUrl"
-                    :alt="item.name"
-                    @error="onImageError"
-                    class="w-20 h-24 object-cover rounded-xl bg-neutral-100 border border-neutral-100 group-hover:scale-[1.03] transition-transform duration-500"
-                  />
-                </router-link>
-
-                <div class="flex-1 min-w-0 flex flex-col justify-between">
-                  <div>
-                    <div class="flex justify-between items-start gap-2">
-                      <router-link
-                        :to="`/product/${item.slug}`"
-                        @click="isWishlistOpen = false"
-                        class="text-xs sm:text-[13px] font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-2 leading-snug transition-colors"
-                      >
-                        {{ item.name }}
-                      </router-link>
-                      <button
-                        type="button"
-                        @click="wishlistStore.removeFromWishlist(item.id)"
-                        class="p-1.5 -mt-1 -mr-1 rounded-full text-neutral-400 hover:text-[#7A1032] hover:bg-gray-100 transition-colors shrink-0"
-                        title="Xóa khỏi yêu thích"
-                        aria-label="Xóa khỏi yêu thích"
-                      >
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                    <span class="text-[11px] text-[#6B7280] uppercase tracking-wider font-medium block mt-1">
-                      {{ item.categoryName || 'Thời Trang' }}
-                    </span>
-                  </div>
-
-                  <div class="flex justify-between items-center mt-2.5 gap-2">
-                    <div class="text-sm font-bold text-[#7A1032]">
-                      {{ formatVND(item.salePrice || item.basePrice) }}
-                    </div>
-                    <button
-                      type="button"
-                      @click="openQuickViewFromWishlist(item)"
-                      class="h-8 px-3 rounded-lg bg-[#7A1032] hover:bg-[#5C0B27] text-white text-xs font-semibold transition-colors shrink-0"
-                    >
-                      Thêm vào giỏ
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Drawer Footer -->
-            <div v-if="wishlistStore.items.length > 0" class="p-5 border-t border-neutral-200 bg-gray-50/80 grid grid-cols-2 gap-3 shrink-0">
-              <button
-                type="button"
-                @click="wishlistStore.clearWishlist"
-                class="py-2.5 px-4 flex items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 text-xs font-bold transition-colors"
-              >
-                Xóa tất cả
-              </button>
+          <!-- Popover Items List -->
+          <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-[#FAF9F8]">
+            <div v-if="cartStore.items.length === 0" class="py-14 text-center space-y-3">
+              <p class="text-stone-900 font-semibold text-sm">Giỏ hàng của bạn đang trống</p>
+              <p class="text-xs text-stone-500">Khám phá các thiết kế mới nhất của FashionStore</p>
               <router-link
-                to="/wishlist"
-                @click="isWishlistOpen = false"
-                class="btn-sheen active:scale-[0.98] py-2.5 px-4 flex items-center justify-center rounded-xl bg-[#7A1032] hover:bg-[#5C0B27] text-white text-xs font-bold transition-all text-center"
+                to="/catalog"
+                @click="cartStore.toggleDrawer(false)"
+                class="btn-sheen inline-flex items-center justify-center min-h-[42px] mt-2 px-6 bg-[#5C0B27] hover:bg-[#4A0820] text-white font-bold text-xs rounded-xl shadow-md transition-colors"
               >
-                Xem trang Yêu thích →
+                Khám phá cửa hàng
               </router-link>
             </div>
 
+            <div
+              v-for="item in cartStore.items"
+              :key="item.variantId"
+              class="flex gap-3 p-3 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-[#8F5A32]/40 hover:shadow-md transition-all duration-300"
+            >
+              <img
+                :src="item.thumbnailUrl"
+                :alt="item.productName"
+                @error="onImageError"
+                class="w-18 h-22 sm:w-20 sm:h-24 object-cover rounded-xl bg-neutral-100 flex-shrink-0 border border-stone-100"
+              />
+              <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start gap-2">
+                    <router-link
+                      :to="`/product/${item.productSlug}`"
+                      @click="cartStore.toggleDrawer(false)"
+                      class="text-xs sm:text-[13px] font-semibold text-stone-900 hover:text-[#5C0B27] line-clamp-2 leading-snug transition-colors"
+                    >
+                      {{ item.productName }}
+                    </router-link>
+                    <button
+                      type="button"
+                      @click="cartStore.removeFromCart(item.variantId)"
+                      class="p-1.5 -mt-1 -mr-1 rounded-full text-stone-400 hover:text-[#5C0B27] hover:bg-stone-100 transition-colors shrink-0"
+                      title="Xóa sản phẩm"
+                      aria-label="Xóa sản phẩm"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="flex items-center gap-2 mt-1.5 text-[11px] text-stone-500">
+                    <span class="bg-stone-100 text-stone-800 px-2 py-0.5 rounded font-semibold">Size {{ item.size }}</span>
+                    <span class="flex items-center gap-1 truncate">
+                      <span class="w-2.5 h-2.5 rounded-full border border-stone-300 shrink-0" :style="{ backgroundColor: item.colorHex }"></span>
+                      <span class="truncate">{{ item.colorName }}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-2.5 gap-2">
+                  <div class="text-sm font-bold text-[#7A1032]">
+                    {{ formatVND(item.price) }}
+                  </div>
+                  <!-- Quantity Stepper -->
+                  <div class="flex items-center h-8 border border-stone-200 rounded-lg overflow-hidden bg-white">
+                    <button
+                      type="button"
+                      @click="cartStore.updateQuantity(item.variantId, item.quantity - 1)"
+                      class="w-8 h-8 flex items-center justify-center text-stone-800 hover:bg-stone-100 text-sm font-bold transition-colors"
+                    >-</button>
+                    <span class="w-8 text-center text-xs font-bold text-stone-900">{{ item.quantity }}</span>
+                    <button
+                      type="button"
+                      @click="cartStore.updateQuantity(item.variantId, item.quantity + 1)"
+                      :disabled="item.quantity >= item.stockQuantity"
+                      class="w-8 h-8 flex items-center justify-center text-stone-800 hover:bg-stone-100 text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    >+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popover Footer -->
+          <div v-if="cartStore.items.length > 0" class="p-4 sm:p-5 bg-white border-t border-stone-100 shadow-[0_-8px_24px_-12px_rgba(24,24,27,0.08)] space-y-2 shrink-0">
+            <div class="flex justify-between text-xs text-stone-500">
+              <span>Tạm tính:</span>
+              <span class="font-semibold text-stone-900">{{ formatVND(cartStore.subTotal) }}</span>
+            </div>
+            <div class="flex justify-between text-xs text-stone-500">
+              <span>Phí vận chuyển:</span>
+              <span v-if="cartStore.isFreeShip" class="font-bold text-emerald-700">Miễn phí</span>
+              <span v-else class="font-semibold text-stone-900">{{ formatVND(cartStore.shippingFee) }}</span>
+            </div>
+
+            <div class="pt-2 border-t border-stone-100 flex justify-between items-baseline">
+              <span class="text-xs font-bold uppercase tracking-wider text-stone-900">Tổng cộng</span>
+              <span class="text-lg font-extrabold text-[#7A1032]">{{ formatVND(cartStore.totalAmount) }}</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 pt-1.5">
+              <router-link
+                to="/cart"
+                @click="cartStore.toggleDrawer(false)"
+                class="py-2.5 px-3.5 flex items-center justify-center rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-800 text-xs font-bold transition-colors"
+              >
+                Xem Giỏ Hàng
+              </router-link>
+              <button
+                type="button"
+                @click="handleProceedToCheckout"
+                class="btn-sheen active:scale-[0.98] py-2.5 px-3.5 flex items-center justify-center rounded-xl bg-[#5C0B27] hover:bg-[#4A0820] text-white text-xs font-bold shadow-md transition-all"
+              >
+                Thanh Toán →
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </Transition>
+    </Teleport>
+
+    <!-- WISHLIST POPOVER — Clean White Luxury (No backdrop, free page scroll) -->
+    <Teleport to="body">
+      <Transition name="fs-popover">
+        <div
+          v-if="isWishlistOpen"
+          ref="wishlistPopoverRef"
+          role="dialog"
+          aria-modal="false"
+          class="fixed top-[74px] right-4 sm:right-6 z-[9995] w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100vh-100px)] flex flex-col rounded-2xl bg-white border border-stone-200/90 shadow-[0_20px_50px_-12px_rgba(24,24,27,0.22),0_0_0_1px_rgba(24,24,27,0.04)] overflow-hidden text-[#18181B] no-print"
+        >
+          <!-- Popover Header (Clean White Minimal) -->
+          <div class="bg-white border-b border-stone-100 px-5 py-4 flex items-center justify-between gap-3 shrink-0">
+            <div>
+              <h2 class="text-sm font-extrabold uppercase tracking-wider text-stone-900">
+                Yêu Thích ({{ wishlistStore.totalWishlist }})
+              </h2>
+              <p class="text-xs text-stone-500 mt-0.5">Các sản phẩm bạn đã lưu lại</p>
+            </div>
+            <button
+              type="button"
+              @click="isWishlistOpen = false"
+              class="w-8 h-8 rounded-full text-stone-400 hover:text-stone-800 hover:bg-stone-100 flex items-center justify-center transition-colors shrink-0"
+              aria-label="Đóng yêu thích"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Popover Body -->
+          <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-[#FAF9F8]">
+            <div v-if="wishlistStore.items.length === 0" class="py-14 text-center space-y-3">
+              <p class="text-stone-900 font-semibold text-sm">Chưa có sản phẩm yêu thích nào</p>
+              <p class="text-xs text-stone-500">Nhấn biểu tượng trái tim để lưu mẫu bạn ưng ý</p>
+              <router-link
+                to="/catalog"
+                @click="isWishlistOpen = false"
+                class="btn-sheen inline-flex items-center justify-center min-h-[42px] mt-2 px-6 bg-[#5C0B27] hover:bg-[#4A0820] text-white font-bold text-xs rounded-xl shadow-md transition-colors"
+              >
+                Khám phá ngay
+              </router-link>
+            </div>
+
+            <div
+              v-for="item in wishlistStore.items"
+              :key="item.id"
+              class="flex gap-3 p-3 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-[#8F5A32]/40 hover:shadow-md transition-all duration-300 group"
+            >
+              <router-link :to="`/product/${item.slug}`" @click="isWishlistOpen = false" class="flex-shrink-0">
+                <img
+                  :src="item.thumbnailUrl"
+                  :alt="item.name"
+                  @error="onImageError"
+                  class="w-18 h-22 sm:w-20 sm:h-24 object-cover rounded-xl bg-neutral-100 border border-stone-100 group-hover:scale-[1.03] transition-transform duration-500"
+                />
+              </router-link>
+
+              <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start gap-2">
+                    <router-link
+                      :to="`/product/${item.slug}`"
+                      @click="isWishlistOpen = false"
+                      class="text-xs sm:text-[13px] font-semibold text-stone-900 hover:text-[#5C0B27] line-clamp-2 leading-snug transition-colors"
+                    >
+                      {{ item.name }}
+                    </router-link>
+                    <button
+                      type="button"
+                      @click="wishlistStore.removeFromWishlist(item.id)"
+                      class="p-1.5 -mt-1 -mr-1 rounded-full text-stone-400 hover:text-[#5C0B27] hover:bg-stone-100 transition-colors shrink-0"
+                      title="Xóa khỏi yêu thích"
+                      aria-label="Xóa khỏi yêu thích"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                  <span class="text-[11px] text-stone-500 uppercase tracking-wider font-medium block mt-1">
+                    {{ item.categoryName || 'Thời Trang' }}
+                  </span>
+                </div>
+
+                <div class="flex justify-between items-center mt-2.5 gap-2">
+                  <div class="text-sm font-bold text-[#7A1032]">
+                    {{ formatVND(item.salePrice || item.basePrice) }}
+                  </div>
+                  <button
+                    type="button"
+                    @click="openQuickViewFromWishlist(item)"
+                    class="h-8 px-3 rounded-lg bg-[#5C0B27] hover:bg-[#4A0820] text-white text-xs font-semibold transition-colors shrink-0"
+                  >
+                    Thêm vào giỏ
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popover Footer -->
+          <div v-if="wishlistStore.items.length > 0" class="p-4 sm:p-5 bg-white border-t border-stone-100 shadow-[0_-8px_24px_-12px_rgba(24,24,27,0.08)] grid grid-cols-2 gap-2.5 shrink-0">
+            <button
+              type="button"
+              @click="wishlistStore.clearWishlist"
+              class="py-2.5 px-3.5 flex items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-800 hover:bg-stone-50 text-xs font-bold transition-colors"
+            >
+              Xóa tất cả
+            </button>
+            <router-link
+              to="/wishlist"
+              @click="isWishlistOpen = false"
+              class="btn-sheen active:scale-[0.98] py-2.5 px-3.5 flex items-center justify-center rounded-xl bg-[#5C0B27] hover:bg-[#4A0820] text-white text-xs font-bold shadow-md transition-all text-center"
+            >
+              Xem trang Yêu thích →
+            </router-link>
+          </div>
+        </div>
       </Transition>
     </Teleport>
 
@@ -773,7 +778,7 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import api from '@/services/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
@@ -786,6 +791,7 @@ import StarfieldOverlay from '@/components/StarfieldOverlay.vue';
 import SparkleDivider from '@/components/SparkleDivider.vue';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const wishlistStore = useWishlistStore();
@@ -798,6 +804,10 @@ const isSearching = ref(false);
 const searchResults = ref([]);
 const searchContainerRef = ref(null);
 const userMenuRef = ref(null);
+const cartPopoverRef = ref(null);
+const cartTriggerRef = ref(null);
+const wishlistPopoverRef = ref(null);
+const wishlistTriggerRef = ref(null);
 const isUserMenuOpen = ref(false);
 const isMobileMenuOpen = ref(false);
 const mobileCategories = ref([]);
@@ -892,7 +902,15 @@ function handleOpenWishlist() {
     router.push({ name: 'login', query: { redirect: '/wishlist' } });
     return;
   }
-  isWishlistOpen.value = true;
+  const next = !isWishlistOpen.value;
+  if (next) cartStore.toggleDrawer(false);
+  isWishlistOpen.value = next;
+}
+
+function handleToggleCart() {
+  const next = !cartStore.isDrawerOpen;
+  if (next) isWishlistOpen.value = false;
+  cartStore.toggleDrawer(next);
 }
 
 function handleProceedToCheckout() {
@@ -926,6 +944,35 @@ function handleClickOutside(event) {
   }
 }
 
+function handlePopoverPointerDown(event) {
+  const target = event.target;
+  if (
+    cartStore.isDrawerOpen &&
+    cartPopoverRef.value &&
+    !cartPopoverRef.value.contains(target) &&
+    !(cartTriggerRef.value && cartTriggerRef.value.contains(target))
+  ) {
+    cartStore.toggleDrawer(false);
+  }
+  if (
+    isWishlistOpen.value &&
+    wishlistPopoverRef.value &&
+    !wishlistPopoverRef.value.contains(target) &&
+    !(wishlistTriggerRef.value && wishlistTriggerRef.value.contains(target))
+  ) {
+    isWishlistOpen.value = false;
+  }
+}
+
+function handleKeydown(event) {
+  if (event.key === 'Escape') {
+    if (cartStore.isDrawerOpen) cartStore.toggleDrawer(false);
+    if (isWishlistOpen.value) isWishlistOpen.value = false;
+    if (isSearchOpen.value) isSearchOpen.value = false;
+    if (isUserMenuOpen.value) isUserMenuOpen.value = false;
+  }
+}
+
 async function loadMobileCategories() {
   try {
     const res = await api.get('/categories');
@@ -938,16 +985,31 @@ async function loadMobileCategories() {
 }
 
 watch(
-  () => isMobileMenuOpen.value || cartStore.isDrawerOpen || isWishlistOpen.value,
-  (isAnyOpen) => {
-    document.body.style.overflow = isAnyOpen ? 'hidden' : '';
-    document.documentElement.style.overflow = isAnyOpen ? 'hidden' : '';
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/cart') {
+      cartStore.toggleDrawer(false);
+    }
+    if (newPath === '/wishlist') {
+      isWishlistOpen.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => isMobileMenuOpen.value,
+  (isMobileOpen) => {
+    document.body.style.overflow = isMobileOpen ? 'hidden' : '';
+    document.documentElement.style.overflow = isMobileOpen ? 'hidden' : '';
   },
   { immediate: true }
 );
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
+  document.addEventListener('pointerdown', handlePopoverPointerDown);
+  document.addEventListener('keydown', handleKeydown);
   loadMobileCategories();
 });
 
@@ -955,6 +1017,8 @@ onUnmounted(() => {
   document.body.style.overflow = '';
   document.documentElement.style.overflow = '';
   document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener('pointerdown', handlePopoverPointerDown);
+  document.removeEventListener('keydown', handleKeydown);
   if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
 });
 </script>

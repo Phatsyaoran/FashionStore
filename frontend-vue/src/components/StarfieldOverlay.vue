@@ -13,6 +13,10 @@ const props = defineProps({
   minStars: {
     type: Number,
     default: 45
+  },
+  driftSpeed: {
+    type: Number,
+    default: 22
   }
 });
 
@@ -25,6 +29,7 @@ let height = 0;
 let dpr = 1;
 let stars = [];
 let rafId = null;
+let lastTime = 0;
 let isVisible = true;
 let resizeObserver = null;
 let intersectionObserver = null;
@@ -46,19 +51,24 @@ function buildStars() {
   const count = Math.max(props.minStars, Math.min(220, Math.floor((width * height) / 1600)));
 
   stars = Array.from({ length: count }, () => {
-    const homeX = Math.random() * width;
-    const homeY = Math.random() * height;
+    const baseX = Math.random() * width;
+    const baseY = Math.random() * height;
     // 92% small white circular dots, 8% slender 4-point diamond sparkles (never 5-point)
     const isDiamond = Math.random() < 0.08;
+    // Dots: radius 0.5px–1.5px; Diamonds: slender 3px–5px
+    const size = isDiamond ? 3 + Math.random() * 2 : 0.5 + Math.random() * 1.0;
+    // Subtle parallax depth (0.7 – 1.15) correlated with star size
+    const sizeNorm = isDiamond ? (size - 3) / 2 : (size - 0.5) / 1.0;
+    const depth = 0.7 + sizeNorm * 0.45;
 
     return {
-      homeX,
-      homeY,
-      x: homeX,
-      y: homeY,
+      baseX,
+      baseY,
+      offsetX: 0,
+      offsetY: 0,
+      depth,
       type: isDiamond ? 'diamond' : 'dot',
-      // Dots: radius 0.5px–1.5px; Diamonds: slender 3px–5px
-      size: isDiamond ? 3 + Math.random() * 2 : 0.5 + Math.random() * 1.0,
+      size,
       twinkleSpeed: 0.0012 + Math.random() * 0.0026,
       phase: Math.random() * Math.PI * 2,
       warmTint: Math.random() < 0.22
@@ -95,9 +105,12 @@ function drawFourPointDiamond(c, x, y, r, alpha, warmTint) {
   c.restore();
 }
 
-function renderFrame(timestamp) {
+function renderFrame(now) {
   const canvas = canvasRef.value;
   if (!ctx || !canvas || width <= 0 || height <= 0) return;
+
+  const deltaSec = lastTime ? Math.min((now - lastTime) / 1000, 0.05) : 0.016;
+  lastTime = now;
 
   ctx.clearRect(0, 0, width, height);
 
@@ -121,39 +134,53 @@ function renderFrame(timestamp) {
 
   for (let i = 0; i < stars.length; i++) {
     const s = stars[i];
-    let targetX = s.homeX;
-    let targetY = s.homeY;
+
+    // 1. Continuous right-to-left parallax drift
+    s.baseX -= props.driftSpeed * s.depth * deltaSec;
+    if (s.baseX < -8) {
+      s.baseX = width + 8;
+      s.offsetX = 0;
+      s.offsetY = 0;
+    }
+
+    // 2. Interactive pointer scatter using offsetX / offsetY so drift & repel compose smoothly
+    let targetOffsetX = 0;
+    let targetOffsetY = 0;
     let pushed = false;
 
     if (pointerNear) {
-      const dx = s.homeX - mx;
-      const dy = s.homeY - my;
+      const curX = s.baseX + s.offsetX;
+      const curY = s.baseY + s.offsetY;
+      const dx = curX - mx;
+      const dy = curY - my;
       const distSq = dx * dx + dy * dy;
 
       if (distSq < REPEL_RADIUS_SQ && distSq > 0.01) {
         const dist = Math.sqrt(distSq);
         const push = (1 - dist / REPEL_RADIUS) * MAX_PUSH;
-        targetX = s.homeX + (dx / dist) * push;
-        targetY = s.homeY + (dy / dist) * push;
+        targetOffsetX = (dx / dist) * push;
+        targetOffsetY = (dy / dist) * push;
         pushed = true;
       }
     }
 
-    // Smooth lerp: responsive push (0.14), dreamy float back (0.04)
     const ease = pushed ? 0.14 : 0.04;
-    s.x += (targetX - s.x) * ease;
-    s.y += (targetY - s.y) * ease;
+    s.offsetX += (targetOffsetX - s.offsetX) * ease;
+    s.offsetY += (targetOffsetY - s.offsetY) * ease;
 
-    // Continuous smooth twinkle between 0.15 and 1.0
-    const wave = (Math.sin(timestamp * s.twinkleSpeed + s.phase) + 1) * 0.5;
+    const drawX = s.baseX + s.offsetX;
+    const drawY = s.baseY + s.offsetY;
+
+    // 3. Continuous smooth twinkle between 0.15 and 1.0
+    const wave = (Math.sin(now * s.twinkleSpeed + s.phase) + 1) * 0.5;
     const alpha = 0.15 + wave * 0.85;
 
     if (s.type === 'diamond') {
-      drawFourPointDiamond(ctx, s.x, s.y, s.size, alpha, s.warmTint);
+      drawFourPointDiamond(ctx, drawX, drawY, s.size, alpha, s.warmTint);
     } else {
       // Soft white halo around each tiny star dot
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size * 2.5, 0, Math.PI * 2);
+      ctx.arc(drawX, drawY, s.size * 2.5, 0, Math.PI * 2);
       ctx.fillStyle = s.warmTint
         ? `rgba(248, 228, 178, ${(alpha * 0.18).toFixed(3)})`
         : `rgba(255, 255, 255, ${(alpha * 0.18).toFixed(3)})`;
@@ -161,7 +188,7 @@ function renderFrame(timestamp) {
 
       // Crisp bright star core
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.arc(drawX, drawY, s.size, 0, Math.PI * 2);
       ctx.fillStyle = s.warmTint
         ? `rgba(252, 236, 196, ${alpha.toFixed(3)})`
         : `rgba(255, 255, 255, ${alpha.toFixed(3)})`;
@@ -170,17 +197,19 @@ function renderFrame(timestamp) {
   }
 }
 
-function loop(timestamp) {
+function loop(now) {
   if (!isVisible) {
     rafId = null;
+    lastTime = 0;
     return;
   }
-  renderFrame(timestamp);
+  renderFrame(now);
   rafId = requestAnimationFrame(loop);
 }
 
 function startLoop() {
   if (!rafId && isVisible) {
+    lastTime = 0;
     rafId = requestAnimationFrame(loop);
   }
 }
@@ -189,6 +218,7 @@ function stopLoop() {
   if (rafId) {
     cancelAnimationFrame(rafId);
     rafId = null;
+    lastTime = 0;
   }
 }
 

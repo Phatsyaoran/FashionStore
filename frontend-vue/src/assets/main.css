@@ -338,6 +338,36 @@
   transform: translate3d(0, 12px, 0) scale(0.92);
 }
 
+/* 11. Header Cart & Wishlist Popover Transitions (Top-Right Bloom) */
+.fs-fade-enter-active,
+.fs-fade-leave-active {
+  transition: opacity 0.28s ease !important;
+}
+.fs-fade-enter-from,
+.fs-fade-leave-to {
+  opacity: 0;
+}
+
+.fs-popover-enter-active {
+  transform-origin: top right;
+  transition:
+    opacity 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  will-change: transform, opacity;
+}
+.fs-popover-leave-active {
+  transform-origin: top right;
+  transition:
+    opacity 0.22s cubic-bezier(0.4, 0, 1, 1),
+    transform 0.24s cubic-bezier(0.4, 0, 1, 1) !important;
+  will-change: transform, opacity;
+}
+.fs-popover-enter-from,
+.fs-popover-leave-to {
+  opacity: 0;
+  transform: translate3d(0, -10px, 0) scale(0.92);
+}
+
 /* Respect Reduced Motion Accessibility Preference (preserve smooth hover transitions on cards & continuous marquee) */
 @media (prefers-reduced-motion: reduce) {
   html {
