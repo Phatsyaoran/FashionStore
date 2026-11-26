@@ -33,7 +33,7 @@ public class Product {
     @Column(name = "Slug", nullable = false, unique = true, length = 255)
     private String slug;
 
-    @Column(name = "Description", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "Description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "BasePrice", nullable = false, precision = 18, scale = 2)

@@ -24,20 +24,19 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         log.info(">>> Khởi chạy DataInitializer: Kiểm tra schema bổ sung & tài khoản mẫu...");
 
-        // 0. Đảm bảo bảng ProductImages tồn tại (tương thích ngược với ddl-auto=none)
+        // 0. Đảm bảo bảng ProductImages tồn tại (PostgreSQL, tương thích với ddl-auto=none)
         try {
             jdbcTemplate.execute(
-                    "IF OBJECT_ID('dbo.ProductImages', 'U') IS NULL " +
-                    "BEGIN " +
-                    "  CREATE TABLE dbo.ProductImages (" +
-                    "    Id BIGINT IDENTITY(1,1) PRIMARY KEY, " +
-                    "    ProductId BIGINT NOT NULL, " +
-                    "    ImageUrl NVARCHAR(500) NOT NULL, " +
-                    "    DisplayOrder INT NOT NULL DEFAULT 0, " +
-                    "    CONSTRAINT FK_ProductImages_Products FOREIGN KEY (ProductId) REFERENCES dbo.Products(Id) ON DELETE CASCADE" +
-                    "  ); " +
-                    "  CREATE INDEX IX_ProductImages_ProductId ON dbo.ProductImages(ProductId); " +
-                    "END"
+                    "CREATE TABLE IF NOT EXISTS ProductImages (" +
+                    "  Id BIGSERIAL PRIMARY KEY, " +
+                    "  ProductId BIGINT NOT NULL, " +
+                    "  ImageUrl VARCHAR(500) NOT NULL, " +
+                    "  DisplayOrder INT NOT NULL DEFAULT 0, " +
+                    "  CONSTRAINT FK_ProductImages_Products FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE" +
+                    ")"
+            );
+            jdbcTemplate.execute(
+                    "CREATE INDEX IF NOT EXISTS IX_ProductImages_ProductId ON ProductImages(ProductId)"
             );
         } catch (Exception e) {
             log.warn(">>> Không thể tự kiểm tra/tạo bảng ProductImages: {}", e.getMessage());

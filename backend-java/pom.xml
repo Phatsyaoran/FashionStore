@@ -15,7 +15,7 @@
     <artifactId>fashion-store-backend</artifactId>
     <version>1.0.0</version>
     <name>fashion-store-backend</name>
-    <description>E-commerce Fashion Store Backend - Spring Boot 3 &amp; MS SQL Server</description>
+    <description>E-commerce Fashion Store Backend - Spring Boot 3 &amp; PostgreSQL</description>
 
     <properties>
         <java.version>21</java.version>
@@ -48,10 +48,10 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Microsoft SQL Server JDBC Driver -->
+        <!-- PostgreSQL JDBC Driver -->
         <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 

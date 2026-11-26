@@ -16,7 +16,7 @@ services:
       - key: PORT
         value: "8080"
       - key: DB_URL
-        sync: false # Nhập JDBC URL MS SQL Server (VD: Azure SQL / MonsterASP): jdbc:sqlserver://<host>:1433;databaseName=FashionStoreDB;encrypt=true;trustServerCertificate=false
+        sync: false # Nhập JDBC URL PostgreSQL từ Neon.tech: jdbc:postgresql://<ep-xxx>.aws.neon.tech/neondb?sslmode=require
       - key: DB_USERNAME
         sync: false
       - key: DB_PASSWORD
