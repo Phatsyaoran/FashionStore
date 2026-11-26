@@ -1,0 +1,35 @@
+# ==============================================================================
+# RENDER BLUEPRINT - FASHION STORE BACKEND (Spring Boot 3 + Java 21 Docker)
+# Hướng dẫn: Trên Render -> New -> Blueprint -> kết nối repo GitHub chứa file này
+# ==============================================================================
+
+services:
+  - type: web
+    name: fashionstore-backend
+    runtime: docker
+    plan: free
+    rootDir: backend-java
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/categories
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: DB_URL
+        sync: false # Nhập JDBC URL MS SQL Server (VD: Azure SQL / MonsterASP): jdbc:sqlserver://<host>:1433;databaseName=FashionStoreDB;encrypt=true;trustServerCertificate=false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false # Nhập domain Vercel Frontend, VD: https://fashionstore.vercel.app
+      - key: GEMINI_API_KEY
+        sync: false # Tùy chọn - để trống sẽ tự chạy trợ lý rule-based
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: APP_UPLOAD_DIR
+        value: /app/uploads
