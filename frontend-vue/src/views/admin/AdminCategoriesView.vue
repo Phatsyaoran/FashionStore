@@ -35,12 +35,12 @@
       <table class="w-full min-w-[650px] text-left text-xs">
         <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
           <tr>
-            <th class="px-4 py-3 font-semibold">ID</th>
-            <th class="px-4 py-3 font-semibold">Tên danh mục</th>
-            <th class="px-4 py-3 font-semibold">Slug</th>
+            <th class="px-4 py-3 font-semibold whitespace-nowrap">ID</th>
+            <th class="px-4 py-3 font-semibold min-w-[140px] whitespace-nowrap">Tên danh mục</th>
+            <th class="px-4 py-3 font-semibold whitespace-nowrap">Slug</th>
             <th class="px-4 py-3 font-semibold">Mô tả</th>
-            <th class="px-4 py-3 font-semibold text-center">Số sản phẩm</th>
-            <th class="px-4 py-3 font-semibold text-right">Thao tác</th>
+            <th class="px-4 py-3 font-semibold text-center whitespace-nowrap">Số sản phẩm</th>
+            <th class="px-4 py-3 font-semibold text-right whitespace-nowrap">Thao tác</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200/80">
@@ -51,21 +51,21 @@
             <td colspan="6" class="p-8 text-center text-slate-400">Chưa có danh mục nào.</td>
           </tr>
           <tr v-else v-for="cat in categories" :key="cat.id" class="hover:bg-slate-50/80 transition-colors">
-            <td class="px-4 py-3.5 font-mono text-slate-400">#{{ cat.id }}</td>
-            <td class="px-4 py-3.5 font-semibold text-slate-900">{{ cat.name }}</td>
-            <td class="px-4 py-3.5 font-mono text-slate-600 text-[11px]">{{ cat.slug }}</td>
-            <td class="px-4 py-3.5 text-slate-500 max-w-xs truncate">{{ cat.description || '—' }}</td>
-            <td class="px-4 py-3.5 text-center">
-              <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-[11px]">
+            <td class="px-4 py-3.5 font-mono text-slate-400 whitespace-nowrap">#{{ cat.id }}</td>
+            <td class="px-4 py-3.5 font-semibold text-slate-900 min-w-[140px]">{{ cat.name }}</td>
+            <td class="px-4 py-3.5 font-mono text-slate-600 text-[11px] whitespace-nowrap">{{ cat.slug }}</td>
+            <td class="px-4 py-3.5 text-slate-500 max-w-[200px] md:max-w-xs truncate">{{ cat.description || '—' }}</td>
+            <td class="px-4 py-3.5 text-center whitespace-nowrap">
+              <span class="whitespace-nowrap px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-[11px]">
                 {{ cat.productCount || 0 }} SP
               </span>
             </td>
-            <td class="px-4 py-3.5 text-right">
-              <div class="inline-flex items-center gap-1.5">
+            <td class="px-4 py-3.5 text-right whitespace-nowrap">
+              <div class="inline-flex items-center flex-nowrap gap-1.5">
                 <button
                   type="button"
                   @click="openEditModal(cat)"
-                  class="h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
+                  class="whitespace-nowrap h-8 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
                 >
                   Sửa
                 </button>
@@ -73,7 +73,7 @@
                   type="button"
                   @click="deleteCategory(cat)"
                   :disabled="deletingId === cat.id"
-                  class="h-8 px-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 rounded-lg font-semibold text-[11px] transition-colors disabled:opacity-50"
+                  class="whitespace-nowrap h-8 px-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 rounded-lg font-semibold text-[11px] transition-colors disabled:opacity-50"
                   title="Xóa danh mục"
                 >
                   {{ deletingId === cat.id ? '...' : 'Xóa' }}

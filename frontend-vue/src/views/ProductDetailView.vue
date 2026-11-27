@@ -234,7 +234,7 @@
             type="button"
             @click="handleAddToCart"
             :disabled="!currentVariant || currentVariant.stockQuantity <= 0"
-            class="btn-sheen silky-hover flex-1 h-12 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5"
+            class="btn-sheen silky-hover w-full sm:flex-1 min-h-[48px] h-12 py-3.5 px-6 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2.5"
             :class="(!currentVariant || currentVariant.stockQuantity <= 0) ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed' : 'bg-[#7A1032] hover:bg-[#5C0B27] text-white active:scale-[0.98] shadow-sm hover:shadow-md'"
           >
             <svg class="w-4 h-4 text-[#F3D078]" fill="none" viewBox="0 0 24 24" stroke="currentColor">

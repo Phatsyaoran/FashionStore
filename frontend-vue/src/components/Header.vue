@@ -507,7 +507,7 @@
           ref="cartPopoverRef"
           role="dialog"
           aria-modal="false"
-          class="fixed top-[74px] right-4 sm:right-6 z-[9995] w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100vh-100px)] flex flex-col rounded-2xl bg-white border border-stone-200/90 shadow-[0_20px_50px_-12px_rgba(24,24,27,0.22),0_0_0_1px_rgba(24,24,27,0.04)] overflow-hidden text-[#18181B] no-print"
+          class="fixed top-[74px] right-3 sm:right-6 z-[9995] w-[calc(100vw-24px)] max-w-md sm:w-[400px] max-h-[calc(100vh-100px)] flex flex-col rounded-2xl bg-white border border-stone-200/90 shadow-[0_20px_50px_-12px_rgba(24,24,27,0.22),0_0_0_1px_rgba(24,24,27,0.04)] overflow-hidden text-[#18181B] no-print"
         >
           <!-- Popover Header (Clean White Minimal) -->
           <div class="bg-white border-b border-stone-100 px-5 py-4 flex items-center justify-between gap-3 shrink-0">
@@ -535,7 +535,7 @@
           </div>
 
           <!-- Popover Items List -->
-          <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-[#FAF9F8]">
+          <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 space-y-3 bg-[#FAF9F8]">
             <div v-if="cartStore.items.length === 0" class="py-14 text-center space-y-3">
               <p class="text-stone-900 font-semibold text-sm">Giỏ hàng của bạn đang trống</p>
               <p class="text-xs text-stone-500">Khám phá các thiết kế mới nhất của FashionStore</p>
@@ -551,13 +551,13 @@
             <div
               v-for="item in cartStore.items"
               :key="item.variantId"
-              class="flex gap-3 p-3 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-[#8F5A32]/40 hover:shadow-md transition-all duration-300"
+              class="flex gap-3 p-3 min-w-0 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-[#8F5A32]/40 hover:shadow-md transition-all duration-300"
             >
               <img
                 :src="item.thumbnailUrl"
                 :alt="item.productName"
                 @error="onImageError"
-                class="w-18 h-22 sm:w-20 sm:h-24 object-cover rounded-xl bg-neutral-100 flex-shrink-0 border border-stone-100"
+                class="w-16 h-20 min-w-[64px] max-w-[64px] sm:w-20 sm:h-24 sm:min-w-[80px] sm:max-w-[80px] shrink-0 object-cover rounded-lg sm:rounded-xl bg-neutral-100 border border-stone-100"
               />
               <div class="flex-1 min-w-0 flex flex-col justify-between">
                 <div>
@@ -660,7 +660,7 @@
           ref="wishlistPopoverRef"
           role="dialog"
           aria-modal="false"
-          class="fixed top-[74px] right-4 sm:right-6 z-[9995] w-[calc(100vw-2rem)] sm:w-[400px] max-h-[calc(100vh-100px)] flex flex-col rounded-2xl bg-white border border-stone-200/90 shadow-[0_20px_50px_-12px_rgba(24,24,27,0.22),0_0_0_1px_rgba(24,24,27,0.04)] overflow-hidden text-[#18181B] no-print"
+          class="fixed top-[74px] right-3 sm:right-6 z-[9995] w-[calc(100vw-24px)] max-w-md sm:w-[400px] max-h-[calc(100vh-100px)] flex flex-col rounded-2xl bg-white border border-stone-200/90 shadow-[0_20px_50px_-12px_rgba(24,24,27,0.22),0_0_0_1px_rgba(24,24,27,0.04)] overflow-hidden text-[#18181B] no-print"
         >
           <!-- Popover Header (Clean White Minimal) -->
           <div class="bg-white border-b border-stone-100 px-5 py-4 flex items-center justify-between gap-3 shrink-0">
@@ -683,7 +683,7 @@
           </div>
 
           <!-- Popover Body -->
-          <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-3 bg-[#FAF9F8]">
+          <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 space-y-3 bg-[#FAF9F8]">
             <div v-if="wishlistStore.items.length === 0" class="py-14 text-center space-y-3">
               <p class="text-stone-900 font-semibold text-sm">Chưa có sản phẩm yêu thích nào</p>
               <p class="text-xs text-stone-500">Nhấn biểu tượng trái tim để lưu mẫu bạn ưng ý</p>
@@ -699,14 +699,18 @@
             <div
               v-for="item in wishlistStore.items"
               :key="item.id"
-              class="flex gap-3 p-3 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-[#8F5A32]/40 hover:shadow-md transition-all duration-300 group"
+              class="flex gap-3 p-3 min-w-0 bg-white rounded-xl border border-stone-200/80 shadow-sm hover:border-[#8F5A32]/40 hover:shadow-md transition-all duration-300 group"
             >
-              <router-link :to="`/product/${item.slug}`" @click="isWishlistOpen = false" class="flex-shrink-0">
+              <router-link
+                :to="`/product/${item.slug}`"
+                @click="isWishlistOpen = false"
+                class="block w-16 h-20 min-w-[64px] max-w-[64px] sm:w-20 sm:h-24 sm:min-w-[80px] sm:max-w-[80px] shrink-0 overflow-hidden rounded-lg sm:rounded-xl bg-neutral-100 border border-stone-100"
+              >
                 <img
                   :src="item.thumbnailUrl"
                   :alt="item.name"
                   @error="onImageError"
-                  class="w-18 h-22 sm:w-20 sm:h-24 object-cover rounded-xl bg-neutral-100 border border-stone-100 group-hover:scale-[1.03] transition-transform duration-500"
+                  class="w-16 h-20 min-w-[64px] max-w-[64px] sm:w-20 sm:h-24 sm:min-w-[80px] sm:max-w-[80px] shrink-0 object-cover rounded-lg sm:rounded-xl group-hover:scale-[1.03] transition-transform duration-500"
                 />
               </router-link>
 

@@ -160,12 +160,12 @@
                   </select>
                 </div>
               </td>
-              <td class="px-4 py-3.5 text-right">
+              <td class="px-4 py-3.5 text-right whitespace-nowrap">
                 <!-- Nút In phiếu giao hàng A6 (Yêu cầu Phase 7) -->
                 <button
                   type="button"
                   @click="printLabel(order)"
-                  class="h-8 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold text-[11px] transition-colors inline-flex items-center gap-1.5"
+                  class="whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold text-[11px] transition-colors"
                 >
                   <span>🖨️</span> In phiếu A6
                 </button>

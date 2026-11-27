@@ -131,10 +131,10 @@
             </td>
 
             <!-- TỒN KHO & NHẬP KHO NHANH -->
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-2">
+            <td class="px-4 py-3 whitespace-nowrap">
+              <div class="flex items-center flex-nowrap gap-2">
                 <span
-                  class="font-semibold px-2.5 py-0.5 rounded-full text-[11px] border"
+                  class="whitespace-nowrap font-semibold px-2.5 py-0.5 rounded-full text-[11px] border"
                   :class="item.totalStock > 5
                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                     : (item.totalStock > 0
@@ -146,7 +146,7 @@
                 <button
                   type="button"
                   @click="openStockModal(item)"
-                  class="h-7 px-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-md text-[11px] font-semibold transition-colors"
+                  class="whitespace-nowrap h-7 px-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-md text-[11px] font-semibold transition-colors"
                   title="Chỉnh sửa tồn kho từng biến thể"
                 >
                   Sửa kho
@@ -154,12 +154,12 @@
               </div>
             </td>
 
-            <td class="px-4 py-3 text-right">
-              <div class="inline-flex items-center gap-1.5">
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+              <div class="inline-flex items-center flex-nowrap gap-1.5">
                 <button
                   type="button"
                   @click="openEditModal(item)"
-                  class="h-8 px-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
+                  class="whitespace-nowrap h-8 px-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
                   title="Chỉnh sửa sản phẩm & biến thể"
                 >
                   Sửa
@@ -167,7 +167,7 @@
                 <router-link
                   :to="`/product/${item.slug}`"
                   target="_blank"
-                  class="h-8 px-2.5 inline-flex items-center bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
+                  class="whitespace-nowrap h-8 px-2.5 inline-flex items-center bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-lg font-semibold text-[11px] transition-colors"
                 >
                   Xem ↗
                 </router-link>
@@ -175,7 +175,7 @@
                   type="button"
                   @click="deleteProduct(item)"
                   :disabled="deletingId === item.id"
-                  class="h-8 px-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 rounded-lg font-semibold text-[11px] transition-colors inline-flex items-center gap-1 disabled:opacity-50"
+                  class="whitespace-nowrap h-8 px-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 rounded-lg font-semibold text-[11px] transition-colors inline-flex items-center gap-1 disabled:opacity-50"
                   title="Xóa sản phẩm an toàn"
                 >
                   <span v-if="deletingId === item.id" class="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>

@@ -278,8 +278,7 @@
         </div>
 
         <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600">
-          <p class="font-semibold text-slate-900">Cơ sở dữ liệu MS SQL Server</p>
-          <p class="mt-0.5">FashionStoreDB hoạt động ổn định (Vietnamese_CI_AS).</p>
+          <p class="font-semibold text-slate-900">Cơ sở dữ liệu PostgreSQL (Neon) — Hoạt động ổn định</p>
         </div>
       </div>
     </div>
