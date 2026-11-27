@@ -7,12 +7,12 @@
   <div v-else-if="product" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-12 sm:space-y-16">
     
     <!-- Breadcrumb -->
-    <div class="text-xs text-[#6B7280] flex items-center gap-2">
-      <router-link to="/" class="hover:text-[#7A1032] transition-colors">Trang chủ</router-link>
-      <span class="text-neutral-300">/</span>
-      <router-link to="/catalog" class="hover:text-[#7A1032] transition-colors">Cửa hàng</router-link>
-      <span class="text-neutral-300">/</span>
-      <span class="text-[#18181B] font-medium truncate">{{ product.name }}</span>
+    <div class="text-xs text-[#6B7280] flex items-center flex-nowrap gap-2 min-w-0 overflow-hidden">
+      <router-link to="/" class="hover:text-[#7A1032] transition-colors whitespace-nowrap shrink-0">Trang chủ</router-link>
+      <span class="text-neutral-300 shrink-0">/</span>
+      <router-link to="/catalog" class="hover:text-[#7A1032] transition-colors whitespace-nowrap shrink-0">Cửa hàng</router-link>
+      <span class="text-neutral-300 shrink-0">/</span>
+      <span class="text-[#18181B] font-medium truncate min-w-0">{{ product.name }}</span>
     </div>
 
     <!-- Main Detail Grid -->
@@ -276,13 +276,13 @@
       <SparkleBorderOverlay :inset="8" :radius="12" />
 
       <!-- Header Band -->
-      <div class="relative z-20 px-5 pt-5 pb-4 sm:px-8 sm:pt-6 sm:pb-5 text-[#FFFDF9] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="relative z-20 px-4 pt-5 pb-3.5 sm:px-8 sm:pt-6 sm:pb-5 text-[#FFFDF9] flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
         <div>
-          <div class="flex items-center gap-2.5">
-            <span class="px-2 py-0.5 text-[10px] font-bold bg-white/15 text-[#F3D078] border border-[#F3D078]/40 rounded uppercase tracking-[0.14em]">
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5">
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-white/15 text-[#F3D078] border border-[#F3D078]/40 rounded uppercase tracking-[0.14em] whitespace-nowrap shrink-0">
               AI Outfit Set
             </span>
-            <h2 class="text-lg sm:text-xl font-bold tracking-tight text-[#FFFDF9]">
+            <h2 class="text-base sm:text-xl font-bold tracking-tight text-[#FFFDF9]">
               Phối Đồ Chuẩn Gu (Mix & Match)
             </h2>
           </div>
@@ -295,20 +295,17 @@
       </div>
 
       <!-- Single Standalone Sparkling Star Divider (aligned 8px inset with SparkleBorderOverlay) -->
-      <SparkleDivider class="relative z-20 mx-[8px] my-3" />
+      <SparkleDivider class="relative z-20 mx-[8px] my-2.5 md:my-3" />
 
       <!-- Outfits Row (Crisp White Cards floating cleanly inside the inset star border) -->
-      <div class="relative z-20 p-5 sm:p-6 pt-4 sm:pt-5">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5 items-stretch">
-          <!-- 3 Items in Set (Cols 1-3) -->
-          <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="relative z-20 p-4 sm:p-5 md:p-6 pt-3 sm:pt-4 md:pt-5">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-3.5 md:gap-5 items-stretch">
+          <!-- 3 Items in Set (Cols 1-3): Compact horizontal cards on mobile, 3-col vertical cards on md+ -->
+          <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-2.5 md:gap-4">
             
             <!-- Item 1: Current Product -->
-            <div class="bg-white/95 backdrop-blur-sm rounded-xl p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between h-full relative group">
-              <span class="absolute top-3 left-3 bg-[#18181B]/85 text-[#F3D078] text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                Món 1 (Đang xem)
-              </span>
-              <div class="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-neutral-100">
+            <div class="bg-white/95 backdrop-blur-sm rounded-xl p-2.5 md:p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-row md:flex-col items-center md:items-stretch md:justify-between gap-3 md:gap-0 h-full relative group">
+              <div class="w-[72px] h-[90px] shrink-0 md:w-full md:h-auto md:aspect-[3/4] rounded-lg overflow-hidden md:mb-3 bg-neutral-100">
                 <img
                   :src="product.thumbnailUrl"
                   :alt="product.name"
@@ -316,11 +313,14 @@
                   class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 />
               </div>
-              <div>
-                <h4 class="text-xs font-semibold text-[#18181B] line-clamp-1 mb-1">{{ product.name }}</h4>
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-bold text-[#7A1032]">{{ formatVND(currentPrice) }}</span>
-                  <span class="text-[10px] text-[#6B7280] bg-neutral-100 px-2 py-0.5 rounded">
+              <div class="flex-1 min-w-0 flex flex-col justify-between gap-1.5 md:gap-0">
+                <span class="inline-block w-fit md:absolute md:top-3 md:left-3 bg-[#18181B]/85 text-[#F3D078] text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10 whitespace-nowrap">
+                  Món 1 (Đang xem)
+                </span>
+                <h4 class="text-xs font-semibold text-[#18181B] line-clamp-2 md:line-clamp-1 md:mb-1 leading-snug">{{ product.name }}</h4>
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <span class="font-bold text-[#7A1032] whitespace-nowrap">{{ formatVND(currentPrice) }}</span>
+                  <span class="text-[10px] text-[#6B7280] bg-neutral-100 px-2 py-0.5 rounded whitespace-nowrap shrink-0">
                     Size: {{ selectedSize }}
                   </span>
                 </div>
@@ -330,12 +330,9 @@
             <!-- Item 2: Mix-Match Product 1 -->
             <div
               v-if="mixMatchProducts[0]"
-              class="bg-white/95 backdrop-blur-sm rounded-xl p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between h-full relative group"
+              class="bg-white/95 backdrop-blur-sm rounded-xl p-2.5 md:p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-row md:flex-col items-center md:items-stretch md:justify-between gap-3 md:gap-0 h-full relative group"
             >
-              <span class="absolute top-3 left-3 bg-[#7A1032] text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                Món 2 (Gợi ý)
-              </span>
-              <router-link :to="`/product/${mixMatchProducts[0].slug}`" class="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-neutral-100 block">
+              <router-link :to="`/product/${mixMatchProducts[0].slug}`" class="w-[72px] h-[90px] shrink-0 md:w-full md:h-auto md:aspect-[3/4] rounded-lg overflow-hidden md:mb-3 bg-neutral-100 block">
                 <img
                   :src="mixMatchProducts[0].thumbnailUrl"
                   :alt="mixMatchProducts[0].name"
@@ -343,17 +340,20 @@
                   class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 />
               </router-link>
-              <div class="space-y-2">
-                <router-link :to="`/product/${mixMatchProducts[0].slug}`">
-                  <h4 class="text-xs font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-1 transition-colors">
+              <div class="flex-1 min-w-0 space-y-1.5 md:space-y-2">
+                <span class="inline-block w-fit md:absolute md:top-3 md:left-3 bg-[#7A1032] text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10 whitespace-nowrap">
+                  Món 2 (Gợi ý)
+                </span>
+                <router-link :to="`/product/${mixMatchProducts[0].slug}`" class="block">
+                  <h4 class="text-xs font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-2 md:line-clamp-1 leading-snug transition-colors">
                     {{ mixMatchProducts[0].name }}
                   </h4>
                 </router-link>
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-bold text-[#7A1032]">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <span class="font-bold text-[#7A1032] whitespace-nowrap">
                     {{ formatVND(mixMatchSelectedVariants[mixMatchProducts[0].id]?.price || mixMatchProducts[0].salePrice || mixMatchProducts[0].basePrice) }}
                   </span>
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1 shrink-0">
                     <span class="text-[10px] text-[#6B7280]">Size:</span>
                     <select
                       v-model="mixMatchSelectedSizes[mixMatchProducts[0].id]"
@@ -375,12 +375,9 @@
             <!-- Item 3: Mix-Match Product 2 -->
             <div
               v-if="mixMatchProducts[1]"
-              class="bg-white/95 backdrop-blur-sm rounded-xl p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between h-full relative group"
+              class="bg-white/95 backdrop-blur-sm rounded-xl p-2.5 md:p-3.5 border border-white/60 shadow-lg silky-hover hover:-translate-y-1 hover:shadow-xl flex flex-row md:flex-col items-center md:items-stretch md:justify-between gap-3 md:gap-0 h-full relative group"
             >
-              <span class="absolute top-3 left-3 bg-[#7A1032] text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10">
-                Món 3 (Gợi ý)
-              </span>
-              <router-link :to="`/product/${mixMatchProducts[1].slug}`" class="aspect-[3/4] rounded-lg overflow-hidden mb-3 bg-neutral-100 block">
+              <router-link :to="`/product/${mixMatchProducts[1].slug}`" class="w-[72px] h-[90px] shrink-0 md:w-full md:h-auto md:aspect-[3/4] rounded-lg overflow-hidden md:mb-3 bg-neutral-100 block">
                 <img
                   :src="mixMatchProducts[1].thumbnailUrl"
                   :alt="mixMatchProducts[1].name"
@@ -388,17 +385,20 @@
                   class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 />
               </router-link>
-              <div class="space-y-2">
-                <router-link :to="`/product/${mixMatchProducts[1].slug}`">
-                  <h4 class="text-xs font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-1 transition-colors">
+              <div class="flex-1 min-w-0 space-y-1.5 md:space-y-2">
+                <span class="inline-block w-fit md:absolute md:top-3 md:left-3 bg-[#7A1032] text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase z-10 whitespace-nowrap">
+                  Món 3 (Gợi ý)
+                </span>
+                <router-link :to="`/product/${mixMatchProducts[1].slug}`" class="block">
+                  <h4 class="text-xs font-semibold text-[#18181B] hover:text-[#7A1032] line-clamp-2 md:line-clamp-1 leading-snug transition-colors">
                     {{ mixMatchProducts[1].name }}
                   </h4>
                 </router-link>
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-bold text-[#7A1032]">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <span class="font-bold text-[#7A1032] whitespace-nowrap">
                     {{ formatVND(mixMatchSelectedVariants[mixMatchProducts[1].id]?.price || mixMatchProducts[1].salePrice || mixMatchProducts[1].basePrice) }}
                   </span>
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1 shrink-0">
                     <span class="text-[10px] text-[#6B7280]">Size:</span>
                     <select
                       v-model="mixMatchSelectedSizes[mixMatchProducts[1].id]"
@@ -420,17 +420,17 @@
           </div>
 
           <!-- Right Summary Card (Col 4) -->
-          <div class="bg-white/95 backdrop-blur-sm rounded-xl p-5 border border-white/60 shadow-lg flex flex-col justify-between space-y-5 h-full">
+          <div class="bg-white/95 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-white/60 shadow-lg flex flex-col justify-between space-y-3.5 md:space-y-5 h-full">
             <div>
               <span class="text-[11px] font-bold text-[#7A1032] uppercase tracking-[0.14em] block">
                 Trọn bộ phối chuẩn gu
               </span>
-              <div class="text-xs text-[#6B7280] mt-1.5">
+              <div class="text-xs text-[#6B7280] mt-1">
                 Gồm {{ 1 + mixMatchProducts.length }} món thời trang kết hợp hoàn hảo
               </div>
-              <div class="mt-5 pt-4 border-t border-neutral-200/80">
+              <div class="mt-3 md:mt-5 pt-3 md:pt-4 border-t border-neutral-200/80 flex items-baseline justify-between md:block">
                 <span class="text-xs text-[#6B7280] block">Tổng giá trị cả set:</span>
-                <div class="text-2xl font-extrabold text-[#7A1032] mt-1">
+                <div class="text-xl md:text-2xl font-extrabold text-[#7A1032] md:mt-1">
                   {{ formatVND(totalSetPrice) }}
                 </div>
               </div>

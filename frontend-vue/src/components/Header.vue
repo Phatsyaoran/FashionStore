@@ -6,11 +6,11 @@
     </div>
 
     <!-- Top Announcement Bar -->
-    <div class="relative z-10 bg-black/25 text-[#FFFDF9]/90 text-[11px] py-2 px-4 font-medium tracking-wide border-b border-white/10">
-      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <div class="flex items-center gap-2 truncate">
+    <div class="relative z-10 bg-black/25 text-[#FFFDF9]/90 text-[10.5px] sm:text-[11px] py-2 px-3 sm:px-4 font-medium tracking-wide border-b border-white/10">
+      <div class="max-w-7xl mx-auto flex items-center justify-center md:justify-between gap-2 md:gap-4">
+        <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 md:truncate">
           <span class="w-1.5 h-1.5 rounded-full bg-[#F3D078] shrink-0"></span>
-          <span class="truncate">Ưu đãi thành viên: Nhập mã <strong class="text-[#F3D078] font-bold px-1.5 py-0.5 bg-white/15 rounded border border-[#F3D078]/35">WELCOME10</strong> giảm 10% đơn từ 200k</span>
+          <span class="whitespace-nowrap md:truncate"><span class="hidden sm:inline">Ưu đãi thành viên: </span>Nhập mã <strong class="text-[#F3D078] font-bold px-1.5 py-0.5 bg-white/15 rounded border border-[#F3D078]/35">WELCOME10</strong> giảm 10%<span class="hidden min-[380px]:inline"> đơn từ 200k</span></span>
         </div>
         <div class="hidden md:flex items-center gap-4 text-[#FFFDF9]/75 shrink-0">
           <span>Freeship đơn từ 500k</span>
@@ -241,12 +241,17 @@
             </transition>
           </div>
 
-          <div v-else class="flex items-center">
+          <div v-else class="flex items-center shrink-0">
             <router-link
               to="/login"
-              class="min-h-[44px] inline-flex items-center text-xs font-bold text-[#FFFDF9] hover:text-[#F3D078] px-3 rounded-lg hover:bg-white/15 transition-colors"
+              class="min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-xs font-bold text-[#FFFDF9] hover:text-[#F3D078] px-2 min-[420px]:px-3 rounded-lg hover:bg-white/15 transition-colors whitespace-nowrap shrink-0"
+              aria-label="Đăng nhập"
+              title="Đăng nhập"
             >
-              Đăng nhập
+              <svg class="w-5 h-5 min-[420px]:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span class="hidden min-[420px]:inline">Đăng nhập</span>
             </router-link>
           </div>
 

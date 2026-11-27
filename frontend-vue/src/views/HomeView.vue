@@ -42,15 +42,15 @@
             </div>
 
             <!-- Subtle Metrics -->
-            <div class="pt-5 flex flex-wrap items-center gap-6 text-xs text-[#6B7280] border-t border-neutral-200/80">
-              <div class="flex items-center gap-1.5">
+            <div class="pt-5 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-6 text-xs text-[#6B7280] border-t border-neutral-200/80">
+              <div class="flex items-center gap-1.5 whitespace-nowrap">
                 <span class="text-[#C9963B] font-bold text-sm">★ 4.9/5</span>
                 <span>Đánh giá hài lòng</span>
               </div>
-              <span class="text-neutral-300">•</span>
-              <div>
+              <span class="hidden sm:inline text-neutral-300">•</span>
+              <div class="flex items-center gap-1.5 whitespace-nowrap">
                 <span class="text-[#18181B] font-bold text-sm">50.000+</span>
-                <span> Khách hàng tin dùng</span>
+                <span>Khách hàng tin dùng</span>
               </div>
             </div>
           </div>
@@ -132,35 +132,35 @@
     <!-- 4 SERVICE COMMITMENTS -->
     <section v-reveal class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+        <div class="group bg-white p-3.5 sm:p-4 md:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col md:flex-row items-center text-center md:text-left gap-2.5 md:gap-3.5">
           <div class="w-10 h-10 rounded-lg bg-[#7A1032]/[0.06] border border-[#7A1032]/15 group-hover:border-[#C9963B]/50 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#7A1032] flex items-center justify-center text-lg shrink-0">🚚</div>
           <div class="min-w-0">
-            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">Freeship toàn quốc</h4>
-            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Đơn hàng từ 500k</p>
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors leading-snug md:truncate">Freeship toàn quốc</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 leading-snug md:truncate">Đơn hàng từ 500k</p>
           </div>
         </div>
 
-        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+        <div class="group bg-white p-3.5 sm:p-4 md:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col md:flex-row items-center text-center md:text-left gap-2.5 md:gap-3.5">
           <div class="w-10 h-10 rounded-lg bg-[#C9963B]/10 border border-[#C9963B]/25 group-hover:border-[#C9963B]/60 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#9A6F20] flex items-center justify-center text-lg shrink-0">🔄</div>
           <div class="min-w-0">
-            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">Đổi trả 60 ngày</h4>
-            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Hỗ trợ đổi tận nơi</p>
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors leading-snug md:truncate">Đổi trả 60 ngày</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 leading-snug md:truncate">Hỗ trợ đổi tận nơi</p>
           </div>
         </div>
 
-        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+        <div class="group bg-white p-3.5 sm:p-4 md:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col md:flex-row items-center text-center md:text-left gap-2.5 md:gap-3.5">
           <div class="w-10 h-10 rounded-lg bg-[#5E1B55]/[0.08] border border-[#5E1B55]/20 group-hover:border-[#C9963B]/50 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#5E1B55] flex items-center justify-center text-lg shrink-0">📏</div>
           <div class="min-w-0">
-            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">AI tư vấn chọn size</h4>
-            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Chuẩn form dáng ~95%</p>
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors leading-snug md:truncate">AI tư vấn chọn size</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 leading-snug md:truncate">Chuẩn form dáng ~95%</p>
           </div>
         </div>
 
-        <div class="group bg-white p-4 sm:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center gap-3.5">
+        <div class="group bg-white p-3.5 sm:p-4 md:p-5 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/75 hover:-translate-y-1.5 hover:shadow-[0_14px_34px_-12px_rgba(74,8,32,0.12)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col md:flex-row items-center text-center md:text-left gap-2.5 md:gap-3.5">
           <div class="w-10 h-10 rounded-lg bg-[#7A1032]/[0.06] border border-[#7A1032]/15 group-hover:border-[#C9963B]/50 group-hover:scale-110 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-[#7A1032] flex items-center justify-center text-lg shrink-0">💳</div>
           <div class="min-w-0">
-            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors truncate">VietQR & COD</h4>
-            <p class="text-[11px] text-[#6B7280] mt-0.5 truncate">Thanh toán linh hoạt</p>
+            <h4 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors leading-snug md:truncate">VietQR & COD</h4>
+            <p class="text-[11px] text-[#6B7280] mt-0.5 leading-snug md:truncate">Thanh toán linh hoạt</p>
           </div>
         </div>
       </div>
@@ -230,18 +230,18 @@
         </router-link>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div class="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar pb-1 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
         <router-link
           v-for="(cat, idx) in categories"
           :key="cat.id"
           v-reveal="idx * 50"
           :to="`/catalog?categorySlug=${cat.slug}`"
-          class="group bg-white p-4 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/60 hover:-translate-y-1 hover:shadow-[0_14px_32px_-12px_rgba(92,11,39,0.12)] silky-hover text-center flex flex-col items-center justify-center space-y-2"
+          class="group bg-white p-3.5 md:p-4 rounded-xl border border-neutral-200/80 hover:border-[#C9963B]/60 hover:-translate-y-1 hover:shadow-[0_14px_32px_-12px_rgba(92,11,39,0.12)] silky-hover text-center flex flex-col items-center justify-center space-y-1.5 md:space-y-2 shrink-0 w-[124px] sm:w-[140px] md:w-auto snap-start"
         >
-          <div class="w-11 h-11 rounded-lg bg-[#FAFAFA] border border-neutral-200/80 group-hover:bg-[#7A1032] group-hover:border-[#7A1032] text-[#7A1032] group-hover:text-white flex items-center justify-center text-lg transition-colors duration-300">
+          <div class="w-10 h-10 md:w-11 md:h-11 rounded-lg bg-[#FAFAFA] border border-neutral-200/80 group-hover:bg-[#7A1032] group-hover:border-[#7A1032] text-[#7A1032] group-hover:text-white flex items-center justify-center text-base md:text-lg transition-colors duration-300">
             👔
           </div>
-          <h3 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors">
+          <h3 class="text-xs font-bold text-[#18181B] group-hover:text-[#7A1032] transition-colors leading-snug">
             {{ cat.name }}
           </h3>
           <span class="text-[11px] text-[#6B7280] font-medium">
@@ -423,5 +423,13 @@ onUnmounted(() => {
 .hero-v-card:hover img,
 .hero-v-card.is-active img {
   transform: scale(1.05);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

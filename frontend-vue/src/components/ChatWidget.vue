@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end no-print">
+  <div class="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end no-print">
     
     <!-- CHAT POPUP WINDOW (Clean White + Luxury Gradient Header) -->
     <Transition name="chat-pop">
@@ -262,18 +262,19 @@
     <button
       type="button"
       @click="toggleChat"
-      class="silky-hover group relative overflow-hidden flex items-center px-4 py-3 rounded-full luxury-gradient text-[#FFFDF9] shadow-[0_12px_30px_-6px_rgba(74,8,32,0.5)] hover:scale-[1.03] active:scale-[0.98] border border-white/25"
+      class="silky-hover group relative overflow-hidden flex items-center justify-center w-12 h-12 md:w-auto md:h-auto p-0 md:px-4 md:py-3 rounded-full luxury-gradient text-[#FFFDF9] shadow-[0_12px_30px_-6px_rgba(74,8,32,0.5)] hover:scale-[1.03] active:scale-[0.98] border border-white/25"
       aria-label="Mở trợ lý Fashion AI"
     >
       <StarfieldOverlay :min-stars="18" />
-      <span class="relative z-10 flex items-center gap-2.5">
+      <span class="relative z-10 flex items-center justify-center md:gap-2.5">
         <span class="text-lg leading-none">✨</span>
-        <div class="text-left hidden sm:block">
+        <div class="text-left hidden md:block">
           <div class="text-[9px] font-semibold text-[#F3D078] uppercase tracking-[0.14em] leading-none">Tư Vấn</div>
           <div class="text-xs font-bold leading-tight mt-0.5 text-[#FFFDF9]">Fashion AI</div>
         </div>
-        <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+        <span class="hidden md:inline-block w-2 h-2 bg-emerald-400 rounded-full"></span>
       </span>
+      <span class="md:hidden absolute top-2 right-2 z-20 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-[#5C0B27]"></span>
     </button>
 
   </div>
