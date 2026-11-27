@@ -19,6 +19,8 @@ import com.fashion.store.repository.ProductVariantRepository;
 import com.fashion.store.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,6 +121,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public ProductVariantDTO updateVariantStock(Long variantId, StockUpdateRequest request) {
         ProductVariant variant = productVariantRepository.findById(variantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy biến thể sản phẩm với ID: " + variantId));
@@ -152,6 +155,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public ProductDTO toggleProductFlashSale(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
@@ -239,7 +243,7 @@ public class AdminServiceImpl implements AdminService {
             // Header CSV
             writer.println("Mã SKU,Tên sản phẩm,Danh mục,Kích thước,Màu sắc,Mã màu Hex,Giá bán (VNĐ),Số lượng tồn kho (chiếc),Tình trạng kho");
 
-            List<ProductVariant> variants = productVariantRepository.findAll(Sort.by(Sort.Direction.ASC, "sku"));
+            List<ProductVariant> variants = productVariantRepository.findAllWithProductAndCategoryOrderBySkuAsc();
 
             for (ProductVariant v : variants) {
                 Product p = v.getProduct();
@@ -350,6 +354,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public void deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm có ID: " + productId));
@@ -436,6 +441,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public ProductDTO createProduct(AdminProductRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục ID: " + request.getCategoryId()));
@@ -483,6 +489,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public ProductDTO updateProduct(Long productId, AdminProductRequest request) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm có ID: " + productId));
@@ -735,6 +742,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("adminCategories")
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         Map<Long, Long> countsMap = new HashMap<>();
@@ -754,6 +762,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public CategoryDTO createCategory(AdminCategoryRequest request) {
         String rawSlug = (request.getSlug() != null && !request.getSlug().trim().isEmpty())
                 ? request.getSlug().trim()
@@ -778,6 +787,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public CategoryDTO updateCategory(Long id, AdminCategoryRequest request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục ID: " + id));
@@ -804,6 +814,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"categories", "adminCategories", "products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục ID: " + id));

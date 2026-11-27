@@ -10,6 +10,8 @@ import com.fashion.store.entity.User;
 import com.fashion.store.exception.ResourceNotFoundException;
 import com.fashion.store.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("categories")
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         Map<Long, Long> countsMap = new HashMap<>();
@@ -60,6 +63,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "categories", key = "'slug:' + #slug")
     public CategoryDTO getCategoryBySlug(String slug) {
         Category category = categoryRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với slug: " + slug));
@@ -75,6 +79,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products")
     public PageResponse<ProductDTO> getProducts(
             Long categoryId,
             String categorySlug,
@@ -98,9 +103,7 @@ public class CatalogServiceImpl implements CatalogService {
         );
 
         Page<Product> productPage = productRepository.findAll(spec, pageable);
-        List<ProductDTO> dtos = productPage.getContent().stream()
-                .map(this::mapToProductDTO)
-                .collect(Collectors.toList());
+        List<ProductDTO> dtos = mapToProductDTOList(productPage.getContent());
 
         return PageResponse.<ProductDTO>builder()
                 .content(dtos)
@@ -114,6 +117,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "productDetail", key = "'slug:' + #slug")
     public ProductDetailDTO getProductDetailBySlug(String slug) {
         Product product = productRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với slug: " + slug));
@@ -122,6 +126,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "productDetail", key = "'id:' + #id")
     public ProductDetailDTO getProductDetailById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + id));
@@ -130,37 +135,35 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("flashSaleProducts")
     public List<ProductDTO> getFlashSaleProducts() {
         List<Product> flashSales = productRepository.findActiveFlashSales(LocalDateTime.now());
-        return flashSales.stream()
-                .map(this::mapToProductDTO)
-                .collect(Collectors.toList());
+        return mapToProductDTOList(flashSales);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "latestProducts", key = "#limit")
     public List<ProductDTO> getLatestProducts(int limit) {
         Pageable pageable = PageRequest.of(0, Math.max(1, limit));
         List<Product> latest = productRepository.findLatestProducts(pageable);
-        return latest.stream()
-                .map(this::mapToProductDTO)
-                .collect(Collectors.toList());
+        return mapToProductDTOList(latest);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "relatedProducts", key = "#productId + ':' + #limit")
     public List<ProductDTO> getRelatedProducts(Long productId, int limit) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm"));
         Pageable pageable = PageRequest.of(0, Math.max(1, limit));
         List<Product> related = productRepository.findRelatedProducts(product.getCategory().getId(), productId, pageable);
-        return related.stream()
-                .map(this::mapToProductDTO)
-                .collect(Collectors.toList());
+        return mapToProductDTOList(related);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "mixMatchProducts", key = "#productId + ':' + #limit")
     public List<ProductDetailDTO> getMixMatchProducts(Long productId, int limit) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
@@ -239,12 +242,14 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public ReviewDTO addReview(Long productId, ReviewCreateRequest request) {
         return addReview(productId, request, null);
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public ReviewDTO addReview(Long productId, ReviewCreateRequest request, String userEmail) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
@@ -281,9 +286,40 @@ public class CatalogServiceImpl implements CatalogService {
     // HELPER MAPPING METHODS (DTO ISOLATION)
     // ==========================================
 
-    private ProductDTO mapToProductDTO(Product product) {
-        List<ProductVariant> variants = productVariantRepository.findByProductId(product.getId());
+    private List<ProductDTO> mapToProductDTOList(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return Collections.emptyList();
+        }
 
+        List<Long> productIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toList());
+
+        Map<Long, List<ProductVariant>> variantsByProductId = productVariantRepository.findByProductIdIn(productIds)
+                .stream()
+                .collect(Collectors.groupingBy(v -> v.getProduct().getId()));
+
+        Map<Long, Double> avgRatingByProductId = new HashMap<>();
+        Map<Long, Integer> reviewCountByProductId = new HashMap<>();
+        for (Object[] row : reviewRepository.findRatingStatsByProductIds(productIds)) {
+            Long pid = ((Number) row[0]).longValue();
+            Double avg = row[1] != null ? ((Number) row[1]).doubleValue() : 0.0;
+            Integer count = row[2] != null ? ((Number) row[2]).intValue() : 0;
+            avgRatingByProductId.put(pid, Math.round(avg * 10.0) / 10.0);
+            reviewCountByProductId.put(pid, count);
+        }
+
+        return products.stream()
+                .map(product -> buildProductDTO(
+                        product,
+                        variantsByProductId.getOrDefault(product.getId(), Collections.emptyList()),
+                        avgRatingByProductId.getOrDefault(product.getId(), 0.0),
+                        reviewCountByProductId.getOrDefault(product.getId(), 0)
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private ProductDTO buildProductDTO(Product product, List<ProductVariant> variants, double avgRating, int reviewCount) {
         List<String> sizes = variants.stream()
                 .map(ProductVariant::getSize)
                 .filter(Objects::nonNull)
@@ -305,10 +341,6 @@ public class CatalogServiceImpl implements CatalogService {
         int totalStock = variants.stream()
                 .mapToInt(v -> v.getStockQuantity() != null ? v.getStockQuantity() : 0)
                 .sum();
-
-        Double rawAvg = reviewRepository.getAverageRating(product.getId());
-        double avgRating = rawAvg != null ? Math.round(rawAvg * 10.0) / 10.0 : 0.0;
-        int reviewCount = (int) reviewRepository.countByProductId(product.getId());
 
         Integer discountPercent = calculateDiscountPercent(product.getBasePrice(), product.getSalePrice());
 

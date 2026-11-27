@@ -1,7 +1,10 @@
 package com.fashion.store.repository;
 
 import com.fashion.store.entity.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +18,11 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
+    @Override
+    @EntityGraph(attributePaths = {"category"})
+    Page<Product> findAll(Specification<Product> spec, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"category"})
     Optional<Product> findBySlug(String slug);
 
     boolean existsBySlug(String slug);
@@ -23,16 +31,16 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     List<Product> findByIsFlashSaleTrueAndFlashSaleEndTimeAfter(LocalDateTime now);
 
-    @Query("SELECT p FROM Product p WHERE p.isFlashSale = true AND (p.flashSaleEndTime IS NULL OR p.flashSaleEndTime > :now) ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.isFlashSale = true AND (p.flashSaleEndTime IS NULL OR p.flashSaleEndTime > :now) ORDER BY p.createdAt DESC")
     List<Product> findActiveFlashSales(@Param("now") LocalDateTime now);
 
-    @Query("SELECT p FROM Product p ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category ORDER BY p.createdAt DESC")
     List<Product> findLatestProducts(Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.id <> :productId")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.category.id = :categoryId AND p.id <> :productId")
     List<Product> findRelatedProducts(@Param("categoryId") Long categoryId, @Param("productId") Long productId, Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE p.category.id <> :categoryId AND p.id <> :productId ORDER BY p.createdAt DESC")
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.category.id <> :categoryId AND p.id <> :productId ORDER BY p.createdAt DESC")
     List<Product> findMixMatchProducts(@Param("categoryId") Long categoryId, @Param("productId") Long productId, Pageable pageable);
 
     @Query("SELECT DISTINCT v.product FROM ProductVariant v WHERE v.size = :size AND v.stockQuantity > 0")

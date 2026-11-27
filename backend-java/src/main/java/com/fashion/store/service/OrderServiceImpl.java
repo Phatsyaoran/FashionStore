@@ -7,6 +7,7 @@ import com.fashion.store.exception.ResourceNotFoundException;
 import com.fashion.store.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public OrderResponseDTO createOrder(OrderCreateRequest request, String userEmail) {
         if (request.getItems() == null || request.getItems().isEmpty()) {
             throw new BadRequestException("Giỏ hàng không có sản phẩm");
@@ -204,6 +206,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public OrderResponseDTO updateOrderStatus(String orderCode, OrderStatusUpdateRequest request) {
         Order order = orderRepository.findByOrderCode(orderCode.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng: " + orderCode));
@@ -325,6 +328,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"products", "productDetail", "flashSaleProducts", "latestProducts", "relatedProducts", "mixMatchProducts"}, allEntries = true)
     public OrderResponseDTO cancelMyOrder(String orderCode, String userEmail) {
         Order order = orderRepository.findByOrderCode(orderCode.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng: " + orderCode));

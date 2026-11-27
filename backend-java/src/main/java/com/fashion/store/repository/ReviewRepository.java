@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -21,4 +22,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Double getAverageRating(@Param("productId") Long productId);
 
     long countByProductId(Long productId);
+
+    @Query("SELECT r.product.id, COALESCE(AVG(r.rating), 0.0), COUNT(r.id) FROM Review r WHERE r.product.id IN :productIds GROUP BY r.product.id")
+    List<Object[]> findRatingStatsByProductIds(@Param("productIds") Collection<Long> productIds);
 }
